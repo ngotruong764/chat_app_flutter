@@ -14,6 +14,6 @@ final kRoutePages = [
   ),
   GetPage(
     name: AppRoutes.LOGIN,
-    page: () => SignUp1(),
+    page: () => const SignUp1(),
   )
 ];
