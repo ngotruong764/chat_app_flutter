@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MaterialApp(
-    theme: ThemeData(fontFamily: 'Times New Roman'),
-    home: SafeArea(
-      child: Scaffold(
-        body: MyWiget(),
-      ),
-    ),
-    debugShowCheckedModeBanner: false,
-  ));
-}
 
-class MyWiget extends StatelessWidget {
+
+
+class SignUp1 extends StatelessWidget {
+  const SignUp1({super.key});
+
   @override
   Widget build(BuildContext context) {
 
@@ -30,7 +23,7 @@ class MyWiget extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 130),
+          // const SizedBox(height: 130),
           const SizedBox(
             width: 325,
             height: 50,
@@ -41,7 +34,7 @@ class MyWiget extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          // const SizedBox(height: 30),
           const SizedBox(
             width: 325,
             height: 50,
@@ -52,7 +45,7 @@ class MyWiget extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          // const SizedBox(height: 30),
           const SizedBox(
             width: 325,
             height: 50,
@@ -63,7 +56,7 @@ class MyWiget extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          // const SizedBox(height: 30),
           const SizedBox(
             width: 325,
             height: 50,
@@ -75,7 +68,7 @@ class MyWiget extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 235,),
+          // const SizedBox(height: 20,),
           ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
