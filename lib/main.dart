@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         colorScheme: kColorScheme,
         useMaterial3: true,
       ),
-      initialRoute: AppRoutes.LOGIN,
+      initialRoute: AppRoutes.SPLASH,
       getPages: kRoutePages,
     );
   }

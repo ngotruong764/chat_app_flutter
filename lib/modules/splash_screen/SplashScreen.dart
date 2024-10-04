@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 class SplashScreen extends StatelessWidget{
   const SplashScreen({super.key});
 
-  void getNavTo(){
+  void getSignUp1(){
     Get.toNamed(AppRoutes.LOGIN);
   }
 
@@ -24,7 +24,7 @@ class SplashScreen extends StatelessWidget{
             ElevatedButton(
               onPressed: () {
                 // Trả về dữ liệu và đóng màn hình
-                getNavTo();
+                getSignUp1();
               },
               child: Text('Tùy chọn 1'),
             ),

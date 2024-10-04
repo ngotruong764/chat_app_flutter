@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 
 
@@ -8,25 +10,35 @@ import 'package:flutter/material.dart';
 class SignUp1 extends StatelessWidget {
   const SignUp1({super.key});
 
+
+  void getSignUpOTP(){
+    Get.toNamed(AppRoutes.LOGINOTP);
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              margin: const EdgeInsets.all(20),
+              margin: const EdgeInsets.only(top: 80),
               alignment: Alignment.center,
+
               child: const Text(
-                "Create new account",
+                "Your information",
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ),
-            // const SizedBox(height: 130),
+
+            const SizedBox(height: 130),
+
             const SizedBox(
               width: 325,
               height: 50,
@@ -37,7 +49,8 @@ class SignUp1 extends StatelessWidget {
                 ),
               ),
             ),
-            // const SizedBox(height: 30),
+
+            const SizedBox(height: 30),
             const SizedBox(
               width: 325,
               height: 50,
@@ -48,7 +61,8 @@ class SignUp1 extends StatelessWidget {
                 ),
               ),
             ),
-            // const SizedBox(height: 30),
+
+            const SizedBox(height: 30),
             const SizedBox(
               width: 325,
               height: 50,
@@ -59,7 +73,8 @@ class SignUp1 extends StatelessWidget {
                 ),
               ),
             ),
-            // const SizedBox(height: 30),
+
+            const SizedBox(height: 30),
             const SizedBox(
               width: 325,
               height: 50,
@@ -71,9 +86,11 @@ class SignUp1 extends StatelessWidget {
               ),
             ),
 
-            // const SizedBox(height: 20,),
+            const SizedBox(height: 230,),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                getSignUpOTP();
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
