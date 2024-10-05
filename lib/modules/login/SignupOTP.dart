@@ -6,11 +6,13 @@ import 'package:get/get.dart';
 
 
 
+
+
 class SignUpOTP extends StatelessWidget {
    SignUpOTP({super.key});
 
-  void getSignUp1(){
-    Get.toNamed(AppRoutes.LOGIN);
+  void getSignUp3(){
+    Get.toNamed(AppRoutes.LOGIN3);
   }
 
   var code = 'OTP'.obs;
@@ -51,26 +53,58 @@ class SignUpOTP extends StatelessWidget {
           ),
 
           const SizedBox(height: 230,),
-          Obx(
-            ()=> ElevatedButton(
+
+
+         ElevatedButton(
               onPressed: () {
-                if (code == '123456'){return getSignUp1();}
-                else{
-                  return error();
-                }
-              },
+               return getSignUp3();},
+
+
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
               ),
-              child: Text('$code',
+              child: Text('Next',
                 style: TextStyle(fontSize: 20),
               ),
             ),
-          )
+
         ],
       ),
 
     );
   }
 }
+
+// class SnackBarPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('SnackBar Example'),
+//       ),
+//       body: Center(
+//         child: ElevatedButton(
+//           onPressed: () {
+//             // Tạo và hiển thị SnackBar
+//             ScaffoldMessenger.of(context).showSnackBar(
+//               SnackBar(
+//                 content: Text('Hello! This is a SnackBar.'),
+//                 duration: Duration(seconds: 3),  // Thời gian hiển thị SnackBar
+//                 action: SnackBarAction(
+//                   label: 'Undo',
+//                   onPressed: () {
+//                     // Hành động khi nhấn nút "Undo"
+//                     print('Undo pressed');
+//                   },
+//                 ),
+//               ),
+//             );
+//           },
+//           child: Text('Show SnackBar'),
+//         ),
+//       ),
+//     );
+//   }
+// }

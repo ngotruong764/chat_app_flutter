@@ -1,19 +1,18 @@
-import 'dart:math';
 
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SignUp2 extends StatelessWidget {
-  const SignUp2({super.key});
+   SignUp2({super.key});
 
-  void getSignUp3() {
-    Get.toNamed(AppRoutes.LOGIN3);
-  }
-
-  void getSignUp1() {
-    Get.toNamed(AppRoutes.LOGIN);
-  }
+  // void getSignUp3() {
+  //   Get.toNamed(AppRoutes.LOGIN3);
+  // }
+  //
+  // void getSignUp1() {
+  //   Get.toNamed(AppRoutes.LOGIN);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +23,19 @@ class SignUp2 extends StatelessWidget {
             margin: const EdgeInsets.only(top: 80),
             alignment: Alignment.center,
             child: const Text(
-              "Create new account",
+              "Create new account 2",
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
+
           const SizedBox(
-            height: 130,
+            height: 10,
           ),
-          Row(
+
+          const Row(
             children: [
               SizedBox(
                 child: TextField(
@@ -57,6 +58,7 @@ class SignUp2 extends StatelessWidget {
               )
             ],
           ),
+
           const SizedBox(
             width: 325,
             height: 50,
@@ -67,12 +69,12 @@ class SignUp2 extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
-            height: 15,
-          ),
+
+          const SizedBox(height: 15,),
+
           Container(
-            child: const Text('Date of birth'),
-          ),
+            child: const Text('Date of birth', style: TextStyle(color: Colors.black),), ),
+
           Row(
             children: [
               SizedBox(
@@ -83,9 +85,9 @@ class SignUp2 extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
+
+              // const SizedBox(width: 10,),
+
               SizedBox(
                 child: TextField(
                   decoration: InputDecoration(
@@ -116,9 +118,9 @@ class SignUp2 extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
+
+              // const SizedBox(width: 10,),
+
               SizedBox(
                 child: TextField(
                   decoration: InputDecoration(
@@ -130,6 +132,8 @@ class SignUp2 extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
+
+
               SizedBox(
                   child: TextField(
                       decoration: InputDecoration(
@@ -141,5 +145,6 @@ class SignUp2 extends StatelessWidget {
         ],
       ),
     );
+
   }
 }
