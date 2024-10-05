@@ -1,11 +1,6 @@
-import 'dart:math';
-
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-
-
 
 
 class SignUpOTP extends StatelessWidget {
@@ -31,7 +26,7 @@ class SignUpOTP extends StatelessWidget {
             margin: const EdgeInsets.only(top: 80),
             alignment: Alignment.center,
 
-            child: Text('Confirm OTP code',
+            child: const Text('Verification email',
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.w700,
@@ -41,13 +36,14 @@ class SignUpOTP extends StatelessWidget {
 
           const SizedBox(height: 150,),
 
-          SizedBox(
+          const SizedBox(
             width: 325,
             height: 50,
             child: TextField(
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: '$code',
+                border: const OutlineInputBorder(),
+                // hintText: '$code',
+                hintText: 'Verification code',
               ),
             ),
           ),
@@ -65,7 +61,7 @@ class SignUpOTP extends StatelessWidget {
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
               ),
-              child: Text('Next',
+              child: const Text('Next',
                 style: TextStyle(fontSize: 20),
               ),
             ),

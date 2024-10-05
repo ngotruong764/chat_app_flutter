@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SignUp2 extends StatelessWidget {
-   SignUp2({super.key});
+   const SignUp2({super.key});
 
   // void getSignUp3() {
   //   Get.toNamed(AppRoutes.LOGIN3);
@@ -45,7 +45,7 @@ class SignUp2 extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
+              SizedBox(
                 width: 22,
               ),
               SizedBox(

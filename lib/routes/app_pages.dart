@@ -1,10 +1,10 @@
 
-import 'package:chat_app_flutter/modules/login/Signup1.dart';
-import 'package:chat_app_flutter/modules/login/Signup2.dart';
-import 'package:chat_app_flutter/modules/login/Signup3.dart';
-import 'package:chat_app_flutter/modules/login/SignupOTP.dart';
+import 'package:chat_app_flutter/modules/login/view/Signup1.dart';
+import 'package:chat_app_flutter/modules/login/view/SignupOTP.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
+import '../modules/login/view/Signup2.dart';
+import '../modules/login/view/Signup3.dart';
 import '../modules/splash_screen/SplashScreen.dart';
 import 'app_routes.dart';
 
