@@ -17,7 +17,7 @@ final kRoutePages = [
   ),
   GetPage(
     name: AppRoutes.LOGIN,
-    page: () =>  SignUp1(),
+    page: () =>  const SignUp1(),
   ),
   GetPage(
     name: AppRoutes.LOGINOTP,
@@ -25,7 +25,7 @@ final kRoutePages = [
   ),
   GetPage(
     name: AppRoutes.LOGIN2,
-    page: () =>  SignUp2(),
+    page: () =>  const SignUp2(),
   ),
   GetPage(
     name: AppRoutes.LOGIN3,

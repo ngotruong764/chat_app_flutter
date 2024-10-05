@@ -2,20 +2,18 @@ import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 class SignUpOTP extends StatelessWidget {
-   SignUpOTP({super.key});
+  SignUpOTP({super.key});
 
-  void getSignUp3(){
-    Get.toNamed(AppRoutes.LOGIN3);
+  void getSignUp2() {
+    Get.toNamed(AppRoutes.LOGIN2);
   }
 
   var code = 'OTP'.obs;
 
-  void error(){
+  void error() {
     print('Incorrect OTP');
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -25,17 +23,17 @@ class SignUpOTP extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(top: 80),
             alignment: Alignment.center,
-
-            child: const Text('Verification email',
+            child: const Text(
+              'Verification email',
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
-
-          const SizedBox(height: 150,),
-
+          const SizedBox(
+            height: 150,
+          ),
           const SizedBox(
             width: 325,
             height: 50,
@@ -47,28 +45,24 @@ class SignUpOTP extends StatelessWidget {
               ),
             ),
           ),
-
-          const SizedBox(height: 230,),
-
-
-         ElevatedButton(
-              onPressed: () {
-               return getSignUp3();},
-
-
-
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Next',
-                style: TextStyle(fontSize: 20),
-              ),
+          const SizedBox(
+            height: 230,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              getSignUp2();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
             ),
-
+            child: const Text(
+              'Next',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
         ],
       ),
-
     );
   }
 }

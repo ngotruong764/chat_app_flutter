@@ -10,11 +10,11 @@ class SignUp3 extends StatelessWidget {
         children: [
           Container(
             alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 160),
+            margin: const EdgeInsets.only(top: 160),
             child: Image.asset('assets/images/task.png'),
           ),
           Container(
-            child: Text(
+            child: const Text(
               "Sigup Successfull",
               style: TextStyle(
                 fontWeight: FontWeight.w900,
