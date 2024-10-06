@@ -1,4 +1,5 @@
 
+import 'package:chat_app_flutter/modules/login/view/Login4.dart';
 import 'package:chat_app_flutter/modules/login/view/Signup1.dart';
 import 'package:chat_app_flutter/modules/login/view/SignupOTP.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
@@ -25,11 +26,14 @@ final kRoutePages = [
   ),
   GetPage(
     name: AppRoutes.LOGIN2,
-    page: () =>  const SignUp2(),
+    page: () =>   SignUp2(),
   ),
   GetPage(
     name: AppRoutes.LOGIN3,
     page: () => const SignUp3(),
+  ),
+  GetPage(
+      name: AppRoutes.LOGIN4,
+      page: () => Login4(),
   )
-
 ];

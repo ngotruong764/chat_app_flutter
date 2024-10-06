@@ -1,27 +1,43 @@
+import 'package:chat_app_flutter/modules/login/view/Login4.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/routes/transitions_type.dart';
 
 class SignUp3 extends StatelessWidget {
   const SignUp3({super.key});
 
+
   @override
   Widget build(BuildContext context) {
+
+    Future.delayed(Duration(seconds: 3), () {
+      Get.off(Login4(),
+        transition: Transition.fade, // Hiệu ứng mờ dần
+        duration: Duration(seconds: 1), // Thời gian chuyển tiếp
+      );
+    });
+
     return Scaffold(
       body: Column(
         children: [
           Container(
             alignment: Alignment.center,
-            margin: const EdgeInsets.only(top: 160),
+            margin: const EdgeInsets.only(top: 300),
             child: Image.asset('assets/images/task.png'),
           ),
+
+          const SizedBox(height: 40,),
+
           Container(
             child: const Text(
-              "Sigup Successfull",
+              "Signup Successfull",
               style: TextStyle(
                 fontWeight: FontWeight.w900,
-                fontSize: 50,
+                fontSize: 40,
               ),
             ),
-          )
+          ),
+
         ],
       ),
     );

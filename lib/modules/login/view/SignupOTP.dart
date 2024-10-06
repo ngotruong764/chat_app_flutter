@@ -21,7 +21,21 @@ class SignUpOTP extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            margin: const EdgeInsets.only(top: 80),
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.fromLTRB(5, 40, 0, 0), // Thêm padding
+            child: IconButton(
+              icon: Icon(Icons.arrow_back_ios_new), // Thay thế icon bằng bất kỳ biểu tượng nào
+              color: Colors.black, // Màu của biểu tượng
+              iconSize: 30.0, // Kích thước biểu tượng
+              onPressed: () {
+                // Hành động khi nút được bấm
+                Get.back();
+              },
+            )
+          ),
+
+          Container(
+            margin: const EdgeInsets.only(top: 0),
             alignment: Alignment.center,
             child: const Text(
               'Verification email',
@@ -32,7 +46,7 @@ class SignUpOTP extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            height: 150,
+            height: 70,
           ),
           const SizedBox(
             width: 325,

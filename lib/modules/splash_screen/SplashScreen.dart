@@ -9,6 +9,10 @@ class SplashScreen extends StatelessWidget{
     Get.toNamed(AppRoutes.LOGIN);
   }
 
+  void  getSignUp2(){
+    Get.toNamed(AppRoutes.LOGIN2);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +34,10 @@ class SplashScreen extends StatelessWidget{
             ),
             ElevatedButton(
               onPressed: () {
+                getSignUp2();
+
                 // Trả về dữ liệu và đóng màn hình
-                Get.back(result: 'Tùy chọn 2');
+                // Get.back(result: 'Tùy chọn 2');
               },
               child: Text('Tùy chọn 2'),
             ),
