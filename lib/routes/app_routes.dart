@@ -5,6 +5,8 @@ abstract class AppRoutes{
   static const String LOGIN3 = "/login3";
   static const String LOGINOTP = "/loginOtp";
   static const String LOGIN4 = "/login4";
+  static const String CHATBOX = "/chatbox";
+
 
 
 

@@ -15,8 +15,13 @@ class CheckboxController extends GetxController {
 class Login4 extends StatelessWidget {
   Login4({super.key});
 
+
   void getSignUp1() {
     Get.toNamed(AppRoutes.LOGIN);
+  }
+
+  void getChatBox() {
+    Get.toNamed(AppRoutes.CHATBOX);
   }
 
   final CheckboxController checkboxController = Get.put(CheckboxController());
@@ -30,20 +35,25 @@ class Login4 extends StatelessWidget {
         },
         child: SingleChildScrollView(
           child: Column(
+            
             children: [
-              Align(
-                alignment: Alignment.center,
-                child: Container(
-                  width: 400,
-                  height: 50,
-                  margin: EdgeInsets.only(top: 420),
-                  child: TextField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15)
+              Container(
 
-                        ),
-                        hintText: 'Username or email'),
+
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 400,
+                    height: 50,
+                    margin: EdgeInsets.only(top: 420),
+                    child: TextField(
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)
+
+                          ),
+                          hintText: 'Username or email'),
+                    ),
                   ),
                 ),
               ),
@@ -66,27 +76,65 @@ class Login4 extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              Row(
-                children: [
-                  Obx(() => Checkbox(
-                        // Sử dụng Obx để theo dõi thay đổi
-                        value: checkboxController.isChecked.value,
-                        onChanged: (bool? value) {
-                          checkboxController.toggleCheckbox(value);
-                        },
-                      )),
-                  Obx(() => Text(checkboxController.isChecked.value
-                      ? 'Save password'
-                      : 'Non-Saving password')), // Hiển thị trạng thái
-                ],
+              Container(
+                child: Row(
+
+                  children: [
+                    Obx(() => Checkbox(
+                          // Sử dụng Obx để theo dõi thay đổi
+                          value: checkboxController.isChecked.value,
+                          onChanged: (bool? value) {
+                            checkboxController.toggleCheckbox(value);
+                          },
+                        )),
+                    Obx(() => Text(checkboxController.isChecked.value
+                        ? 'Save password'
+                        : 'Non-Saving password')
+                    ), // Hiển thị trạng thái
+                  ],
+                ),
               ),
+              
+              const SizedBox(height: 35,),
+              
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,  // Căn giữa hàng
+              //
+              //   children: [
+              //   Container(
+              //     alignment: Alignment.center,
+              //     child: Image.asset('assets/images/phone.png',
+              //     height: 30,
+              //     fit: BoxFit.contain ,),
+              //   ),
+              //   const SizedBox(width: 25,),
+              //
+              //   Container(
+              //     alignment: Alignment.center,
+              //     child: Image.asset('assets/images/google.png',
+              //       width: 30,
+              //       height: 30,
+              //       fit: BoxFit.contain ,),
+              //   ),
+              //   const SizedBox(width: 25,),
+              //
+              //   Container(
+              //     alignment: Alignment.center,
+              //     child: Image.asset('assets/images/facebook.png',
+              //       width: 30,
+              //       height: 30,
+              //       fit: BoxFit.contain ,),
+              //   ),
+              //
+              // ],
+              // ),
 
               const SizedBox(height: 30,),
 
               Container(
                 width: 300,
                 height: 50,
-                child: ElevatedButton(onPressed: null,
+                child: ElevatedButton(onPressed: getChatBox,
                     child:Text('Login')
                 ),
               ),
