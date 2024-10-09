@@ -9,7 +9,7 @@ class InforUser extends StatelessWidget {
     Get.toNamed(AppRoutes.LOGIN3);
   }
 
-  void getSignUp1() {
+  void getCreateAccount() {
     Get.toNamed(AppRoutes.CREATACCOUNT);
   }
 
@@ -35,7 +35,7 @@ class InforUser extends StatelessWidget {
                       iconSize: 30.0, // Kích thước biểu tượng
                       onPressed: () {
                         // Hành động khi nút được bấm
-                        getSignUp1();
+                        getCreateAccount();
                       },
                     )
                 ),

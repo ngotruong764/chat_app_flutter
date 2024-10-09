@@ -1,5 +1,6 @@
 
 import 'package:chat_app_flutter/modules/chat/ChatBox.dart';
+import 'package:chat_app_flutter/modules/chat/ListConversations.dart';
 import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:chat_app_flutter/modules/login/view/CreateAccount.dart';
 import 'package:chat_app_flutter/modules/login/view/SignupOTP.dart';
@@ -40,5 +41,9 @@ final kRoutePages = [
   GetPage(
       name: AppRoutes.CHATBOX,
       page:() => ChatBox()
+  ),
+  GetPage(
+    name: AppRoutes.CONVERSATIONS,
+    page: () => Conversations(),
   )
 ];

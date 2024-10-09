@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 class SignUpOTP extends StatelessWidget {
   SignUpOTP({super.key});
 
-  void getSignUp2() {
+  void getInforUser() {
     Get.toNamed(AppRoutes.INFORUSER);
   }
 
@@ -69,7 +69,7 @@ class SignUpOTP extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  getSignUp2();
+                  getInforUser();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,

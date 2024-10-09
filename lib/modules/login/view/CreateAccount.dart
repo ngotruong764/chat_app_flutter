@@ -15,7 +15,7 @@ class _Signup1State extends State<CreateAccount> {
     Get.toNamed(AppRoutes.LOGINOTP);
   }
 
-  void getSignUp4() {
+  void getLogin() {
     Get.toNamed(AppRoutes.LOGIN);
   }
 
@@ -148,7 +148,7 @@ class _Signup1State extends State<CreateAccount> {
                   height: 10,
                 ),
                 TextButton(
-                  onPressed: () {getSignUp4();},
+                  onPressed: () {getLogin();},
                   child: const Text('Do you have an account?'),
                 ),
               ],

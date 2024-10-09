@@ -16,12 +16,12 @@ class Login extends StatelessWidget {
   Login({super.key});
 
 
-  void getSignUp1() {
+  void getCreateAccount() {
     Get.toNamed(AppRoutes.CREATACCOUNT);
   }
 
-  void getChatBox() {
-    Get.toNamed(AppRoutes.CHATBOX);
+  void getConversation() {
+    Get.toNamed(AppRoutes.CONVERSATIONS);
   }
 
   final CheckboxController checkboxController = Get.put(CheckboxController());
@@ -134,7 +134,7 @@ class Login extends StatelessWidget {
               Container(
                 width: 300,
                 height: 50,
-                child: ElevatedButton(onPressed: getChatBox,
+                child: ElevatedButton(onPressed: getConversation,
                     child:Text('Login')
                 ),
               ),
@@ -143,7 +143,7 @@ class Login extends StatelessWidget {
               Container(
                 width: 300,
                 height: 50,
-                child: ElevatedButton(onPressed: getSignUp1,
+                child: ElevatedButton(onPressed: getCreateAccount,
                     child:Text("Create new accout")),
               )
 
