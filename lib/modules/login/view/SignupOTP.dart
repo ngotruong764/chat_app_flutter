@@ -6,7 +6,7 @@ class SignUpOTP extends StatelessWidget {
   SignUpOTP({super.key});
 
   void getSignUp2() {
-    Get.toNamed(AppRoutes.LOGIN2);
+    Get.toNamed(AppRoutes.INFORUSER);
   }
 
   var code = 'OTP'.obs;

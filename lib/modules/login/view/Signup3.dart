@@ -1,4 +1,4 @@
-import 'package:chat_app_flutter/modules/login/view/Login4.dart';
+import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
@@ -11,7 +11,7 @@ class SignUp3 extends StatelessWidget {
   Widget build(BuildContext context) {
 
     Future.delayed(Duration(seconds: 3), () {
-      Get.off(Login4(),
+      Get.off(Login(),
         transition: Transition.fade, // Hiệu ứng mờ dần
         duration: Duration(seconds: 1), // Thời gian chuyển tiếp
       );

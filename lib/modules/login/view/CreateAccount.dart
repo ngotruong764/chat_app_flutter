@@ -3,20 +3,20 @@ import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SignUp1 extends StatefulWidget {
-  const SignUp1({super.key});
+class CreateAccount extends StatefulWidget {
+  const CreateAccount({super.key});
 
   @override
-  State<SignUp1> createState() => _Signup1State();
+  State<CreateAccount> createState() => _Signup1State();
 }
 
-class _Signup1State extends State<SignUp1> {
+class _Signup1State extends State<CreateAccount> {
   void getSignUpOTP() {
     Get.toNamed(AppRoutes.LOGINOTP);
   }
 
   void getSignUp4() {
-    Get.toNamed(AppRoutes.LOGIN4);
+    Get.toNamed(AppRoutes.LOGIN);
   }
 
   final LoginController loginController = Get.put(LoginController());

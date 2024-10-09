@@ -12,12 +12,12 @@ class CheckboxController extends GetxController {
   }
 }
 
-class Login4 extends StatelessWidget {
-  Login4({super.key});
+class Login extends StatelessWidget {
+  Login({super.key});
 
 
   void getSignUp1() {
-    Get.toNamed(AppRoutes.LOGIN);
+    Get.toNamed(AppRoutes.CREATACCOUNT);
   }
 
   void getChatBox() {

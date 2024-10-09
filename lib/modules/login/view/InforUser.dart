@@ -2,15 +2,15 @@ import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SignUp2 extends StatelessWidget {
-   SignUp2({super.key});
+class InforUser extends StatelessWidget {
+   InforUser({super.key});
 
   void getSignUp3() {
     Get.toNamed(AppRoutes.LOGIN3);
   }
 
   void getSignUp1() {
-    Get.toNamed(AppRoutes.LOGIN);
+    Get.toNamed(AppRoutes.CREATACCOUNT);
   }
 
   @override

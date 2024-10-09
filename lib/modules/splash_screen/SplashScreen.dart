@@ -1,4 +1,4 @@
-import 'package:chat_app_flutter/modules/login/view/Login4.dart';
+import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,7 +11,7 @@ class SplashScreen extends StatelessWidget {
     //
     Future.delayed(Duration(seconds: 3), () {
       Get.off(
-        Login4(),
+        Login(),
         transition: Transition.fade, // Hiệu ứng mờ dần
         duration: Duration(seconds: 1), // Thời gian chuyển tiếp
       );
