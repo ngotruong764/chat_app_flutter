@@ -1,4 +1,5 @@
 import 'package:chat_app_flutter/modules/application/controller/application_controller.dart';
+import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +15,7 @@ class ApplicationView extends GetView<ApplicationController>{
       scrollDirection: Axis.horizontal,
       children: const [
         Conversations(),
-        Conversations(),
+        Login(),
         Conversations(),
       ],
     );
