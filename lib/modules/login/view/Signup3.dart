@@ -1,7 +1,6 @@
 import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/routes/transitions_type.dart';
 
 class SignUp3 extends StatelessWidget {
   const SignUp3({super.key});

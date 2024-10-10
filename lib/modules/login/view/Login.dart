@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/modules/login/controller/login_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,10 +13,19 @@ class CheckboxController extends GetxController {
   }
 }
 
-class Login extends StatelessWidget {
-  Login({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
+  @override
+  State<StatefulWidget> createState() => _LoginState();
+}
 
+class _LoginState extends State<Login> {
+  final LoginController loginController = Get.put(LoginController());
+  final TextEditingController accountNameCtl = TextEditingController();
+  final TextEditingController passwordCtl = TextEditingController();
+
+  //
   void getCreateAccount() {
     Get.toNamed(AppRoutes.CREATACCOUNT);
   }
@@ -26,6 +36,24 @@ class Login extends StatelessWidget {
 
   final CheckboxController checkboxController = Get.put(CheckboxController());
 
+  /*
+  * TODO:
+  * If not username --> username == null, email != null
+  * If not email --> email == null, username != null
+  *   viết validate
+  */
+  void login(String accountName, String password) {
+    loginController.login(null, accountName, password);
+  }
+
+  // dispose
+  @override
+  void dispose() {
+    super.dispose();
+    accountNameCtl.dispose();
+    passwordCtl.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,30 +63,27 @@ class Login extends StatelessWidget {
         },
         child: SingleChildScrollView(
           child: Column(
-            
             children: [
               Container(
-
-
                 child: Align(
                   alignment: Alignment.center,
                   child: Container(
                     width: 400,
                     height: 50,
-                    margin: EdgeInsets.only(top: 420),
+                    margin: const EdgeInsets.only(top: 420),
                     child: TextField(
+                      controller: accountNameCtl,
                       decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)
-
-                          ),
-                          hintText: 'Username or email'),
+                        label: const Text('Username or email'),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(
-                height: 5,
+                height: 10,
               ),
               Align(
                 alignment: Alignment.center,
@@ -66,10 +91,12 @@ class Login extends StatelessWidget {
                   width: 400,
                   height: 50,
                   child: TextField(
+                    controller: passwordCtl,
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)
-                        ), hintText: 'Password'),
+                      label: const Text('Password'),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                    ),
                   ),
                 ),
               ),
@@ -78,7 +105,6 @@ class Login extends StatelessWidget {
               ),
               Container(
                 child: Row(
-
                   children: [
                     Obx(() => Checkbox(
                           // Sử dụng Obx để theo dõi thay đổi
@@ -89,14 +115,15 @@ class Login extends StatelessWidget {
                         )),
                     Obx(() => Text(checkboxController.isChecked.value
                         ? 'Save password'
-                        : 'Non-Saving password')
-                    ), // Hiển thị trạng thái
+                        : 'Non-Saving password')), // Hiển thị trạng thái
                   ],
                 ),
               ),
-              
-              const SizedBox(height: 35,),
-              
+
+              const SizedBox(
+                height: 35,
+              ),
+
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.center,  // Căn giữa hàng
               //
@@ -129,26 +156,32 @@ class Login extends StatelessWidget {
               // ],
               // ),
 
-              const SizedBox(height: 30,),
-
-              Container(
+              const SizedBox(
+                height: 30,
+              ),
+              SizedBox(
                 width: 300,
                 height: 50,
-                child: ElevatedButton(onPressed: getConversation,
-                    child:Text('Login')
+                child: ElevatedButton(
+                  // onPressed: getConversation,
+                  onPressed: () {
+                    login(accountNameCtl.text, passwordCtl.text);
+                  },
+                  child: const Text('Login'),
                 ),
               ),
-              const SizedBox(height: 10,),
-
-              Container(
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
                 width: 300,
                 height: 50,
-                child: ElevatedButton(onPressed: getCreateAccount,
-                    child:Text("Create new accout")),
+                child: ElevatedButton(
+                  onPressed: getCreateAccount,
+                  child: const Text("Create new accout"),
+                ),
               )
-
             ],
-            
           ),
         ),
       ),

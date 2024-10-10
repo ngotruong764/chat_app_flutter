@@ -1,7 +1,12 @@
 import 'package:chat_app_flutter/routes/app_pages.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/status.dart' as status;
+
+import 'data/api/apis_base.dart';
 
 // setting up theme
 var kColorScheme =
@@ -23,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Talkie',
       // setting theme for dark mode
       darkTheme: ThemeData.dark().copyWith(
         colorScheme: kDarkColorScheme,
@@ -32,7 +37,8 @@ class MyApp extends StatelessWidget {
         colorScheme: kColorScheme,
         useMaterial3: true,
       ),
-      initialRoute: AppRoutes.SPLASH,
+      // initialRoute: AppRoutes.SPLASH,
+      initialRoute: AppRoutes.APPLICATION,
       getPages: kRoutePages,
     );
   }

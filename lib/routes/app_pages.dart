@@ -1,4 +1,6 @@
 
+import 'package:chat_app_flutter/modules/application/binding/application_binding.dart';
+import 'package:chat_app_flutter/modules/application/view/application_view.dart';
 import 'package:chat_app_flutter/modules/chat/ChatBox.dart';
 import 'package:chat_app_flutter/modules/chat/ListConversations.dart';
 import 'package:chat_app_flutter/modules/login/view/Login.dart';
@@ -17,6 +19,11 @@ final kRoutePages = [
   GetPage(
     name: AppRoutes.SPLASH,
     page: () => const SplashScreen(),
+  ),
+  GetPage(
+    name: AppRoutes.APPLICATION,
+    page: () => const ApplicationView(),
+    binding: ApplicationBinding(),
   ),
   GetPage(
     name: AppRoutes.CREATACCOUNT,

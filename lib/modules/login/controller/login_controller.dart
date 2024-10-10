@@ -11,4 +11,9 @@ class LoginController extends GetxController{
     return null;
   }
 
+  Future<UserInfo?>? login(String? username, String? email, String password) async{
+    UserInfo? userInfo = await ApisUserinfo.login(username: username, email: email, password: password);
+    return null;
+  }
+
 }
