@@ -1,9 +1,21 @@
+import 'package:chat_app_flutter/modules/login/controller/login_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SignUpOTP extends StatelessWidget {
+class SignUpOTP extends StatefulWidget {
   SignUpOTP({super.key});
+
+
+  @override
+  State<StatefulWidget> createState() => _VerificationEmailState();
+}
+
+class _VerificationEmailState extends State<SignUpOTP>{
+  // login controller
+  final LoginController loginController = Get.put(LoginController());
+  // text controller
+  final TextEditingController verificationCtl = TextEditingController();
 
   void getInforUser() {
     Get.toNamed(AppRoutes.INFORUSER);
@@ -13,6 +25,12 @@ class SignUpOTP extends StatelessWidget {
 
   void error() {
     print('Incorrect OTP');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    verificationCtl.dispose();
   }
 
   @override
@@ -27,18 +45,18 @@ class SignUpOTP extends StatelessWidget {
             children: [
               Container(
                   alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.fromLTRB(5, 40, 0, 0), // Thêm padding
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new), // Thay thế icon bằng bất kỳ biểu tượng nào
-                  color: Colors.black, // Màu của biểu tượng
-                  iconSize: 30.0, // Kích thước biểu tượng
-                  onPressed: () {
-                    // Hành động khi nút được bấm
-                    Get.back();
-                  },
-                )
+                  margin: const EdgeInsets.fromLTRB(5, 40, 0, 0), // Thêm padding
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new), // Thay thế icon bằng bất kỳ biểu tượng nào
+                    color: Colors.black, // Màu của biểu tượng
+                    iconSize: 30.0, // Kích thước biểu tượng
+                    onPressed: () {
+                      // Hành động khi nút được bấm
+                      Get.back();
+                    },
+                  )
               ),
-          
+
               Container(
                 margin: const EdgeInsets.only(top: 0),
                 alignment: Alignment.center,
@@ -53,11 +71,12 @@ class SignUpOTP extends StatelessWidget {
               const SizedBox(
                 height: 70,
               ),
-              const SizedBox(
+              SizedBox(
                 width: 325,
                 height: 50,
                 child: TextField(
-                  decoration: InputDecoration(
+                  controller: verificationCtl,
+                  decoration: const InputDecoration(
                     border:  OutlineInputBorder(),
                     // hintText: '$code',
                     hintText: 'Verification code',
@@ -68,7 +87,8 @@ class SignUpOTP extends StatelessWidget {
                 height: 230,
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  // await loginController.confirmAccount(verificationCtl.text);
                   getInforUser();
                 },
                 style: ElevatedButton.styleFrom(

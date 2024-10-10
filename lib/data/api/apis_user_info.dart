@@ -35,6 +35,27 @@ abstract class ApisUserinfo {
   }
 
   // Login
+  static Future<UserInfo?> confirmAccount(
+      {required String? verificationCode}) async {
+    try {
+      final response = await ApisBase.dio.post(
+        ApisBase.confirmAccount,
+        options: Options(
+          contentType: 'application/json',
+        ),
+        data: {
+          'verificationCode': verificationCode
+        },
+      );
+      // if success
+      if (response.data['responseCode'] == 200) {
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  // Login
   static Future<UserInfo?> login(
       {required String? username,
       required String? email,

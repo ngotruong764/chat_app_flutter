@@ -16,4 +16,10 @@ class LoginController extends GetxController{
     return null;
   }
 
+  // Verification account after create
+  Future<UserInfo?>? confirmAccount(String verificationCode) async{
+    UserInfo? userInfo = await ApisUserinfo.confirmAccount(verificationCode: verificationCode);
+    return null;
+  }
+
 }

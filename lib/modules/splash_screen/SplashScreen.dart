@@ -15,6 +15,7 @@ class SplashScreen extends StatelessWidget {
     await Future.delayed(const Duration(seconds: 2));
 
     SecureStorage secureStorage = SecureStorage();
+    secureStorage.deleteSecureData('jwt_token');
     String? data = await secureStorage.readSecureData('jwt_token');
     // if data == null --> not login --> go to login page
     if(data == null){

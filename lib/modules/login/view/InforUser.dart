@@ -1,16 +1,37 @@
+import 'package:chat_app_flutter/modules/login/controller/login_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class InforUser extends StatelessWidget {
-   InforUser({super.key});
+class InforUser extends StatefulWidget {
+   const InforUser({super.key});
 
+
+  @override
+  State<StatefulWidget> createState() =>_InfoUserState();
+}
+
+class _InfoUserState extends State<InforUser>{
+  // Login controller
+  final LoginController loginController = LoginController();
+  // Text editing controller
+  final TextEditingController firstNameCtl = TextEditingController();
+  final TextEditingController lastNameCtl = TextEditingController();
+  final TextEditingController phoneNumberCtl = TextEditingController();
+  //
   void getSignUp3() {
     Get.toNamed(AppRoutes.LOGIN3);
   }
 
   void getCreateAccount() {
     Get.toNamed(AppRoutes.CREATACCOUNT);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    firstNameCtl.dispose();
+    lastNameCtl.dispose();
   }
 
   @override
@@ -26,11 +47,10 @@ class InforUser extends StatelessWidget {
             child: Column(
               children: [
                 Container(
-
                     alignment: Alignment.centerLeft,
-                    margin: EdgeInsets.fromLTRB(5, 40, 0, 0), // Thêm padding
+                    margin: const EdgeInsets.fromLTRB(5, 40, 0, 0), // Thêm padding
                     child: IconButton(
-                      icon: Icon(Icons.arrow_back_ios_new), // Thay thế icon bằng bất kỳ biểu tượng nào
+                      icon: const Icon(Icons.arrow_back_ios_new), // Thay thế icon bằng bất kỳ biểu tượng nào
                       color: Colors.black, // Màu của biểu tượng
                       iconSize: 30.0, // Kích thước biểu tượng
                       onPressed: () {
@@ -39,8 +59,6 @@ class InforUser extends StatelessWidget {
                       },
                     )
                 ),
-
-
                 Container(
                   margin: const EdgeInsets.only(top: 0),
                   alignment: Alignment.center,
@@ -52,29 +70,29 @@ class InforUser extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(
                   height: 50,
                 ),
-
-                const Row(
+                Row(
                   children: [
                     Expanded(
                       child: TextField(
-                        decoration: InputDecoration(
+                        controller: firstNameCtl,
+                        decoration: const InputDecoration(
+                          label: Text("First name"),
                           border: OutlineInputBorder(),
-                          hintText: 'First name',
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 22,
                     ),
                     Expanded(
                       child: TextField(
-                        decoration: InputDecoration(
+                        controller: lastNameCtl,
+                        decoration: const InputDecoration(
+                          label: Text('Last name'),
                           border: OutlineInputBorder(),
-                          hintText: 'Last name',
                         ),
                       ),
                     ),
@@ -82,36 +100,32 @@ class InforUser extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 15,),
-
-                const SizedBox(
+                SizedBox(
                   width: double.infinity,
                   height: 50,
                   child: TextField(
                     autofocus: true, // Tự động mở bàn phím khi vào trường này
-
-                    decoration: InputDecoration(
+                    controller: phoneNumberCtl,
+                    decoration: const InputDecoration(
+                      label: Text('Phone number'),
                       border: OutlineInputBorder(),
-                      hintText: 'Telephone number',
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 15,),
-
                 Container(
                   alignment: Alignment.centerLeft,
                   margin: EdgeInsets.fromLTRB(16, 13, 0, 0),
                   child: const Text('Date of birth',
                     style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
                     ),),
                 ),
 
                 const SizedBox(height: 10,),
-
-                Row(
+                const Row(
                   children: [
                     Expanded(
                       child: TextField(
@@ -121,7 +135,7 @@ class InforUser extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10,),
+                    SizedBox(width: 10,),
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
@@ -130,7 +144,7 @@ class InforUser extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10,),
+                    SizedBox(width: 10,),
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
@@ -144,7 +158,7 @@ class InforUser extends StatelessWidget {
 
                 Container(
                   alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.fromLTRB(16, 13, 0, 0),
+                  margin: const EdgeInsets.fromLTRB(16, 13, 0, 0),
                   child: const Text('Sex',
                     style: TextStyle(
                       color: Colors.black,
@@ -152,8 +166,7 @@ class InforUser extends StatelessWidget {
                       fontSize: 16,
                     ),),
                 ),
-
-                Row(
+                const Row(
                   children: [
                     Expanded(
                       child: TextField(
@@ -172,7 +185,7 @@ class InforUser extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10,),
+                    SizedBox(width: 10,),
                     Expanded(
                       child: TextField(
 
