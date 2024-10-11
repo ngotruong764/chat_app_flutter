@@ -26,11 +26,15 @@ abstract class ApisUserinfo {
           }
         },
       );
-      if(response.data['responseCode'] == 200){
-
+      if(response.data['responseCode'] == 200
+          && response.data['userInfo'] != null){
+        UserInfo userInfo = UserInfo.fromJson(response.data['userInfo']);
+        return userInfo;
       }
+      return null;
     } catch(e){
       e.printError();
+      return null;
     }
   }
 
@@ -85,6 +89,28 @@ abstract class ApisUserinfo {
 
         // print JWT token
         log("jwt token: ${response.data["jwt_token"]}");
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  // update user-info
+  static Future<UserInfo?> updateUserInfo(
+      {required UserInfo userInfo}) async {
+    try {
+      final response = await ApisBase.dio.post(
+        ApisBase.updateUserInfo,
+        options: Options(
+          contentType: 'application/json',
+        ),
+        data: {
+          'userInfo': userInfo.toJson(),
+        },
+      );
+      // if success
+      if (response.data['responseCode'] == 200 &&
+          response.data['jwt_token'] != null) {
       }
     } catch (e) {
       log(e.toString());

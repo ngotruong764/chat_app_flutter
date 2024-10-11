@@ -3,6 +3,8 @@ import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../model/user_info.dart';
+
 class SignUpOTP extends StatefulWidget {
   SignUpOTP({super.key});
 
@@ -17,8 +19,10 @@ class _VerificationEmailState extends State<SignUpOTP>{
   // text controller
   final TextEditingController verificationCtl = TextEditingController();
 
+  UserInfo userInfo = Get.arguments ?? UserInfo();
+
   void getInforUser() {
-    Get.toNamed(AppRoutes.INFORUSER);
+    Get.toNamed(AppRoutes.INFORUSER, arguments: userInfo);
   }
 
   var code = 'OTP'.obs;

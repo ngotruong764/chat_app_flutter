@@ -5,10 +5,14 @@ import '../../../model/user_info.dart';
 
 class LoginController extends GetxController{
 
+  DateTime firstDate = DateTime(1900);
+  DateTime lastDate = DateTime.now();
+  //
+  List<String> gender = ['Male', 'Female', 'Others'];
 
   Future<UserInfo?>? registerUser(String username, String email, String password) async{
     UserInfo? userInfo = await ApisUserinfo.registerAccount(username: username, email: email, password: password);
-    return null;
+    return userInfo;
   }
 
   Future<UserInfo?>? login(String? username, String? email, String password) async{
@@ -19,6 +23,12 @@ class LoginController extends GetxController{
   // Verification account after create
   Future<UserInfo?>? confirmAccount(String verificationCode) async{
     UserInfo? userInfo = await ApisUserinfo.confirmAccount(verificationCode: verificationCode);
+    return null;
+  }
+
+  // Update user info
+  Future<UserInfo?>? updateUser(UserInfo user) async{
+    UserInfo? userInfo = await ApisUserinfo.updateUserInfo(userInfo: user);
     return null;
   }
 

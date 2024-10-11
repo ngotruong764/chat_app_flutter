@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:chat_app_flutter/modules/login/controller/login_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,10 @@ class CreateAccount extends StatefulWidget {
 }
 
 class _Signup1State extends State<CreateAccount> {
+  // void getSignUpOTP(UserInfo? userInfo) {
+  //   Get.toNamed(AppRoutes.LOGINOTP, arguments: userInfo);
+  // }
+
   void getSignUpOTP() {
     Get.toNamed(AppRoutes.LOGINOTP);
   }
@@ -131,7 +136,8 @@ class _Signup1State extends State<CreateAccount> {
                     String email = emailController.text;
                     String password = passwordController.text;
                     // sent request
-                    // await loginController.registerUser(username, email, password);
+                    // UserInfo? userInfo =  await loginController.registerUser(username, email, password);
+                    // getSignUpOTP(userInfo);
                     getSignUpOTP();
                   },
                   style: ElevatedButton.styleFrom(

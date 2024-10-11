@@ -1,7 +1,9 @@
+import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:chat_app_flutter/modules/login/controller/login_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class InforUser extends StatefulWidget {
    const InforUser({super.key});
@@ -14,10 +16,22 @@ class InforUser extends StatefulWidget {
 class _InfoUserState extends State<InforUser>{
   // Login controller
   final LoginController loginController = LoginController();
+  // get user info from previous screen
+  UserInfo userInfo = Get.arguments ?? UserInfo();
   // Text editing controller
   final TextEditingController firstNameCtl = TextEditingController();
   final TextEditingController lastNameCtl = TextEditingController();
   final TextEditingController phoneNumberCtl = TextEditingController();
+  final TextEditingController dobCtl = TextEditingController();
+  //
+  late String _currentGender;
+  DateFormat formatter = DateFormat('dd/MM/yyyy');
+
+  @override
+  void initState() {
+    // init current gender
+    _currentGender = loginController.gender[0];
+  }
   //
   void getSignUp3() {
     Get.toNamed(AppRoutes.LOGIN3);
@@ -27,11 +41,63 @@ class _InfoUserState extends State<InforUser>{
     Get.toNamed(AppRoutes.CREATACCOUNT);
   }
 
+  // used to open dataPicker
+  Future<void> _openDatePicker() async{
+    DateTime? selectedDate = await showDatePicker(
+        context: context,
+        firstDate: loginController.firstDate,
+        lastDate: loginController.lastDate,
+    );
+    if(selectedDate != null){
+      String formatedDate = formatter.format(selectedDate);
+      dobCtl.text = formatedDate;
+    }
+  }
+
+  // create radio button
+  Widget addRadioButton(int index, String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Radio(
+          // title: Text(loginController.gender[index]),
+          value: loginController.gender[index],
+          groupValue: _currentGender,
+          onChanged: (gender) {
+            setState(() {
+              _currentGender = gender!;
+            });
+          },
+        ),
+        Text(title),
+      ],
+    );
+  }
+
+  // send request to update user info
+  void updateUserRequest() async {
+    String firstName = firstNameCtl.text;
+    String lastName = lastNameCtl.text;
+    String phoneNumber = phoneNumberCtl.text;
+    DateTime dob = formatter.parse(dobCtl.text);
+    String gender = _currentGender.toUpperCase();
+    // update UserInfo
+    userInfo.firstname = firstName;
+    userInfo.lastname = lastName;
+    userInfo.phoneNumber = phoneNumber;
+    userInfo.dob = dob;
+    userInfo.sex = gender;
+    // send request
+    // loginController.updateUser(userInfo);
+  }
+
   @override
   void dispose() {
     super.dispose();
     firstNameCtl.dispose();
     lastNameCtl.dispose();
+    phoneNumberCtl.dispose();
+    dobCtl.dispose();
   }
 
   @override
@@ -113,95 +179,115 @@ class _InfoUserState extends State<InforUser>{
                   ),
                 ),
                 const SizedBox(height: 15,),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.fromLTRB(16, 13, 0, 0),
-                  child: const Text('Date of birth',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),),
-                ),
+                // Container(
+                //   alignment: Alignment.centerLeft,
+                //   margin: EdgeInsets.fromLTRB(16, 13, 0, 0),
+                //   child: const Text('Date of birth',
+                //     style: TextStyle(
+                //       color: Colors.black,
+                //       fontWeight: FontWeight.w500,
+                //       fontSize: 16,
+                //     ),),
+                // ),
 
                 const SizedBox(height: 10,),
-                const Row(
+                // const Row(
+                //   children: [
+                //     Expanded(
+                //       child: TextField(
+                //         decoration: InputDecoration(
+                //           border: OutlineInputBorder(),
+                //           hintText: 'Day',
+                //         ),
+                //       ),
+                //     ),
+                //     SizedBox(width: 10,),
+                //     Expanded(
+                //       child: TextField(
+                //         decoration: InputDecoration(
+                //           border: OutlineInputBorder(),
+                //           hintText: 'Month',
+                //         ),
+                //       ),
+                //     ),
+                //     SizedBox(width: 10,),
+                //     Expanded(
+                //       child: TextField(
+                //         decoration: InputDecoration(
+                //           border: OutlineInputBorder(),
+                //           hintText: 'Year',
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // DOB form: dd/MM/yyyy
+                TextFormField(
+                  controller: dobCtl,
+                  onTap: _openDatePicker,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.calendar_today),
+                    label: Text('Date of birth'),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                // Choose gender
+                Row(
+                  // mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Day',
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10,),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Month',
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10,),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Year',
-                        ),
-                      ),
-                    ),
+                    addRadioButton(0, loginController.gender[0]),
+                    addRadioButton(1, loginController.gender[1]),
+                    addRadioButton(2, loginController.gender[2]),
                   ],
                 ),
-
-                Container(
-                  alignment: Alignment.centerLeft,
-                  margin: const EdgeInsets.fromLTRB(16, 13, 0, 0),
-                  child: const Text('Sex',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),),
-                ),
-                const Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Male',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10,),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Female',
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10,),
-                    Expanded(
-                      child: TextField(
-
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Other',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Container(
+                //   alignment: Alignment.centerLeft,
+                //   margin: const EdgeInsets.fromLTRB(16, 13, 0, 0),
+                //   child: const Text('Sex',
+                //     style: TextStyle(
+                //       color: Colors.black,
+                //       fontWeight: FontWeight.w500,
+                //       fontSize: 16,
+                //     ),),
+                // ),
+                // const Row(
+                //   children: [
+                //     Expanded(
+                //       child: TextField(
+                //         decoration: InputDecoration(
+                //           border: OutlineInputBorder(),
+                //           hintText: 'Male',
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(width: 10,),
+                //     Expanded(
+                //       child: TextField(
+                //         decoration: InputDecoration(
+                //           border: OutlineInputBorder(),
+                //           hintText: 'Female',
+                //         ),
+                //       ),
+                //     ),
+                //     SizedBox(width: 10,),
+                //     Expanded(
+                //       child: TextField(
+                //         decoration: InputDecoration(
+                //           border: OutlineInputBorder(),
+                //           hintText: 'Other',
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
 
                 const SizedBox(height: 80,),
 
                 ElevatedButton(
                   onPressed: () {
+                    updateUserRequest();
                     getSignUp3();
                   },
                   style: ElevatedButton.styleFrom(
@@ -213,7 +299,6 @@ class _InfoUserState extends State<InforUser>{
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-
               ],
             ),
           ),

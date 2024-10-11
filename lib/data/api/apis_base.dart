@@ -10,4 +10,5 @@ abstract class ApisBase{
   static const String registerAccount = '$baseURL/user-info/register';
   static const String login = '$baseURL/user-info/login';
   static const String confirmAccount = '$baseURL/user-info/confirm-account';
+  static const String updateUserInfo = '$baseURL/user-info/update-user';
 }
