@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/modules/login/controller/login_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../model/user_info.dart';
 
 class SignUpOTP extends StatefulWidget {
-  SignUpOTP({super.key});
+  const SignUpOTP({super.key});
 
 
   @override
@@ -80,6 +81,7 @@ class _VerificationEmailState extends State<SignUpOTP>{
                 height: 50,
                 child: TextField(
                   controller: verificationCtl,
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border:  OutlineInputBorder(),
                     // hintText: '$code',
@@ -92,7 +94,11 @@ class _VerificationEmailState extends State<SignUpOTP>{
               ),
               ElevatedButton(
                 onPressed: () async {
-                  // await loginController.confirmAccount(verificationCtl.text);
+                  // get user
+                  // UserInfo userInfo = ApisBase.currentUser;
+                  // userInfo.verificationCode = verificationCtl.text;
+                  // await loginController.confirmAccount(userInfo);
+                  //
                   getInforUser();
                 },
                 style: ElevatedButton.styleFrom(

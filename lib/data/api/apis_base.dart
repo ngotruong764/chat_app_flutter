@@ -1,6 +1,9 @@
+import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:dio/dio.dart';
 
 abstract class ApisBase{
+  //
+  static late UserInfo currentUser;
   // create dio
   static final Dio dio = Dio();
   static const String baseURL = 'http://10.0.2.2:8081/talkie/api/v1';

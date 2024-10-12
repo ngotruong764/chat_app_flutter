@@ -29,6 +29,7 @@ abstract class ApisUserinfo {
       if(response.data['responseCode'] == 200
           && response.data['userInfo'] != null){
         UserInfo userInfo = UserInfo.fromJson(response.data['userInfo']);
+        ApisBase.currentUser = userInfo;
         return userInfo;
       }
       return null;
@@ -40,7 +41,7 @@ abstract class ApisUserinfo {
 
   // Login
   static Future<UserInfo?> confirmAccount(
-      {required String? verificationCode}) async {
+      {required UserInfo userInfo}) async {
     try {
       final response = await ApisBase.dio.post(
         ApisBase.confirmAccount,
@@ -48,14 +49,20 @@ abstract class ApisUserinfo {
           contentType: 'application/json',
         ),
         data: {
-          'verificationCode': verificationCode
+          'userInfo': userInfo
         },
       );
       // if success
-      if (response.data['responseCode'] == 200) {
+      if (response.data['responseCode'] == 200
+          && response.data['userInfo'] != null) {
+        UserInfo userInfo = UserInfo.fromJson(response.data['userInfo']);
+        ApisBase.currentUser = userInfo;
+        return userInfo;
       }
+      return null;
     } catch (e) {
       log(e.toString());
+      return null;
     }
   }
 
@@ -109,11 +116,17 @@ abstract class ApisUserinfo {
         },
       );
       // if success
-      if (response.data['responseCode'] == 200 &&
-          response.data['jwt_token'] != null) {
+      if (response.data['responseCode'] == 200
+          && response.data['userInfo'] != null) {
+        print(response.data);
+        UserInfo userInfo = UserInfo.fromJson(response.data['userInfo']);
+        ApisBase.currentUser = userInfo;
+        return userInfo;
       }
+      return null;
     } catch (e) {
       log(e.toString());
+      return null;
     }
   }
 }

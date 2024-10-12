@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:chat_app_flutter/modules/login/controller/login_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
@@ -16,8 +17,6 @@ class InforUser extends StatefulWidget {
 class _InfoUserState extends State<InforUser>{
   // Login controller
   final LoginController loginController = LoginController();
-  // get user info from previous screen
-  UserInfo userInfo = Get.arguments ?? UserInfo();
   // Text editing controller
   final TextEditingController firstNameCtl = TextEditingController();
   final TextEditingController lastNameCtl = TextEditingController();
@@ -29,6 +28,7 @@ class _InfoUserState extends State<InforUser>{
 
   @override
   void initState() {
+    super.initState();
     // init current gender
     _currentGender = loginController.gender[0];
   }
@@ -76,17 +76,19 @@ class _InfoUserState extends State<InforUser>{
 
   // send request to update user info
   void updateUserRequest() async {
-    String firstName = firstNameCtl.text;
-    String lastName = lastNameCtl.text;
-    String phoneNumber = phoneNumberCtl.text;
-    DateTime dob = formatter.parse(dobCtl.text);
-    String gender = _currentGender.toUpperCase();
-    // update UserInfo
-    userInfo.firstname = firstName;
-    userInfo.lastname = lastName;
-    userInfo.phoneNumber = phoneNumber;
-    userInfo.dob = dob;
-    userInfo.sex = gender;
+    // String firstName = firstNameCtl.text;
+    // String lastName = lastNameCtl.text;
+    // String phoneNumber = phoneNumberCtl.text;
+    // DateTime dob = formatter.parse(dobCtl.text);
+    // String gender = _currentGender.toUpperCase();
+    // // get user info
+    // UserInfo userInfo = ApisBase.currentUser;
+    // // update UserInfo
+    // userInfo.firstname = firstName;
+    // userInfo.lastname = lastName;
+    // userInfo.phoneNumber = phoneNumber;
+    // userInfo.dob = dob;
+    // userInfo.sex = gender;
     // send request
     // loginController.updateUser(userInfo);
   }
@@ -170,12 +172,13 @@ class _InfoUserState extends State<InforUser>{
                   width: double.infinity,
                   height: 50,
                   child: TextField(
-                    autofocus: true, // Tự động mở bàn phím khi vào trường này
+                    // autofocus: true, // Tự động mở bàn phím khi vào trường này
                     controller: phoneNumberCtl,
                     decoration: const InputDecoration(
                       label: Text('Phone number'),
                       border: OutlineInputBorder(),
                     ),
+                    keyboardType: TextInputType.number,
                   ),
                 ),
                 const SizedBox(height: 15,),

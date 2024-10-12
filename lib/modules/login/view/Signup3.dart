@@ -9,10 +9,10 @@ class SignUp3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Future.delayed(Duration(seconds: 3), () {
-      Get.off(Login(),
+    Future.delayed(const Duration(seconds: 3), () {
+      Get.off(() => const Login(),
         transition: Transition.fade, // Hiệu ứng mờ dần
-        duration: Duration(seconds: 1), // Thời gian chuyển tiếp
+        duration: const Duration(seconds: 1), // Thời gian chuyển tiếp
       );
     });
 

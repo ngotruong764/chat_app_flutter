@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/data/api/apis_user_info.dart';
 import 'package:get/get.dart';
 
@@ -21,8 +22,8 @@ class LoginController extends GetxController{
   }
 
   // Verification account after create
-  Future<UserInfo?>? confirmAccount(String verificationCode) async{
-    UserInfo? userInfo = await ApisUserinfo.confirmAccount(verificationCode: verificationCode);
+  Future<UserInfo?>? confirmAccount(UserInfo user) async{
+    UserInfo? userInfo = await ApisUserinfo.confirmAccount(userInfo: user);
     return null;
   }
 

@@ -16,6 +16,7 @@ class UserInfo {
   DateTime? createAt;
   DateTime? updateAt;
   String? role;
+  bool? active;
 
   UserInfo(
       {this.id,
@@ -34,29 +35,30 @@ class UserInfo {
       this.profilePicture,
       this.createAt,
       this.updateAt,
-      this.role});
+      this.role,
+      this.active});
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
-    return UserInfo(
+    return  UserInfo(
       id: json['id'],
       email: json['email'],
       password: json['password'],
       verificationCode: json['verificationCode'],
       codeCreateAt: json['codeCreateAt'] != null
-          ? DateTime.parse(json["created_date"])
+          ? DateTime.parse(json['codeCreateAt'])
           : null,
-      isActive: json['isActive'],
+      isActive: json['active'],
       firstname: json['firstName'],
       lastname: json['lastName'],
       username: json['username'],
       phoneNumber: json['phoneNumber'],
-      dob: json['dob'] != null ? DateTime.parse(json["dob"]) : null,
+      dob: json['dob'] != null ? DateTime.parse(json['dob']) : null,
       sex: json['sex'],
       status: json['status'],
       profilePicture: json['profilePicture'],
-      createAt: DateTime.parse(json['createdAt']),
+      createAt: json['createAt'] != null ? DateTime.parse(json['createAt']) : null,
       updateAt:
-          json['updateAt'] != null ? DateTime.parse(json['createdAt']) : null,
+          json['updateAt'] != null ? DateTime.parse(json['updateAt']) : null,
       role: json['role'],
     );
   }
@@ -68,7 +70,7 @@ class UserInfo {
       'password': password,
       'verificationCode': verificationCode,
       'codeCreateAt': codeCreateAt?.toIso8601String(),
-      'isActive': isActive,
+      'active': isActive,
       'firstName': firstname,
       'lastName': lastname,
       'username': username,

@@ -30,8 +30,8 @@ class _LoginState extends State<Login> {
     Get.toNamed(AppRoutes.CREATACCOUNT);
   }
 
-  void getConversation() {
-    Get.toNamed(AppRoutes.CONVERSATIONS);
+  void directToApplication() {
+    Get.toNamed(AppRoutes.APPLICATION);
   }
 
   final CheckboxController checkboxController = Get.put(CheckboxController());
@@ -163,10 +163,10 @@ class _LoginState extends State<Login> {
                 width: 300,
                 height: 50,
                 child: ElevatedButton(
-                  // onPressed: getConversation,
-                  onPressed: () {
-                    // login(accountNameCtl.text, passwordCtl.text);
-                  },
+                  onPressed: directToApplication,
+                  // onPressed: () {
+                  //   // login(accountNameCtl.text, passwordCtl.text);
+                  // },
                   child: const Text('Login'),
                 ),
               ),

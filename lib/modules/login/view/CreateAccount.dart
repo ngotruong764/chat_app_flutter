@@ -12,17 +12,6 @@ class CreateAccount extends StatefulWidget {
 }
 
 class _Signup1State extends State<CreateAccount> {
-  // void getSignUpOTP(UserInfo? userInfo) {
-  //   Get.toNamed(AppRoutes.LOGINOTP, arguments: userInfo);
-  // }
-
-  void getSignUpOTP() {
-    Get.toNamed(AppRoutes.LOGINOTP);
-  }
-
-  void getLogin() {
-    Get.toNamed(AppRoutes.LOGIN);
-  }
 
   final LoginController loginController = Get.put(LoginController());
   final TextEditingController usernameController = TextEditingController();
@@ -39,6 +28,14 @@ class _Signup1State extends State<CreateAccount> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+  }
+
+  void getSignUpOTP() {
+    Get.toNamed(AppRoutes.LOGINOTP);
+  }
+
+  void getLogin() {
+    Get.toNamed(AppRoutes.LOGIN);
   }
 
   @override
@@ -137,7 +134,6 @@ class _Signup1State extends State<CreateAccount> {
                     String password = passwordController.text;
                     // sent request
                     // UserInfo? userInfo =  await loginController.registerUser(username, email, password);
-                    // getSignUpOTP(userInfo);
                     getSignUpOTP();
                   },
                   style: ElevatedButton.styleFrom(
