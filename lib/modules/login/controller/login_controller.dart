@@ -11,26 +11,26 @@ class LoginController extends GetxController{
   //
   List<String> gender = ['Male', 'Female', 'Others'];
 
-  Future<UserInfo?>? registerUser(String username, String email, String password) async{
+  Future<UserInfo?> registerUser(String username, String email, String password) async{
     UserInfo? userInfo = await ApisUserinfo.registerAccount(username: username, email: email, password: password);
     return userInfo;
   }
 
-  Future<UserInfo?>? login(String? username, String? email, String password) async{
-    UserInfo? userInfo = await ApisUserinfo.login(username: username, email: email, password: password);
-    return null;
+  Future<UserInfo?> login(UserInfo user) async{
+    UserInfo? userInfo = await ApisUserinfo.login(userInfo: user);
+    return userInfo;
   }
 
   // Verification account after create
-  Future<UserInfo?>? confirmAccount(UserInfo user) async{
+  Future<UserInfo?> confirmAccount(UserInfo user) async{
     UserInfo? userInfo = await ApisUserinfo.confirmAccount(userInfo: user);
-    return null;
+    return userInfo;
   }
 
   // Update user info
-  Future<UserInfo?>? updateUser(UserInfo user) async{
+  Future<UserInfo?> updateUser(UserInfo user) async{
     UserInfo? userInfo = await ApisUserinfo.updateUserInfo(userInfo: user);
-    return null;
+    return userInfo;
   }
 
 }

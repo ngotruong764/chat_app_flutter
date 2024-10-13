@@ -1,12 +1,8 @@
 import 'package:chat_app_flutter/routes/app_pages.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/status.dart' as status;
 
-import 'data/api/apis_base.dart';
 
 // setting up theme
 var kColorScheme =

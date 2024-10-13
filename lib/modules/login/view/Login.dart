@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:chat_app_flutter/modules/login/controller/login_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +43,18 @@ class _LoginState extends State<Login> {
   * If not email --> email == null, username != null
   *   viết validate
   */
-  void login(String accountName, String password) {
-    loginController.login(null, accountName, password);
+  void login(String accountName, String password) async {
+    // create UserInfo object
+    UserInfo userInfo = UserInfo(
+      username: null,
+      email: accountName,
+      password: password
+    );
+    UserInfo? user = await loginController.login(userInfo);
+    if(user != null){
+      // redirect to application
+      Get.offAllNamed(AppRoutes.APPLICATION);
+    }
   }
 
   // dispose
@@ -163,10 +174,10 @@ class _LoginState extends State<Login> {
                 width: 300,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: directToApplication,
-                  // onPressed: () {
-                  //   // login(accountNameCtl.text, passwordCtl.text);
-                  // },
+                  // onPressed: directToApplication,
+                  onPressed: () {
+                    login(accountNameCtl.text, passwordCtl.text);
+                  },
                   child: const Text('Login'),
                 ),
               ),

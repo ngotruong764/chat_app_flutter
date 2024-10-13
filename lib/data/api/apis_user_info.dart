@@ -1,10 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
-
 import 'package:chat_app_flutter/data/api/apis_base.dart';
-import 'package:chat_app_flutter/data/storage/secure_storage.dart';
 import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class ApisUserinfo {
   // Register account
@@ -68,9 +68,7 @@ abstract class ApisUserinfo {
 
   // Login
   static Future<UserInfo?> login(
-      {required String? username,
-      required String? email,
-      required String password}) async {
+      {required UserInfo userInfo}) async {
     try {
       final response = await ApisBase.dio.post(
         ApisBase.login,
@@ -78,25 +76,42 @@ abstract class ApisUserinfo {
           contentType: 'application/json',
         ),
         data: {
-          'userInfo': {
-            'username': username,
-            'email': email,
-            'password': password,
-          }
+          'userInfo': userInfo,
         },
       );
       // if success
-      if (response.data['responseCode'] == 200 &&
-          response.data['jwt_token'] != null) {
-        // get jwt token
-        String jwtToken = response.data['jwt_token'];
-        // store jwt_token to storage
-        SecureStorage secureStorage = SecureStorage();
-        secureStorage.writeSecureData('jwt_token', jwtToken);
-
+      if (response.data['responseCode'] == 200
+          && response.data['jwt_token'] != null
+          && response.data['userInfo'] != null) {
+        // get shared preferences instance
+        final UserInfo user = UserInfo.fromJson(response.data['userInfo']);
+        ApisBase.currentUser = user;
+        final prefs = await SharedPreferences.getInstance();
+        // save user info to local
+        user.password = userInfo.password!;
+        prefs.setString('userInfo', jsonEncode(user));
         // print JWT token
         log("jwt token: ${response.data["jwt_token"]}");
+        return user;
       }
+      return null;
+    } catch (e) {
+      log(e.toString());
+      return null;
+    }
+  }
+
+  static Future<void> logout(UserInfo userInfo) async {
+    try {
+      final response = await ApisBase.dio.post(
+        ApisBase.login,
+        options: Options(
+          contentType: 'application/json',
+        ),
+        data: {
+          'userInfo': userInfo
+        }
+      );
     } catch (e) {
       log(e.toString());
     }

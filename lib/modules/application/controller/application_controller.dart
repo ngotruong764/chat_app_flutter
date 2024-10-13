@@ -13,7 +13,6 @@ class ApplicationController extends GetxController{
 
   // handle bottom tab navigation
   void handleBottomTabNav(int index){
-    print(page.value);
     page.value = index;
     pageController.jumpToPage(page.value);
   }

@@ -1,4 +1,5 @@
 import 'package:chat_app_flutter/modules/application/controller/application_controller.dart';
+import 'package:chat_app_flutter/modules/application/view/widget/main_drawer.dart';
 import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +25,8 @@ class ApplicationView extends GetView<ApplicationController>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const MainDrawer(),
+      appBar: AppBar(),
       body: buildPageView(),
       bottomNavigationBar: Obx(
           () => BottomNavigationBar(
