@@ -133,7 +133,7 @@ class _Signup1State extends State<CreateAccount> {
                     String email = emailController.text;
                     String password = passwordController.text;
                     // sent request
-                    // UserInfo? userInfo =  await loginController.registerUser(username, email, password);
+                    UserInfo? userInfo =  await loginController.registerUser(username, email, password);
                     getSignUpOTP();
                   },
                   style: ElevatedButton.styleFrom(

@@ -14,9 +14,11 @@ class ApplicationView extends GetView<ApplicationController>{
       controller: controller.pageController,
       onPageChanged: controller.onPageChange,
       scrollDirection: Axis.horizontal,
+
       children: const [
         Conversations(),
         Login(),
+        Conversations(),
         Conversations(),
       ],
     );
@@ -33,6 +35,8 @@ class ApplicationView extends GetView<ApplicationController>{
             onTap: controller.handleBottomTabNav,
             items: controller.bottomTabs,
             currentIndex: controller.page.value,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.blue,
           ),
       ),
     );

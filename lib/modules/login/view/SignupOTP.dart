@@ -95,9 +95,9 @@ class _VerificationEmailState extends State<SignUpOTP>{
               ElevatedButton(
                 onPressed: () async {
                   // get user
-                  // UserInfo userInfo = ApisBase.currentUser;
-                  // userInfo.verificationCode = verificationCtl.text;
-                  // await loginController.confirmAccount(userInfo);
+                  UserInfo userInfo = ApisBase.currentUser;
+                  userInfo.verificationCode = verificationCtl.text;
+                  await loginController.confirmAccount(userInfo);
                   //
                   getInforUser();
                 },

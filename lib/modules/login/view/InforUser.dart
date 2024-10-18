@@ -76,21 +76,21 @@ class _InfoUserState extends State<InforUser>{
 
   // send request to update user info
   void updateUserRequest() async {
-    // String firstName = firstNameCtl.text;
-    // String lastName = lastNameCtl.text;
-    // String phoneNumber = phoneNumberCtl.text;
-    // DateTime dob = formatter.parse(dobCtl.text);
-    // String gender = _currentGender.toUpperCase();
-    // // get user info
-    // UserInfo userInfo = ApisBase.currentUser;
-    // // update UserInfo
-    // userInfo.firstname = firstName;
-    // userInfo.lastname = lastName;
-    // userInfo.phoneNumber = phoneNumber;
-    // userInfo.dob = dob;
-    // userInfo.sex = gender;
+    String firstName = firstNameCtl.text;
+    String lastName = lastNameCtl.text;
+    String phoneNumber = phoneNumberCtl.text;
+    DateTime dob = formatter.parse(dobCtl.text);
+    String gender = _currentGender.toUpperCase();
+    // get user info
+    UserInfo userInfo = ApisBase.currentUser;
+    // update UserInfo
+    userInfo.firstname = firstName;
+    userInfo.lastname = lastName;
+    userInfo.phoneNumber = phoneNumber;
+    userInfo.dob = dob;
+    userInfo.sex = gender;
     // send request
-    // loginController.updateUser(userInfo);
+    loginController.updateUser(userInfo);
   }
 
   @override
