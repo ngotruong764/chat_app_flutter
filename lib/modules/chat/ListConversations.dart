@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:chat_app_flutter/modules/chat/ChatDetailPage.dart';
+import 'package:chat_app_flutter/modules/application/contact/ContactsPage.dart';
+import 'package:chat_app_flutter/modules/application/setting/SettingsPage.dart';
+import 'package:chat_app_flutter/modules/application/addgroup/AddGroupPage.dart';
 
 class Conversations extends StatefulWidget {
   const Conversations({Key? key}) : super(key: key);
@@ -34,26 +38,26 @@ class ConversationsState extends State<Conversations> {
     },
     {
       "name": "Peter",
-      "imageUrl": "https://randomuser.me/api/portraits/men/2.jpg",
+      "imageUrl": "https://randomuser.me/api/portraits/men/22.jpg",
       "isOnline": true,
     },
     {
       "name": "Dad",
-      "imageUrl": "https://randomuser.me/api/portraits/men/3.jpg",
+      "imageUrl": "https://randomuser.me/api/portraits/men/33.jpg",
       "isOnline": true,
     },
     {
       "name": "Cherry",
-      "imageUrl": "https://randomuser.me/api/portraits/women/4.jpg",
+      "imageUrl": "https://randomuser.me/api/portraits/women/43.jpg",
       "isOnline": false,
     },
     {
       "name": "Ken",
-      "imageUrl": "https://randomuser.me/api/portraits/men/4.jpg",
+      "imageUrl": "https://randomuser.me/api/portraits/men/41.jpg",
       "isOnline": true,
     },
   ];
-  //Active bar
+
   Widget _activeUsersBar() {
     List<Map<String, dynamic>> onlineUsers =
         activeUsers.where((user) => user['isOnline']).toList();
@@ -113,7 +117,6 @@ class ConversationsState extends State<Conversations> {
     );
   }
 
-  // List of conversation
   List<Map<String, dynamic>> conversationList = [
     {
       "name": "Alice",
@@ -135,7 +138,7 @@ class ConversationsState extends State<Conversations> {
     },
     {
       "name": "Mee",
-      "imageUrl": "https://randomuser.me/api/portraits/women/2.jpg",
+      "imageUrl": "https://randomuser.me/api/portraits/women/22.jpg",
       "message": "Nice to meet you",
       "time": "5:30 AM",
       "isOnline": false,
@@ -153,7 +156,7 @@ class ConversationsState extends State<Conversations> {
     },
     {
       "name": "Peter",
-      "imageUrl": "https://randomuser.me/api/portraits/men/2.jpg",
+      "imageUrl": "https://randomuser.me/api/portraits/men/22.jpg",
       "message": "ok",
       "time": "4:20 PM",
       "isOnline": true,
@@ -162,7 +165,7 @@ class ConversationsState extends State<Conversations> {
     },
     {
       "name": "Dad",
-      "imageUrl": "https://randomuser.me/api/portraits/men/3.jpg",
+      "imageUrl": "https://randomuser.me/api/portraits/men/33.jpg",
       "message": "ok",
       "time": "2:45 AM",
       "isOnline": true,
@@ -171,7 +174,7 @@ class ConversationsState extends State<Conversations> {
     },
     {
       "name": "Cherry",
-      "imageUrl": "https://randomuser.me/api/portraits/women/4.jpg",
+      "imageUrl": "https://randomuser.me/api/portraits/women/43.jpg",
       "message": "so do I",
       "time": "8:00 PM",
       "isOnline": false,
@@ -180,7 +183,7 @@ class ConversationsState extends State<Conversations> {
     },
     {
       "name": "Ken",
-      "imageUrl": "https://randomuser.me/api/portraits/men/4.jpg",
+      "imageUrl": "https://randomuser.me/api/portraits/men/41.jpg",
       "message": "see ya",
       "time": "6:00 PM",
       "isOnline": true,
@@ -188,102 +191,111 @@ class ConversationsState extends State<Conversations> {
       "isMine": true,
     },
   ];
-  //Conversation
+
   Widget _conversations(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: conversationList.length,
       itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            children: <Widget>[
-              // Avatar and Active status
-              SizedBox(
-                width: 70,
-                height: 70,
-                child: Stack(
-                  children: <Widget>[
-                    Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image:
-                              NetworkImage(conversationList[index]['imageUrl']),
-                          fit: BoxFit.cover,
+        final conversation = conversationList[index];
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatDetailPage(
+                  name: conversation['name'],
+                  imageUrl: conversation['imageUrl'],
+                  message: conversation['message'],
+                ),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              children: <Widget>[
+                SizedBox(
+                  width: 70,
+                  height: 70,
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: NetworkImage(conversation['imageUrl']),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
-                    // Active Status
-                    if (conversationList[index]['isOnline'])
-                      Positioned(
-                        top: 38,
-                        left: 42,
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF66BB6A),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFFFFFFFF),
-                              width: 3,
+                      if (conversation['isOnline'])
+                        Positioned(
+                          top: 38,
+                          left: 42,
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF66BB6A),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFFFFFFFF),
+                                width: 3,
+                              ),
                             ),
                           ),
                         ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        conversation['name'],
+                        style: const TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w500),
                       ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 20),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      conversationList[index]['name'],
-                      style: const TextStyle(
-                          fontSize: 17, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            (conversationList[index]['isMine'] ? "You: " : "") +
-                                conversationList[index]['message'] +
-                                " - " +
-                                conversationList[index]['time'],
-                            style: TextStyle(
-                                fontSize: 15,
-                                color:
-                                    const Color(0xFF000000).withOpacity(0.7)),
-                            overflow: TextOverflow.ellipsis,
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              (conversation['isMine'] ? "You: " : "") +
+                                  conversation['message'] +
+                                  " - " +
+                                  conversation['time'],
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color:
+                                      const Color(0xFF000000).withOpacity(0.7)),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        // Chỉ hiển thị biểu tượng trạng thái nếu tin nhắn được gửi bởi người dùng
-                        if (conversationList[index]['isMine']) ...[
-                          Icon(
-                            conversationList[index]['status'] == "received"
-                                ? Icons.check_circle
-                                : Icons.check,
-                            color:
-                                conversationList[index]['status'] == "received"
-                                    ? Colors.blue
-                                    : Colors.grey,
-                          ),
+                          const SizedBox(width: 10),
+                          if (conversation['isMine']) ...[
+                            Icon(
+                              conversation['status'] == "received"
+                                  ? Icons.check_circle
+                                  : Icons.check,
+                              color: conversation['status'] == "received"
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            ),
+                          ],
                         ],
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         );
       },
@@ -293,36 +305,26 @@ class ConversationsState extends State<Conversations> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Chats"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddNewPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.only(left: 20, right: 20, top: 15),
           child: ListView(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          "https://randomuser.me/api/portraits/women/20.jpg",
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    "Chats",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  const Icon(Icons.edit)
-                ],
-              ),
               const SizedBox(height: 15),
-              // Search bar
               Container(
                 width: double.infinity,
                 height: 40,
@@ -347,6 +349,28 @@ class ConversationsState extends State<Conversations> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Contacts'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: 'Settings'),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          if (index == 1) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const ContactsPage()));
+          } else if (index == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()));
+          }
+        },
       ),
     );
   }
