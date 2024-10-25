@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:chat_app_flutter/modules/chat/ChatDetailPage.dart';
-import 'package:chat_app_flutter/modules/application/contact/ContactsPage.dart';
-import 'package:chat_app_flutter/modules/application/setting/SettingsPage.dart';
-import 'package:chat_app_flutter/modules/application/addgroup/AddGroupPage.dart';
+import 'package:chat_ui/screens/ChatDetailPage.dart';
+import 'package:chat_ui/screens/AddNewPage.dart';
 
 class Conversations extends StatefulWidget {
   const Conversations({Key? key}) : super(key: key);
@@ -13,7 +11,6 @@ class Conversations extends StatefulWidget {
 
 class ConversationsState extends State<Conversations> {
   TextEditingController _searchController = TextEditingController();
-  int _selectedIndex = 0;
 
   List<Map<String, dynamic>> activeUsers = [
     {
@@ -349,28 +346,6 @@ class ConversationsState extends State<Conversations> {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Contacts'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Settings'),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          if (index == 1) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const ContactsPage()));
-          } else if (index == 2) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()));
-          }
-        },
       ),
     );
   }
