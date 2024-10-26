@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:chat_ui/screens/ChatDetailPage.dart';
-import 'package:chat_ui/screens/AddNewPage.dart';
+import 'package:chat_app_flutter/modules/chat/ChatDetailPage.dart';
+import 'package:chat_app_flutter/modules/application/creategroup/CreateGroup.dart';
 
 class Conversations extends StatefulWidget {
   const Conversations({Key? key}) : super(key: key);
