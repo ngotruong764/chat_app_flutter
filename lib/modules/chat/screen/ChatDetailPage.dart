@@ -1,22 +1,36 @@
+import 'package:chat_app_flutter/modules/chat/controller/chat_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ChatDetailPage extends StatelessWidget {
+class ChatDetailPage extends StatefulWidget {
+  final int conversationId;
   final String name;
   final String imageUrl;
   final String message;
 
   const ChatDetailPage({
-    Key? key,
+    super.key,
+    required this.conversationId,
     required this.name,
     required this.imageUrl,
     required this.message,
-  }) : super(key: key);
+  });
+
+  @override
+  State<ChatDetailPage> createState() => _ChatBoxState();
+}
+
+class _ChatBoxState extends State<ChatDetailPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(name),
+        title: Text(widget.name),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -26,7 +40,7 @@ class ChatDetailPage extends StatelessWidget {
             Center(
               child: CircleAvatar(
                 radius: 50,
-                backgroundImage: NetworkImage(imageUrl),
+                backgroundImage: NetworkImage(widget.imageUrl),
               ),
             ),
             const SizedBox(height: 20),
@@ -36,7 +50,7 @@ class ChatDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              message,
+              widget.message,
               style: const TextStyle(fontSize: 16),
             ),
           ],

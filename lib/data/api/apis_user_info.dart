@@ -90,6 +90,9 @@ abstract class ApisUserinfo {
         // save user info to local
         user.password = userInfo.password!;
         prefs.setString('userInfo', jsonEncode(user));
+        // add jwt token to header
+        ApisBase.dio.options.headers['Authorization'] =
+          'Bearer ${response.data["jwt_token"]}';
         // print JWT token
         log("jwt token: ${response.data["jwt_token"]}");
         return user;

@@ -1,33 +1,34 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../controller/chat_controller.dart';
+
 // Tạo ChatController với GetX
-class ChatController extends GetxController {
-  var messagesMap = <String, List<Map<String, dynamic>>>{
-    '1': [
-      {'isMine': true, 'message': 'Hi Alice!'},
-      {'isMine': false, 'message': 'Hello! How are you?'},
-      {'isMine': true, 'message': 'I am good, thanks!'},
-    ],
-    '2': [
-      {'isMine': true, 'message': 'Hi Bob!'},
-      {'isMine': false, 'message': 'Hey! What’s up?'},
-      {'isMine': true, 'message': 'Just working on a project.'},
-    ],
-  }.obs;
-
-
-  void sendMessage(String userId, String message) {
-    if (message.isNotEmpty) {
-      messagesMap.putIfAbsent(userId, () => []).add({'isMine': true, 'message': message});
-    }
-  }
-
-  List<Map<String, dynamic>> getMessages(String userId) {
-    return messagesMap[userId] ?? [];
-  }
-}
+// class ChatController extends GetxController {
+//   var messagesMap = <String, List<Map<String, dynamic>>>{
+//     '1': [
+//       {'isMine': true, 'message': 'Hi Alice!'},
+//       {'isMine': false, 'message': 'Hello! How are you?'},
+//       {'isMine': true, 'message': 'I am good, thanks!'},
+//     ],
+//     '2': [
+//       {'isMine': true, 'message': 'Hi Bob!'},
+//       {'isMine': false, 'message': 'Hey! What’s up?'},
+//       {'isMine': true, 'message': 'Just working on a project.'},
+//     ],
+//   }.obs;
+//
+//
+//   void sendMessage(String userId, String message) {
+//     if (message.isNotEmpty) {
+//       messagesMap.putIfAbsent(userId, () => []).add({'isMine': true, 'message': message});
+//     }
+//   }
+//
+//   List<Map<String, dynamic>> getMessages(String userId) {
+//     return messagesMap[userId] ?? [];
+//   }
+// }
 
 class ChatBox extends StatelessWidget{
   ChatBox({required this.userId, Key? key, required this.name, required this.imageUrl, required this.message}) : super(key: key);

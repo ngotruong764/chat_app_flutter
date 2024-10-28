@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../data/api/apis_chat.dart';
+
 class ApplicationController extends GetxController{
 
   // init the page index
@@ -48,11 +50,20 @@ class ApplicationController extends GetxController{
     super.onInit();
     bottomTabs = _buildBottomTabs();
     pageController = PageController(initialPage: page.value);
+    // connect websocket
+    connectWebSocket();
   }
 
   @override
   void dispose() {
     super.dispose();
     pageController.dispose();
+  }
+
+  /*
+  * Connect web socket
+  */
+  Future<void> connectWebSocket() async{
+    ApisChat.connectSocket();
   }
 }

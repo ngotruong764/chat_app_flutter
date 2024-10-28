@@ -1,0 +1,11 @@
+import 'package:chat_app_flutter/modules/chat/screen/ChatBox.dart';
+import 'package:get/get.dart';
+
+import '../controller/chat_controller.dart';
+
+class ChatBinding extends Bindings{
+  @override
+  void dependencies() {
+    Get.lazyPut(() => ChatController());
+  }
+}
