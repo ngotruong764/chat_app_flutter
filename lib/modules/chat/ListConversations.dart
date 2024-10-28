@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/modules/chat/ChatBox.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app_flutter/modules/chat/ChatDetailPage.dart';
 import 'package:chat_app_flutter/modules/application/creategroup/CreateGroup.dart';
@@ -57,7 +58,7 @@ class ConversationsState extends State<Conversations> {
 
   Widget _activeUsersBar() {
     List<Map<String, dynamic>> onlineUsers =
-        activeUsers.where((user) => user['isOnline']).toList();
+    activeUsers.where((user) => user['isOnline']).toList();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -116,6 +117,7 @@ class ConversationsState extends State<Conversations> {
 
   List<Map<String, dynamic>> conversationList = [
     {
+      "userId": "1",
       "name": "Alice",
       "imageUrl": "https://randomuser.me/api/portraits/women/1.jpg",
       "message": "Hi",
@@ -125,6 +127,7 @@ class ConversationsState extends State<Conversations> {
       "isMine": true,
     },
     {
+      "userId": "2",
       "name": "Bob",
       "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
       "message": "i'm hungry",
@@ -134,6 +137,7 @@ class ConversationsState extends State<Conversations> {
       "isMine": false,
     },
     {
+      "userId": "3",
       "name": "Mee",
       "imageUrl": "https://randomuser.me/api/portraits/women/22.jpg",
       "message": "Nice to meet you",
@@ -143,6 +147,7 @@ class ConversationsState extends State<Conversations> {
       "isMine": true,
     },
     {
+      "userId": "4",
       "name": "Mari",
       "imageUrl": "https://randomuser.me/api/portraits/women/3.jpg",
       "message": "Nice!",
@@ -152,6 +157,7 @@ class ConversationsState extends State<Conversations> {
       "isMine": true,
     },
     {
+      "userId": "5",
       "name": "Peter",
       "imageUrl": "https://randomuser.me/api/portraits/men/22.jpg",
       "message": "ok",
@@ -161,6 +167,7 @@ class ConversationsState extends State<Conversations> {
       "isMine": true,
     },
     {
+      "userId": "6",
       "name": "Dad",
       "imageUrl": "https://randomuser.me/api/portraits/men/33.jpg",
       "message": "ok",
@@ -170,6 +177,7 @@ class ConversationsState extends State<Conversations> {
       "isMine": false,
     },
     {
+      "userId": "7",
       "name": "Cherry",
       "imageUrl": "https://randomuser.me/api/portraits/women/43.jpg",
       "message": "so do I",
@@ -179,6 +187,7 @@ class ConversationsState extends State<Conversations> {
       "isMine": true,
     },
     {
+      "userId": "8",
       "name": "Ken",
       "imageUrl": "https://randomuser.me/api/portraits/men/41.jpg",
       "message": "see ya",
@@ -201,10 +210,11 @@ class ConversationsState extends State<Conversations> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ChatDetailPage(
-                  name: conversation['name'],
-                  imageUrl: conversation['imageUrl'],
-                  message: conversation['message'],
+                builder: (context) => ChatBox(
+                  userId: conversation['userId'],
+                  name: conversation['name'] ?? 'No Name',
+                  imageUrl: conversation['imageUrl'] ?? '',
+                  message: conversation['message'] ?? '',
                 ),
               ),
             );
@@ -271,7 +281,7 @@ class ConversationsState extends State<Conversations> {
                               style: TextStyle(
                                   fontSize: 15,
                                   color:
-                                      const Color(0xFF000000).withOpacity(0.7)),
+                                  const Color(0xFF000000).withOpacity(0.7)),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),

@@ -47,7 +47,7 @@ final kRoutePages = [
   ),
   GetPage(
       name: AppRoutes.CHATBOX,
-      page:() => ChatBox()
+      page:() => ChatBox(userId: '', name: '', message: '', imageUrl: '',)
   ),
   GetPage(
     name: AppRoutes.CONVERSATIONS,
