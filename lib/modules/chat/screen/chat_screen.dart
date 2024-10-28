@@ -367,9 +367,7 @@ class ChatScreenState extends State<ChatScreen> {
 
 
   Widget _conversations(BuildContext context) {
-    return Obx(
-          () =>
-          ListView.builder(
+    return ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             // itemCount: chatController.conversationList.length,
@@ -484,7 +482,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               );
             },
-          ),
+
     );
   }
 }
