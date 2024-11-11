@@ -1,9 +1,17 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:chat_app_flutter/data/api/apis_base.dart';
+import 'package:chat_app_flutter/model/message.dart';
+import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 abstract class ApisChat {
+  static late final WebSocketChannel socketChannel;
+  /*
+  * Connect web socket
+  */
   static void connectSocket() async{
     try{
       // get this user id
@@ -18,9 +26,45 @@ abstract class ApisChat {
       final channel = WebSocketChannel.connect(wsUrl);
       // wait for socket ready
       await channel.ready;
+      socketChannel = channel;
       print("Connected");
     } catch(e){
       log('$e');
     }
+  }
+
+  /*
+  * Send message
+  */
+  static void sendMessageSocket({
+    required Message message,
+  }) async {
+    try {
+      // send message
+      socketChannel.sink.add(jsonEncode(message.toJson()));
+    } catch (e) {
+      log('$e');
+    }
+  }
+
+  /*
+  * Receive message message
+  */
+  static Stream<dynamic>? listenMessage({
+    required RxList<Message> messageList,
+  }) {
+    try {
+      // listen message
+      socketChannel.stream.listen((onData) {
+        // convert String to message
+        Message message = Message.fromJson(jsonDecode(onData));
+        // add message to the list
+        messageList.add(message);
+      },);
+      return messageList.stream;
+    } catch (e) {
+      log('$e');
+    }
+    return null;
   }
 }

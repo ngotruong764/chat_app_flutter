@@ -1,7 +1,7 @@
 
 import 'package:chat_app_flutter/modules/application/binding/application_binding.dart';
 import 'package:chat_app_flutter/modules/application/view/application_view.dart';
-import 'package:chat_app_flutter/modules/chat/screen/ChatBox.dart';
+import 'package:chat_app_flutter/modules/chat/screen/chat_box.dart';
 import 'package:chat_app_flutter/modules/chat/screen/ChatDetailPage.dart';
 import 'package:chat_app_flutter/modules/chat/screen/chat_screen.dart';
 import 'package:chat_app_flutter/modules/chat/binding/chat_binding.dart';
@@ -47,10 +47,10 @@ final kRoutePages = [
       name: AppRoutes.LOGIN,
       page: () => Login(),
   ),
-  GetPage(
-      name: AppRoutes.CHATBOX,
-      page:() => ChatBox(userId: '', name: '', message: '', imageUrl: '',)
-  ),
+  // GetPage(
+  //     name: AppRoutes.CHATBOX,
+  //     page:() => ChatBox(userId: 0, name: '', message: '', imageUrl: '',)
+  // ),
   GetPage(
     name: AppRoutes.CONVERSATIONS,
     page: () => const ChatScreen(),

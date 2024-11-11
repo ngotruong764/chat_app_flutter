@@ -1,4 +1,4 @@
-import 'package:chat_app_flutter/modules/chat/screen/ChatBox.dart';
+import 'package:chat_app_flutter/modules/chat/screen/chat_box.dart';
 import 'package:get/get.dart';
 
 import '../controller/chat_controller.dart';

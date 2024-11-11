@@ -8,7 +8,6 @@ abstract class ApisBase{
   static final Dio dio = Dio();
   static const String baseURL = 'http://10.0.2.2:8081/talkie/api/v1';
   static const String socketBaseUrl = 'ws://10.0.2.2:8081/talkie/api/v1/chat';
-  static const String testApi = 'http://10.0.2.2:8081/talkie/api/v1/user-info/test';
 
   // USER INFO
   static const String registerAccount = '$baseURL/user-info/register';
@@ -19,5 +18,6 @@ abstract class ApisBase{
 
   // conservation
   static const String getListConversationUrl = '$baseURL/conservation/getListConversation';
+  static const String fetchConversationMessageUrl = '$baseURL/conservation/fetchConversationMessage';
 
 }
