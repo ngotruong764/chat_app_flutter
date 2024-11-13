@@ -1,6 +1,6 @@
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/model/user_info.dart';
-import 'package:chat_app_flutter/modules/chat/Settings/Profile.dart';
+import 'package:chat_app_flutter/modules/Settings/Profile.dart';
 import 'package:chat_app_flutter/modules/chat/screen/chat_screen.dart';
 import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:flutter/material.dart';
@@ -75,10 +75,11 @@ class SettingsPage extends StatelessWidget {
               title: const Text("Logout"),
               trailing:  const Icon(Icons.chevron_right),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Login ())
-                );
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => _showLogoutDialog ())
+                // );
+                _showLogoutDialog(context);
               },
             ),
           ],
@@ -86,6 +87,37 @@ class SettingsPage extends StatelessWidget {
       ),
     );
   }
+
+   Future<void> _showLogoutDialog(BuildContext context) async {
+     return showDialog<void>(
+       context: context,
+       barrierDismissible: false, // Không cho phép đóng pop-up ngoài vùng
+       builder: (BuildContext context) {
+         return AlertDialog(
+           title: Text('Confirm Logout'),
+           content: Text('Do you want logout?'),
+           actions: <Widget>[
+             TextButton(
+               child: Text('Cancel'),
+               onPressed: () {
+                 Navigator.of(context).pop();
+               },
+             ),
+             TextButton(
+               child: Text('Logout'),
+               onPressed: () {
+                 Navigator.push(
+                     context,
+                     MaterialPageRoute(builder: (context) => Login())
+                 );
+                 print("Logout successful!");
+               },
+             ),
+           ],
+         );
+       },
+     );
+   }
 
   Widget buildSettingsItem(IconData icon, String title, String trailing, Color iconColor, BuildContext context) {
     return ListTile(

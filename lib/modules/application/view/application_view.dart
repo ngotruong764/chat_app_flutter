@@ -1,5 +1,6 @@
 import 'package:chat_app_flutter/modules/application/controller/application_controller.dart';
 import 'package:chat_app_flutter/modules/application/view/widget/main_drawer.dart';
+import 'package:chat_app_flutter/modules/Settings/SettingsPage.dart';
 import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,11 +16,11 @@ class ApplicationView extends GetView<ApplicationController>{
       onPageChanged: controller.onPageChange,
       scrollDirection: Axis.horizontal,
 
-      children: const [
-        ChatScreen(),
-        Login(),
-        ChatScreen(),
-        ChatScreen(),
+      children: [
+        const ChatScreen(),
+        const Login(),
+        const ChatScreen(),
+        SettingsPage(),
       ],
     );
   }
