@@ -11,23 +11,7 @@ class ChatController extends GetxController{
   RxList<Conversation> conversationList = <Conversation>[].obs;
   // list for message of a conversation
   RxList<Message> messageList = <Message>[].obs;
-  //
-  var messagesMap = <String, List<Map<String, dynamic>>>{
-    '1': [
-      {'isMine': true, 'message': 'Hi Alice!'},
-      {'isMine': false, 'message': 'Hello! How are you?'},
-      {'isMine': true, 'message': 'I am good, thanks!'},
-    ],
-    '2': [
-      {'isMine': true, 'message': 'Hi Bob!'},
-      {'isMine': false, 'message': 'Hey! What’s up?'},
-      {'isMine': true, 'message': 'Just working on a project.'},
-    ],
-  }.obs;
 
-  List<Map<String, dynamic>> getMessages(String userId) {
-    return messagesMap[userId] ?? [];
-  }
   //
   @override
   void onInit() async{

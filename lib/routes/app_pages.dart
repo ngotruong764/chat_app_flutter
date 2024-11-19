@@ -8,6 +8,8 @@ import 'package:chat_app_flutter/modules/chat/binding/chat_binding.dart';
 import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:chat_app_flutter/modules/login/view/CreateAccount.dart';
 import 'package:chat_app_flutter/modules/login/view/SignupOTP.dart';
+import 'package:chat_app_flutter/modules/search/binding/search_binding.dart';
+import 'package:chat_app_flutter/modules/search/view/search_screen.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
 import '../modules/login/view/InforUser.dart';
@@ -26,6 +28,11 @@ final kRoutePages = [
     name: AppRoutes.APPLICATION,
     page: () => const ApplicationView(),
     binding: ApplicationBinding(),
+  ),
+  GetPage(
+    name: AppRoutes.SEARCH,
+    page: () => const SearchScreen(),
+    binding: SearchBinding(),
   ),
   GetPage(
     name: AppRoutes.CREATACCOUNT,

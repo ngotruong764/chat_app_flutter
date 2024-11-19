@@ -1,6 +1,7 @@
 abstract class AppRoutes{
   static const String SPLASH = "/";
   static const String APPLICATION = "/application";
+  static const String SEARCH = "/application/search";
   static const String CREATACCOUNT = "/login";
   static const String INFORUSER = "/login2";
   static const String LOGIN3 = "/login3";

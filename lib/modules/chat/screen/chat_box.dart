@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/data/api/apis_chat.dart';
+import 'package:chat_app_flutter/helper/helper.dart';
 import 'package:chat_app_flutter/model/message.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../controller/chat_controller.dart';
@@ -30,6 +32,8 @@ class ChatBox extends StatefulWidget{
 class _ChatBoxState extends State<ChatBox>{
   final ChatController chatController = Get.put(ChatController());
   final TextEditingController messageController = TextEditingController();
+  final _picker = ImagePicker();
+  List<XFile> medias = [];
   //
   int messagePageSize = 40;
   int messagePageNumber = 0;
@@ -46,6 +50,14 @@ class _ChatBoxState extends State<ChatBox>{
     super.dispose();
     ApisChat.socketChannel.stream;
   }
+
+  Future<void> pickMedia() async{
+    // clear the list before get medias
+    medias.clear();
+    medias = await _picker.pickMultipleMedia();
+    Helper.encodeImgToBase64(medias);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,6 +159,13 @@ class _ChatBoxState extends State<ChatBox>{
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
+                IconButton(
+                  icon: const Icon(Icons.image_outlined),
+                  onPressed: ()async {
+                    // pick (image + video)
+                    await pickMedia();
+                  },
+                ),
                 Expanded(
                   child: TextField(
                     controller: messageController,

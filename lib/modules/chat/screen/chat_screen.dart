@@ -1,4 +1,5 @@
 import 'package:chat_app_flutter/modules/chat/controller/chat_controller.dart';
+import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app_flutter/modules/application/creategroup/CreateGroup.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,7 @@ class ChatScreen extends StatefulWidget {
 class ChatScreenState extends State<ChatScreen> {
   final ChatController chatController = Get.find<ChatController>();
 
-  final TextEditingController _searchController = TextEditingController();
+  // final TextEditingController _searchController = TextEditingController();
 
   List<Map<String, dynamic>> activeUsers = [
     {
@@ -118,89 +119,6 @@ class ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-
-  List<Map<String, dynamic>> conversationList = [
-    {
-      "userId": "1",
-      "name": "Alice",
-      "imageUrl": "https://randomuser.me/api/portraits/women/1.jpg",
-      "message": "Hi",
-      "time": "10:30 AM",
-      "isOnline": true,
-      "status": "received",
-      "isMine": true,
-    },
-    {
-      "userId": "2",
-      "name": "Bob",
-      "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
-      "message": "i'm hungry",
-      "time": "9:45 AM",
-      "isOnline": false,
-      "status": "sent",
-      "isMine": false,
-    },
-    {
-      "userId": "3",
-      "name": "Mee",
-      "imageUrl": "https://randomuser.me/api/portraits/women/22.jpg",
-      "message": "Nice to meet you",
-      "time": "5:30 AM",
-      "isOnline": false,
-      "status": "received",
-      "isMine": true,
-    },
-    {
-      "userId": "4",
-      "name": "Mari",
-      "imageUrl": "https://randomuser.me/api/portraits/women/3.jpg",
-      "message": "Nice!",
-      "time": "1:30 PM",
-      "isOnline": false,
-      "status": "sent",
-      "isMine": true,
-    },
-    {
-      "userId": "5",
-      "name": "Peter",
-      "imageUrl": "https://randomuser.me/api/portraits/men/22.jpg",
-      "message": "ok",
-      "time": "4:20 PM",
-      "isOnline": true,
-      "status": "sent",
-      "isMine": true,
-    },
-    {
-      "userId": "6",
-      "name": "Dad",
-      "imageUrl": "https://randomuser.me/api/portraits/men/33.jpg",
-      "message": "ok",
-      "time": "2:45 AM",
-      "isOnline": true,
-      "status": "sent",
-      "isMine": false,
-    },
-    {
-      "userId": "7",
-      "name": "Cherry",
-      "imageUrl": "https://randomuser.me/api/portraits/women/43.jpg",
-      "message": "so do I",
-      "time": "8:00 PM",
-      "isOnline": false,
-      "status": "sent",
-      "isMine": true,
-    },
-    {
-      "userId": "8",
-      "name": "Ken",
-      "imageUrl": "https://randomuser.me/api/portraits/men/41.jpg",
-      "message": "see ya",
-      "time": "6:00 PM",
-      "isOnline": true,
-      "status": "received",
-      "isMine": true,
-    },
-  ];
 
   // Widget _conversations(BuildContext context) {
   //   return ListView.builder(
@@ -315,49 +233,66 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Chats"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AddNewPage()),
-              );
-            },
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 15),
-          child: ListView(
-            children: [
-              const SizedBox(height: 15),
-              Container(
-                width: double.infinity,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFe9eaec),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  cursorColor: Colors.grey,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Search',
-                    prefixIcon: Icon(Icons.search),
+    return GestureDetector(
+      onTap: (){
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus &&
+            currentFocus.focusedChild != null) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Chats"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddNewPage()),
+                );
+              },
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 15),
+            child: ListView(
+              children: [
+                const SizedBox(height: 15),
+                Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFe9eaec),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    // controller: _searchController,
+                    cursorColor: Colors.grey,
+                    // disable cursor
+                    showCursor: false,
+                    // disable keyboard
+                    keyboardType: TextInputType.none,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Search',
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                    onTap: () {
+                      // navigate to search screen
+                      Get.toNamed(AppRoutes.SEARCH);
+                    },
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              _activeUsersBar(),
-              const SizedBox(height: 20),
-              _conversations(context),
-            ],
+                const SizedBox(height: 20),
+                _activeUsersBar(),
+                const SizedBox(height: 20),
+                _conversations(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -376,14 +311,16 @@ class ChatScreenState extends State<ChatScreen> {
           return InkWell(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChatBox(
-                            conversationId: conversation.id ?? 0,
-                            name: conversation.conservationName ?? 'No Name',
-                            imageUrl: conversation.conservationName ?? '',
-                            message: conversation.conservationName ?? '',
-                          )));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatBox(
+                    conversationId: conversation.id ?? 0,
+                    name: conversation.conservationName ?? '',
+                    imageUrl: conversation.conservationName ?? '',
+                    message: conversation.conservationName ?? '',
+                  ),
+                ),
+              );
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -440,34 +377,7 @@ class ChatScreenState extends State<ChatScreen> {
                               fontSize: 17, fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(height: 5),
-                        // Row(
-                        //   children: [
-                        //     Expanded(
-                        //       child: Text(
-                        //         (conversation['isMine'] ? "You: " : "") +
-                        //             conversation['message'] +
-                        //             " - " +
-                        //             conversation['time'],
-                        //         style: TextStyle(
-                        //             fontSize: 15,
-                        //             color:
-                        //             const Color(0xFF000000).withOpacity(0.7)),
-                        //         overflow: TextOverflow.ellipsis,
-                        //       ),
-                        //     ),
-                        //     const SizedBox(width: 10),
-                        //     if (conversation['isMine']) ...[
-                        //       Icon(
-                        //         conversation['status'] == "received"
-                        //             ? Icons.check_circle
-                        //             : Icons.check,
-                        //         color: conversation['status'] == "received"
-                        //             ? Colors.blue
-                        //             : Colors.grey,
-                        //       ),
-                        //     ],
-                        //   ],
-                        // ),
+                        Text(conversation.lastMessage ?? ''),
                       ],
                     ),
                   )

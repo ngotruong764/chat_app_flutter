@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/model/message.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -66,5 +67,25 @@ abstract class ApisChat {
       log('$e');
     }
     return null;
+  }
+
+  // test api
+  static Future<void> sendMedia({
+    required String base64Encoded,
+  }) async {
+    try {
+      final response = await ApisBase.dio.post(
+        'http://10.0.2.2:8081/talkie/api/v1/message/test_put_s3',
+        options: Options(
+          contentType: 'application/json',
+        ),
+        data: {
+          'base64': base64Encoded,
+        },
+      );
+
+    } catch (e) {
+      log('$e');
+    }
   }
 }
