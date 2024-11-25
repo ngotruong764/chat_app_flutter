@@ -46,3 +46,6 @@ linux
 macos
 windows
 pubspec.lock
+/lib/firebase_options.dart
+firebase.json
+/android/app/google-services.json

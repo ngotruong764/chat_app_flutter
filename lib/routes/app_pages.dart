@@ -1,10 +1,7 @@
 
 import 'package:chat_app_flutter/modules/application/binding/application_binding.dart';
 import 'package:chat_app_flutter/modules/application/view/application_view.dart';
-import 'package:chat_app_flutter/modules/chat/screen/chat_box.dart';
-import 'package:chat_app_flutter/modules/chat/screen/ChatDetailPage.dart';
 import 'package:chat_app_flutter/modules/chat/screen/chat_screen.dart';
-import 'package:chat_app_flutter/modules/chat/binding/chat_binding.dart';
 import 'package:chat_app_flutter/modules/login/view/Login.dart';
 import 'package:chat_app_flutter/modules/login/view/CreateAccount.dart';
 import 'package:chat_app_flutter/modules/login/view/SignupOTP.dart';
@@ -17,7 +14,6 @@ import '../modules/login/view/Signup3.dart';
 import '../modules/splash_screen/SplashScreen.dart';
 import 'app_routes.dart';
 
-const INITIAL = AppRoutes.SPLASH;
 
 final kRoutePages = [
   GetPage(

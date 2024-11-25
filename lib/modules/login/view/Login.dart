@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:chat_app_flutter/modules/login/controller/login_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';

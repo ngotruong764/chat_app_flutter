@@ -40,21 +40,11 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //
-    // Future.delayed(Duration(seconds: 3), () {
-    //   Get.off(
-    //     Login(),
-    //     transition: Transition.fade, // Hiệu ứng mờ dần
-    //     duration: Duration(seconds: 1), // Thời gian chuyển tiếp
-    //   );
-    // });
-
     init();
     //
     return Scaffold(
         body: Container(
         alignment: Alignment.center,
-
           child: Image.asset('assets/images/logo.png',
         width: 150,
         height: 150,
