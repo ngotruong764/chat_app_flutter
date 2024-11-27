@@ -46,12 +46,12 @@ class ApplicationController extends GetxController{
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     bottomTabs = _buildBottomTabs();
     pageController = PageController(initialPage: page.value);
     // connect websocket
-    connectWebSocket();
+    await connectWebSocket();
   }
 
   @override

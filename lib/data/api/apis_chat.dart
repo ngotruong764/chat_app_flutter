@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:chat_app_flutter/data/api/apis_base.dart';
+import 'package:chat_app_flutter/model/conversation.dart';
 import 'package:chat_app_flutter/model/message.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -13,7 +14,7 @@ abstract class ApisChat {
   /*
   * Connect web socket
   */
-  static void connectSocket() async{
+  static Future<void> connectSocket() async{
     try{
       // get this user id
       int userId = ApisBase.currentUser.id ?? 0;
@@ -28,7 +29,7 @@ abstract class ApisChat {
       // wait for socket ready
       await channel.ready;
       socketChannel = channel;
-      print("Connected");
+      log("Connected");
     } catch(e){
       log('$e');
     }
@@ -49,7 +50,7 @@ abstract class ApisChat {
   }
 
   /*
-  * Receive message message
+  * Receive message in chat box
   */
   static Stream<dynamic>? listenMessage({
     required RxList<Message> messageList,
@@ -63,6 +64,40 @@ abstract class ApisChat {
         messageList.add(message);
       },);
       return messageList.stream;
+    } catch (e) {
+      log('$e');
+    }
+    return null;
+  }
+
+  /*
+  * Receive message in chat screed
+  */
+  static Stream<dynamic>? listenMessageInChatScreen({
+    required RxList<Conversation> conversationList,
+  }) {
+    try {
+      // listen message
+      socketChannel.stream.listen(
+        (onData) {
+          // convert String to message
+          Message message = Message.fromJson(jsonDecode(onData));
+          // get conversation id
+          int conversationId = message.conversationId;
+          Conversation? conversationReceivedMess =
+              conversationList.firstWhereOrNull(
+                  (conversation) => conversation.id!.isEqual(conversationId));
+          if (conversationReceivedMess != null) {
+            // remove old conversation
+            conversationList.removeWhere(
+                (conversation) => conversation.id!.isEqual(conversationId));
+            // add new conversation
+            conversationReceivedMess.lastMessage = message.content;
+            conversationList.insert(0, conversationReceivedMess);
+          }
+        },
+      );
+      return conversationList.stream;
     } catch (e) {
       log('$e');
     }

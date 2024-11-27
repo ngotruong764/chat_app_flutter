@@ -3,7 +3,14 @@ import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:chat_app_flutter/modules/Settings/Profile.dart';
 import 'package:chat_app_flutter/modules/chat/screen/chat_screen.dart';
 import 'package:chat_app_flutter/modules/login/view/Login.dart';
+import 'package:chat_app_flutter/services/push_notifications_service.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../data/api/apis_user_info.dart';
+import '../../routes/app_routes.dart';
 
 
 
@@ -94,23 +101,23 @@ class SettingsPage extends StatelessWidget {
        barrierDismissible: false, // Không cho phép đóng pop-up ngoài vùng
        builder: (BuildContext context) {
          return AlertDialog(
-           title: Text('Confirm Logout'),
-           content: Text('Do you want logout?'),
+           title: const Text('Confirm Logout'),
+           content: const Text('Do you want logout?'),
            actions: <Widget>[
              TextButton(
-               child: Text('Cancel'),
+               child: const Text('Cancel'),
                onPressed: () {
                  Navigator.of(context).pop();
                },
              ),
              TextButton(
-               child: Text('Logout'),
-               onPressed: () {
-                 Navigator.push(
-                     context,
-                     MaterialPageRoute(builder: (context) => Login())
-                 );
-                 print("Logout successful!");
+               child: const Text('Logout'),
+               onPressed: () async{
+                 logOut();
+                 // Navigator.push(
+                 //     context,
+                 //     MaterialPageRoute(builder: (context) => Login())
+                 // );
                },
              ),
            ],
@@ -127,5 +134,20 @@ class SettingsPage extends StatelessWidget {
       onTap: () {
       },
     );
+  }
+
+  // logout function
+   void logOut() async {
+    // get share preferences instance
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('userInfo');
+    // logout request
+    await ApisUserinfo.logout(ApisBase.currentUser);
+    // create empty user info
+    ApisBase.currentUser = UserInfo();
+    // delete device token
+    PushNotificationsService.deleteDeviceToken();
+    // direct to login page
+    Get.offAllNamed(AppRoutes.LOGIN);
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:chat_app_flutter/data/api/apis_base.dart';
+import 'package:chat_app_flutter/constants/constants.dart';
 import 'package:chat_app_flutter/firebase_options.dart';
 import 'package:chat_app_flutter/routes/app_pages.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
@@ -10,7 +10,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,7 +48,11 @@ Future<void> init() async {
     Map<String, dynamic> userMap = jsonDecode(userPrefs) as Map<
         String,
         dynamic>;
+    // Get device token
+    // await PushNotificationsService.getDeviceToken();
+    //
     UserInfo userInfo = UserInfo.fromJson(userMap);
+    // userInfo.deviceToken = Constants.DEVICE_TOKEN;
     // login request
     UserInfo? loginUser = await ApisUserinfo.login(userInfo: userInfo);
     // if login user is not null --> direct to application
@@ -61,10 +64,6 @@ Future<void> init() async {
 
 void main() async{
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await init();
-  FlutterNativeSplash.remove();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -73,14 +72,15 @@ void main() async{
   // Request notification permission
   await PushNotificationsService.notificationRequestPermission();
 
-  // Get device token for test (must remove this)
-  await PushNotificationsService.getDeviceToken();
-
   // Handle foreground mode message
   PushNotificationsService.handleForegroundNotification();
 
   // Handler background & terminate mode message
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await init();
+  FlutterNativeSplash.remove();
   runApp(const MyApp());
 }
 

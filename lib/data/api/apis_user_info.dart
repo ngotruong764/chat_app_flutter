@@ -6,6 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../constants/constants.dart';
+import '../../services/push_notifications_service.dart';
+
 abstract class ApisUserinfo {
   // Register account
   static Future<UserInfo?> registerAccount(
@@ -70,6 +73,10 @@ abstract class ApisUserinfo {
   static Future<UserInfo?> login(
       {required UserInfo userInfo}) async {
     try {
+      // Get device token
+      await PushNotificationsService.getDeviceToken();
+      userInfo.deviceToken = Constants.DEVICE_TOKEN;
+      //
       final response = await ApisBase.dio.post(
         ApisBase.login,
         options: Options(
@@ -107,7 +114,7 @@ abstract class ApisUserinfo {
   static Future<void> logout(UserInfo userInfo) async {
     try {
       final response = await ApisBase.dio.post(
-        ApisBase.login,
+        ApisBase.logout,
         options: Options(
           contentType: 'application/json',
         ),

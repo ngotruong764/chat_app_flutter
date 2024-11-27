@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:chat_app_flutter/constants/constants.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PushNotificationsService {
   // create instance of FirebaseMessaging
@@ -46,8 +47,18 @@ class PushNotificationsService {
   static Future<String?> getDeviceToken() async {
     String? token = await _messaging.getToken();
     log('Device token: $token');
+    // save device token
     Constants.DEVICE_TOKEN = token;
     return token;
+  }
+
+  /*
+   * Delete device token (push token)
+   */
+  static void deleteDeviceToken() async {
+    await _messaging.deleteToken();
+    log('Device token is deleted');
+    Constants.DEVICE_TOKEN = '';
   }
 
   /*

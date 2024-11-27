@@ -17,6 +17,7 @@ class UserInfo {
   DateTime? updateAt;
   String? role;
   bool? active;
+  String? deviceToken;
 
   UserInfo(
       {this.id,
@@ -36,7 +37,8 @@ class UserInfo {
       this.createAt,
       this.updateAt,
       this.role,
-      this.active});
+      this.active,
+      this.deviceToken});
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
     return  UserInfo(
@@ -60,6 +62,7 @@ class UserInfo {
       updateAt:
           json['updateAt'] != null ? DateTime.parse(json['updateAt']) : null,
       role: json['role'],
+      deviceToken: json['deviceToken'],
     );
   }
 
@@ -82,6 +85,7 @@ class UserInfo {
       'createAt': createAt?.toIso8601String(),
       'updateAt': updateAt?.toIso8601String(),
       'role': role?.toString(),
+      'deviceToken': deviceToken
     };
   }
 }

@@ -1,3 +1,3 @@
 class Constants {
-  static late final String? DEVICE_TOKEN;
+  static late String? DEVICE_TOKEN;
 }
