@@ -50,12 +50,33 @@ class ChatController extends GetxController{
   /*
   * Send messages of a conversation
   */
-  void sendMessage(int userId, int conversationId, String conversationName, String content, DateTime currentTime) {
-    Message message = Message(userId: userId, conversationId: conversationId, content: content,
-        messageTime: currentTime, conversationName: conversationName);
+  // void sendMessage(int userId, int conversationId, String conversationName, String content, DateTime currentTime) {
+  //   Message message = Message(userId: userId, conversationId: conversationId, content: content,
+  //       messageTime: currentTime, conversationName: conversationName);
+  //   // add this temporary message
+  //   messageList.add(message);
+  //   // send message to a conversation
+  //   ApisChat.sendMessageSocket(message: message);
+  //
+  // }
+
+  void sendMessage(int userId, int conversationId, String conversationName, String content, DateTime currentTime, {String? mediaUrl}) {
+    Message message = Message(
+      userId: userId,
+      conversationId: conversationId,
+      content: content,
+      messageTime: currentTime,
+      conversationName: conversationName,
+      mediaUrl: mediaUrl ?? '', // Nếu không có mediaUrl thì để mặc định ''
+    );
     // add this temporary message
     messageList.add(message);
     // send message to a conversation
     ApisChat.sendMessageSocket(message: message);
   }
+
+
+
+
 }
+
