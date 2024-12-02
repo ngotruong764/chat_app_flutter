@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:chat_app_flutter/constants/constants.dart';
 import 'package:chat_app_flutter/firebase_options.dart';
 import 'package:chat_app_flutter/routes/app_pages.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';

@@ -29,9 +29,13 @@ abstract class ApisChat {
       // wait for socket ready
       await channel.ready;
       socketChannel = channel;
+      //  broad cast channel
+      socketChannel.stream.asBroadcastStream();
+      //
+      socketChannel.closeCode;
       log("Connected");
     } catch(e){
-      log('$e');
+      log('Error connect socket: $e');
     }
   }
 
@@ -45,7 +49,7 @@ abstract class ApisChat {
       // send message
       socketChannel.sink.add(jsonEncode(message.toJson()));
     } catch (e) {
-      log('$e');
+      log('Error send message socket: $e');
     }
   }
 
@@ -65,7 +69,7 @@ abstract class ApisChat {
       },);
       return messageList.stream;
     } catch (e) {
-      log('$e');
+      log('Error listen message: $e');
     }
     return null;
   }
@@ -99,7 +103,7 @@ abstract class ApisChat {
       );
       return conversationList.stream;
     } catch (e) {
-      log('$e');
+      log('Error listen message in chat: $e');
     }
     return null;
   }
@@ -120,7 +124,7 @@ abstract class ApisChat {
       );
 
     } catch (e) {
-      log('$e');
+      log('Error send media: $e');
     }
   }
 }

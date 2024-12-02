@@ -71,7 +71,8 @@ class _ChatBoxState extends State<ChatBox>{
   void initState() {
     super.initState();
     // fetch messages
-    chatController.fetchMessage(messagePageNumber, messagePageSize, widget.conversationId);
+    chatController.fetchMessage(messagePageNumber, messagePageSize, widget.conversationId)
+        .then((_) => _scrollToBottom(),);
     // add listener to focus node
     currentFocus.addListener(() {
       // currentScopeNode = FocusScope.of(context);

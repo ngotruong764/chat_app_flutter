@@ -49,3 +49,7 @@ pubspec.lock
 /lib/firebase_options.dart
 firebase.json
 /android/app/google-services.json
+
+ios
+android
+/pubspec.lock
