@@ -11,7 +11,7 @@ class Helper{
       final List<int> bytes = await io.File(media.path).readAsBytes();
       String base64Encoded = base64Encode(bytes);
       encodedMediaBase64.add(base64Encoded);
-      // await ApisChat.sendMedia(base64Encoded: base64Encoded);
+      await ApisChat.sendMedia(base64Encoded: base64Encoded);
     }
     return encodedMediaBase64;
   }

@@ -7,7 +7,6 @@ class Message{
   String content;
   List<dynamic>? attachments;
   DateTime messageTime;
-  String mediaUrl;
 
   Message({
     this.id,
@@ -18,7 +17,6 @@ class Message{
     required this.content,
     required this.messageTime,
     this.attachments,
-    this.mediaUrl = '',
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
@@ -27,13 +25,9 @@ class Message{
       userId: json['userId'] ?? -1,
       senderName: json['senderName'] ?? '',
       conversationId: json['conversationId'] ?? -1,
-      conversationName: json['conversationName'],
       content: json['content'] ?? '',
       messageTime: DateTime.parse(json['messageTime']),
-      mediaUrl: json['mediaUrl'] ?? '',
-      attachments: json['attachments'] != null
-          ? List<String>.from(json['attachments'])
-          : [],
+      attachments: json['attachments'] ?? [],
     );
   }
 
@@ -44,8 +38,6 @@ class Message{
       'conversationId': conversationId,
       'conversationName': conversationName,
       'content': content,
-      'attachments': attachments,
-      'mediaUrl': mediaUrl,
       'messageTime': messageTime.toIso8601String(),
     };
   }

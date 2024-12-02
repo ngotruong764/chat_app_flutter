@@ -27,6 +27,4 @@ abstract class ApisBase{
   static const String getListConversationUrl = '$baseURL/conservation/getListConversation';
   static const String fetchConversationMessageUrl = '$baseURL/conservation/fetchConversationMessage';
 
-
-
 }
