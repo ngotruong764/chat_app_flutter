@@ -1,5 +1,5 @@
-
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/data/api/apis_chat.dart';
@@ -13,7 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../model/conversation.dart';
 import '../controller/chat_controller.dart';
 
-class ChatBox extends StatefulWidget{
+class ChatBox extends StatefulWidget {
   const ChatBox({
     super.key,
     required this.conversationId,
@@ -31,7 +31,7 @@ class ChatBox extends StatefulWidget{
   State<StatefulWidget> createState() => _ChatBoxState();
 }
 
-class _ChatBoxState extends State<ChatBox>{
+class _ChatBoxState extends State<ChatBox> {
   final ChatController chatController = Get.put(ChatController());
   final TextEditingController messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -43,18 +43,19 @@ class _ChatBoxState extends State<ChatBox>{
   int messagePageSize = 40;
   int messagePageNumber = 0;
 
-  void _scrollToBottom(){
-    _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.fastOutSlowIn);
+  void _scrollToBottom() {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn);
   }
 
   /*
   * Un focus TextField
   */
-  void _unFocusTextField(){
-    if(!currentScopeNode.hasPrimaryFocus && currentScopeNode.focusedChild != null){
+
+  void _unFocusTextField() {
+    if (!currentScopeNode.hasPrimaryFocus &&
+        currentScopeNode.focusedChild != null) {
       FocusManager.instance.primaryFocus?.unfocus();
     }
   }
@@ -62,7 +63,7 @@ class _ChatBoxState extends State<ChatBox>{
   /*
   * To open keyboard
   */
-  void openKeyboard(){
+  void openKeyboard() {
     FocusScope.of(context).requestFocus(currentFocus);
     _scrollToBottom();
   }
@@ -71,15 +72,18 @@ class _ChatBoxState extends State<ChatBox>{
   void initState() {
     super.initState();
     // fetch messages
-    chatController.fetchMessage(messagePageNumber, messagePageSize, widget.conversationId)
-        .then((_) => _scrollToBottom(),);
+    chatController
+        .fetchMessage(messagePageNumber, messagePageSize, widget.conversationId)
+        .then(
+          (_) => _scrollToBottom(),
+        );
     // add listener to focus node
     currentFocus.addListener(() {
       // currentScopeNode = FocusScope.of(context);
-      if(currentFocus.hasFocus){
+      if (currentFocus.hasFocus) {
         Future.delayed(
-            const Duration(milliseconds: 500),
-            () => _scrollToBottom(),
+          const Duration(milliseconds: 500),
+          () => _scrollToBottom(),
         );
       }
     });
@@ -101,7 +105,7 @@ class _ChatBoxState extends State<ChatBox>{
     log('dispose ChatBox');
   }
 
-  Future<void> pickMedia() async{
+  Future<void> pickMedia() async {
     // clear the list before get medias
     medias.clear();
     medias = await _picker.pickMultipleMedia();
@@ -129,128 +133,266 @@ class _ChatBoxState extends State<ChatBox>{
           ),
         ),
         body: Column(
-            children: [
-              // Danh sách tin nhắn
-              Expanded(
-                child: StreamBuilder(
-                  // stream to listen
-                  // stream: chatController.messageList.stream,
-                  // stream: ApisChat.socketChannel.stream,
-                  stream: ApisChat.listenMessage(messageList: chatController.messageList)?.asBroadcastStream(),
-                  initialData: chatController.messageList,
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    // waiting for data
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    // if has no data
-                    if (!snapshot.hasData) {
-                      return const Text("Have no messages");
-                    }
-                    // if has data
-                    // Message message = Message.fromJson(jsonDecode(snapshot.data));
-                    // chatController.messageList.add(message);
-                    return Obx(() =>
-                        ListView.builder(
-                          controller: _scrollController,
-                          itemCount: chatController.messageList.length,
-                          // physics: const NeverScrollableScrollPhysics(),
-                          // shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            Message message = chatController.messageList[index];
-                            bool isUserMessage = message.userId == ApisBase.currentUser.id; // Kiểm tra tin nhắn có phải của người dùng không
-                            // if message is not empty
-                            if (message.content.isNotEmpty) {
-                              return Align(
-                                alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft, // Tin nhắn của người dùng căn phải, tin nhắn của đối phương căn trái
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                  decoration: BoxDecoration(
-                                    color: isUserMessage ? Colors.blue[200] : Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(message.content),
-                                ),
-                              );
-                            }
-                            return const SizedBox.shrink(); // Return an empty widget if the message content is empty
-                          },
-                        )
+          children: [
+            // Danh sách tin nhắn
+            Expanded(
+              child: StreamBuilder(
+                // stream to listen
+                // stream: chatController.messageList.stream,
+                // stream: ApisChat.socketChannel.stream,
+                stream: ApisChat.listenMessage(
+                        messageList: chatController.messageList)
+                    ?.asBroadcastStream(),
+                initialData: chatController.messageList,
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  // waiting for data
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
+                  }
+                  // if has no data
+                  if (!snapshot.hasData) {
+                    return const Text("Have no messages");
+                  }
+                  // if has data
+                  // Message message = Message.fromJson(jsonDecode(snapshot.data));
+                  // chatController.messageList.add(message);
+                  return Obx(
+                    () => ListView.builder(
+                      controller: _scrollController,
+                      itemCount: chatController.messageList.length,
+                      itemBuilder: (context, index) {
+                        Message message = chatController.messageList[index];
+                        bool isUserMessage =
+                            message.userId == ApisBase.currentUser.id;
 
-                  },
-                ),
-              ),
-              SizedBox(height: Get.height * 0.001),
-              // Khung nhập và nút gửi
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.image_outlined),
-                      onPressed: ()async {
-                        // pick (image + video)
-                        await pickMedia();
+                        if (message.content.isNotEmpty) {
+                          return Align(
+                            alignment: isUserMessage
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              decoration: BoxDecoration(
+                                color: isUserMessage
+                                    ? Colors.blue[200]
+                                    : Colors.grey[300],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(message.content),
+                            ),
+                          );
+                        }
+
+                        if (message.mediaUrl.isNotEmpty) {
+                          return Align(
+                            alignment: isUserMessage
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => Dialog(
+                                    child: Image.file(
+                                      File(message
+                                          .mediaUrl), // Hiển thị ảnh từ file
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 10),
+                                constraints: const BoxConstraints(
+                                  maxWidth: 150, // Giới hạn chiều rộng ảnh
+                                  maxHeight: 150, // Giới hạn chiều cao ảnh
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  // Bo góc ảnh
+                                  child: Image.file(
+                                    File(message.mediaUrl),
+                                    // Hiển thị ảnh từ File
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
+                        return const SizedBox.shrink();
                       },
                     ),
-                    Expanded(
-                      child: TextField(
-                        controller: messageController,
-                        decoration: InputDecoration(
-                          hintText: "Enter your message...",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: Get.height * 0.001),
+            // Khung nhập và nút gửi
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.image_outlined),
+                    onPressed: () async {
+                      // pick (image + video)
+                      await pickMedia();
+                    },
+                  ),
+                  Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.image_outlined),
+                    onPressed: pickMedia,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Hiển thị danh sách ảnh nếu có
+                        if (medias.isNotEmpty)
+                          SizedBox(
+                            height: 80, // Chiều cao cố định cho vùng thumbnail
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              // Cuộn theo chiều ngang
+                              itemCount: medias.length,
+                              itemBuilder: (context, index) {
+                                return Stack(
+                                  alignment: Alignment.topRight,
+                                  children: [
+                                    // Hiển thị ảnh thumbnail
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      // Bo góc thumbnail
+                                      child: Image.file(
+                                        File(medias[index].path),
+                                        width: 70,
+                                        // Kích thước cố định cho thumbnail
+                                        height: 70,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    // Nút xóa ảnh
+                                    Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            medias.removeAt(
+                                                index); // Xóa ảnh khỏi danh sách
+                                          });
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 12,
+                                          // Kích thước nút xóa
+                                          backgroundColor: Colors.red,
+                                          // Màu nền nút xóa
+                                          child: const Icon(
+                                            Icons.close, // Icon xóa
+                                            color: Colors.white, // Màu icon
+                                            size: 16, // Kích thước icon
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                           ),
+                        // Thanh nhập tin nhắn
+                        TextField(
+                          controller: messageController,
+                          decoration: InputDecoration(
+                            hintText: "Enter your message...",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          autofocus: true,
+                          focusNode: currentFocus,
                         ),
-                        autofocus: true,
-                        focusNode: currentFocus,
-                      ),
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: () {
-                        // scrollToBottom
-                        _scrollToBottom();
-                        // Send message to a conversation
-                        chatController.sendMessage(
-                          ApisBase.currentUser.id!,
-                          widget.conversationId,
-                          widget.name,
-                          messageController.text,
-                          DateTime.now(),
-                        );
-                        SchedulerBinding.instance.addPostFrameCallback((_) {
-                          _scrollToBottom();
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () {
+                      // Gửi ảnh nếu có trong danh sách `medias`
+                      if (medias.isNotEmpty) {
+                        for (var media in medias) {
+                          chatController.sendMessage(
+                            ApisBase.currentUser.id!,
+                            widget.conversationId,
+                            widget.name,
+                            '', // Không có nội dung tin nhắn
+                            DateTime.now(),
+                            mediaUrl: media.path, // Đường dẫn ảnh
+                          );
+                        }
+                        // Xóa danh sách ảnh sau khi gửi
+                        setState(() {
+                          medias.clear(); // Xóa tất cả ảnh trong danh sách
                         });
-                        // update chat screen
-                        updateChatScreen();
-                        messageController.clear(); // Xóa khung nhập sau khi gửi
-                      },
-                    )
-                  ],
-                ),
+                      } else {
+                        if (messageController.text.trim().isNotEmpty) {
+                          chatController.sendMessage(
+                            ApisBase.currentUser.id!,
+                            widget.conversationId,
+                            widget.name,
+                            messageController.text.trim(), // Nội dung tin nhắn
+                            DateTime.now(),
+                          );
+                          // Xóa nội dung trong TextField
+                          messageController.clear();
+                        }
+                      }
+
+                      // Sau khi gửi xong, cuộn xuống dưới và xóa nội dung tin nhắn
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                        _scrollToBottom();
+                      });
+                      updateChatScreen();
+                      messageController.clear();
+                      medias.clear();
+                    },
+                  )
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
     );
   }
 
-  void updateChatScreen(){
-    Conversation? conversationReceivedMess = chatController.conversationList.firstWhereOrNull(
+  void updateChatScreen() {
+    Conversation? conversationReceivedMess = chatController.conversationList
+        .firstWhereOrNull(
             (conversation) => conversation.id!.isEqual(widget.conversationId));
     if (conversationReceivedMess != null) {
       // remove old conversation
       chatController.conversationList.removeWhere(
-              (conversation) => conversation.id!.isEqual(widget.conversationId));
+          (conversation) => conversation.id!.isEqual(widget.conversationId));
       // add new conversation
       conversationReceivedMess.lastMessage = messageController.text;
       chatController.conversationList.insert(0, conversationReceivedMess);
     }
   }
 }
-
