@@ -112,6 +112,42 @@ class _ChatBoxState extends State<ChatBox> {
     Helper.encodeImgToBase64(medias);
   }
 
+ 
+  @override
+  void initState() {
+    super.initState();
+    chatController.fetchMessage(
+        messagePageNumber, messagePageSize, widget.conversationId);
+    currentFocus.addListener(() {
+      if (currentFocus.hasFocus) {
+        Future.delayed(
+          const Duration(milliseconds: 500),
+          () => _scrollToBottom(),
+        );
+      }
+    });
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      currentScopeNode = FocusScope.of(context);
+      _scrollToBottom();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    ApisChat.socketChannel.stream.asBroadcastStream();
+    ApisChat.listenMessage(messageList: chatController.messageList);
+    _unFocusTextField();
+    currentFocus.dispose();
+  }
+
+  void _unFocusTextField() {
+    if (!currentScopeNode.hasPrimaryFocus &&
+        currentScopeNode.focusedChild != null) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -122,9 +158,7 @@ class _ChatBoxState extends State<ChatBox> {
           title: Row(
             children: [
               const CircleAvatar(
-                // backgroundImage: NetworkImage(widget.imageUrl),
                 radius: 20,
-                // backgroundImage: NetworkImage(widget.imageUrl),
                 child: Icon(Icons.account_circle),
               ),
               const SizedBox(width: 10),
@@ -134,31 +168,20 @@ class _ChatBoxState extends State<ChatBox> {
         ),
         body: Column(
           children: [
-            // Danh sách tin nhắn
             Expanded(
               child: StreamBuilder(
-                // stream to listen
-                // stream: chatController.messageList.stream,
-                // stream: ApisChat.socketChannel.stream,
                 stream: ApisChat.listenMessage(
                         messageList: chatController.messageList)
                     ?.asBroadcastStream(),
                 initialData: chatController.messageList,
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  // waiting for data
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
-                  // if has no data
                   if (!snapshot.hasData) {
-                    return const Text("Have no messages");
+                    return const Text("No messages");
                   }
-                  // if has data
-                  // Message message = Message.fromJson(jsonDecode(snapshot.data));
-                  // chatController.messageList.add(message);
                   return Obx(
                     () => ListView.builder(
                       controller: _scrollController,
@@ -239,19 +262,7 @@ class _ChatBoxState extends State<ChatBox> {
               ),
             ),
             SizedBox(height: Get.height * 0.001),
-            // Khung nhập và nút gửi
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.image_outlined),
-                    onPressed: () async {
-                      // pick (image + video)
-                      await pickMedia();
-                    },
-                  ),
-                  Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
