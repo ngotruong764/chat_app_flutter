@@ -113,40 +113,40 @@ class _ChatBoxState extends State<ChatBox> {
   }
 
  
-  @override
-  void initState() {
-    super.initState();
-    chatController.fetchMessage(
-        messagePageNumber, messagePageSize, widget.conversationId);
-    currentFocus.addListener(() {
-      if (currentFocus.hasFocus) {
-        Future.delayed(
-          const Duration(milliseconds: 500),
-          () => _scrollToBottom(),
-        );
-      }
-    });
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      currentScopeNode = FocusScope.of(context);
-      _scrollToBottom();
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    ApisChat.socketChannel.stream.asBroadcastStream();
-    ApisChat.listenMessage(messageList: chatController.messageList);
-    _unFocusTextField();
-    currentFocus.dispose();
-  }
-
-  void _unFocusTextField() {
-    if (!currentScopeNode.hasPrimaryFocus &&
-        currentScopeNode.focusedChild != null) {
-      FocusManager.instance.primaryFocus?.unfocus();
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   chatController.fetchMessage(
+  //       messagePageNumber, messagePageSize, widget.conversationId);
+  //   currentFocus.addListener(() {
+  //     if (currentFocus.hasFocus) {
+  //       Future.delayed(
+  //         const Duration(milliseconds: 500),
+  //         () => _scrollToBottom(),
+  //       );
+  //     }
+  //   });
+  //   SchedulerBinding.instance.addPostFrameCallback((_) {
+  //     currentScopeNode = FocusScope.of(context);
+  //     _scrollToBottom();
+  //   });
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   ApisChat.socketChannel.stream.asBroadcastStream();
+  //   ApisChat.listenMessage(messageList: chatController.messageList);
+  //   _unFocusTextField();
+  //   currentFocus.dispose();
+  // }
+  //
+  // void _unFocusTextField() {
+  //   if (!currentScopeNode.hasPrimaryFocus &&
+  //       currentScopeNode.focusedChild != null) {
+  //     FocusManager.instance.primaryFocus?.unfocus();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +171,7 @@ class _ChatBoxState extends State<ChatBox> {
             Expanded(
               child: StreamBuilder(
                 stream: ApisChat.listenMessage(
-                        messageList: chatController.messageList)
+                    messageList: chatController.messageList)
                     ?.asBroadcastStream(),
                 initialData: chatController.messageList,
                 builder:
@@ -183,7 +183,7 @@ class _ChatBoxState extends State<ChatBox> {
                     return const Text("No messages");
                   }
                   return Obx(
-                    () => ListView.builder(
+                        () => ListView.builder(
                       controller: _scrollController,
                       itemCount: chatController.messageList.length,
                       itemBuilder: (context, index) {
@@ -238,7 +238,7 @@ class _ChatBoxState extends State<ChatBox> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   border:
-                                      Border.all(color: Colors.grey.shade300),
+                                  Border.all(color: Colors.grey.shade300),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
