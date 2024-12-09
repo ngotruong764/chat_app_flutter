@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../model/conversation.dart';
 import '../controller/chat_controller.dart';
 
+
 class ChatBox extends StatefulWidget {
   const ChatBox({
     super.key,
@@ -38,52 +39,42 @@ class _ChatBoxState extends State<ChatBox> {
   final FocusNode currentFocus = FocusNode();
   late final FocusScopeNode currentScopeNode;
   final _picker = ImagePicker();
-  List<XFile> medias = [];
-  //
+  List<XFile> medias = []; // Dùng để lưu ảnh đã chọn nhưng chưa gửi
   int messagePageSize = 40;
   int messagePageNumber = 0;
 
   void _scrollToBottom() {
-    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.fastOutSlowIn);
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.fastOutSlowIn,
+    );
   }
 
-  /*
-  * Un focus TextField
-  */
-
-  void _unFocusTextField() {
-    if (!currentScopeNode.hasPrimaryFocus &&
-        currentScopeNode.focusedChild != null) {
-      FocusManager.instance.primaryFocus?.unfocus();
-    }
-  }
-
-  /*
-  * To open keyboard
-  */
+  // Open keyboard
   void openKeyboard() {
     FocusScope.of(context).requestFocus(currentFocus);
     _scrollToBottom();
   }
 
+  Future<void> pickMedia() async {
+    medias.clear();
+    medias = await _picker.pickMultipleMedia();
+    if (medias.isNotEmpty) {
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    // fetch messages
-    chatController
-        .fetchMessage(messagePageNumber, messagePageSize, widget.conversationId)
-        .then(
-          (_) => _scrollToBottom(),
-        );
-    // add listener to focus node
+    chatController.fetchMessage(
+        messagePageNumber, messagePageSize, widget.conversationId);
     currentFocus.addListener(() {
-      // currentScopeNode = FocusScope.of(context);
       if (currentFocus.hasFocus) {
         Future.delayed(
           const Duration(milliseconds: 500),
-          () => _scrollToBottom(),
+              () => _scrollToBottom(),
         );
       }
     });
@@ -98,55 +89,17 @@ class _ChatBoxState extends State<ChatBox> {
     super.dispose();
     ApisChat.socketChannel.stream.asBroadcastStream();
     ApisChat.listenMessage(messageList: chatController.messageList);
-    // un focus text field
     _unFocusTextField();
     currentFocus.dispose();
-    // currentScopeNode.dispose();
-    log('dispose ChatBox');
   }
 
-  Future<void> pickMedia() async {
-    // clear the list before get medias
-    medias.clear();
-    medias = await _picker.pickMultipleMedia();
-    Helper.encodeImgToBase64(medias);
+  void _unFocusTextField() {
+    if (!currentScopeNode.hasPrimaryFocus &&
+        currentScopeNode.focusedChild != null) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
   }
 
- 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   chatController.fetchMessage(
-  //       messagePageNumber, messagePageSize, widget.conversationId);
-  //   currentFocus.addListener(() {
-  //     if (currentFocus.hasFocus) {
-  //       Future.delayed(
-  //         const Duration(milliseconds: 500),
-  //         () => _scrollToBottom(),
-  //       );
-  //     }
-  //   });
-  //   SchedulerBinding.instance.addPostFrameCallback((_) {
-  //     currentScopeNode = FocusScope.of(context);
-  //     _scrollToBottom();
-  //   });
-  // }
-  //
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   ApisChat.socketChannel.stream.asBroadcastStream();
-  //   ApisChat.listenMessage(messageList: chatController.messageList);
-  //   _unFocusTextField();
-  //   currentFocus.dispose();
-  // }
-  //
-  // void _unFocusTextField() {
-  //   if (!currentScopeNode.hasPrimaryFocus &&
-  //       currentScopeNode.focusedChild != null) {
-  //     FocusManager.instance.primaryFocus?.unfocus();
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
