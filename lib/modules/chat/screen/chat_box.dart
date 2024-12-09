@@ -113,40 +113,40 @@ class _ChatBoxState extends State<ChatBox> {
   }
 
  
-  @override
-  void initState() {
-    super.initState();
-    chatController.fetchMessage(
-        messagePageNumber, messagePageSize, widget.conversationId);
-    currentFocus.addListener(() {
-      if (currentFocus.hasFocus) {
-        Future.delayed(
-          const Duration(milliseconds: 500),
-          () => _scrollToBottom(),
-        );
-      }
-    });
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      currentScopeNode = FocusScope.of(context);
-      _scrollToBottom();
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   chatController.fetchMessage(
+  //       messagePageNumber, messagePageSize, widget.conversationId);
+  //   currentFocus.addListener(() {
+  //     if (currentFocus.hasFocus) {
+  //       Future.delayed(
+  //         const Duration(milliseconds: 500),
+  //         () => _scrollToBottom(),
+  //       );
+  //     }
+  //   });
+  //   SchedulerBinding.instance.addPostFrameCallback((_) {
+  //     currentScopeNode = FocusScope.of(context);
+  //     _scrollToBottom();
+  //   });
+  // }
 
-  @override
-  void dispose() {
-    super.dispose();
-    ApisChat.socketChannel.stream.asBroadcastStream();
-    ApisChat.listenMessage(messageList: chatController.messageList);
-    _unFocusTextField();
-    currentFocus.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   ApisChat.socketChannel.stream.asBroadcastStream();
+  //   ApisChat.listenMessage(messageList: chatController.messageList);
+  //   _unFocusTextField();
+  //   currentFocus.dispose();
+  // }
 
-  void _unFocusTextField() {
-    if (!currentScopeNode.hasPrimaryFocus &&
-        currentScopeNode.focusedChild != null) {
-      FocusManager.instance.primaryFocus?.unfocus();
-    }
-  }
+  // void _unFocusTextField() {
+  //   if (!currentScopeNode.hasPrimaryFocus &&
+  //       currentScopeNode.focusedChild != null) {
+  //     FocusManager.instance.primaryFocus?.unfocus();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
