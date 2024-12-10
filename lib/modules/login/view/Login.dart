@@ -46,13 +46,10 @@ class _LoginState extends State<Login> {
   */
   void login(String accountName, String password) async {
     // create UserInfo object
-    UserInfo userInfo = UserInfo(
-      username: null,
-      email: accountName,
-      password: password
-    );
+    UserInfo userInfo =
+        UserInfo(username: null, email: accountName, password: password);
     UserInfo? user = await loginController.login(userInfo);
-    if(user != null){
+    if (user != null) {
       // redirect to application
       Get.offAllNamed(AppRoutes.APPLICATION);
     }
@@ -77,12 +74,23 @@ class _LoginState extends State<Login> {
           child: Column(
             children: [
               Container(
+                margin: const EdgeInsets.only(top: 150),
+
+                child: Image.asset(
+                  'assets/icon_launcher/ic_launcher.9.png',
+                  height: 130,
+                  width: 130,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
                 child: Align(
                   alignment: Alignment.center,
                   child: Container(
                     width: 400,
                     height: 50,
-                    margin: const EdgeInsets.only(top: 420),
+                    margin: const EdgeInsets.only(top: 150),
                     child: TextField(
                       controller: accountNameCtl,
                       decoration: InputDecoration(
@@ -131,43 +139,9 @@ class _LoginState extends State<Login> {
                   ],
                 ),
               ),
-
               const SizedBox(
                 height: 35,
               ),
-
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,  // Căn giữa hàng
-              //
-              //   children: [
-              //   Container(
-              //     alignment: Alignment.center,
-              //     child: Image.asset('assets/images/phone.png',
-              //     height: 30,
-              //     fit: BoxFit.contain ,),
-              //   ),
-              //   const SizedBox(width: 25,),
-              //
-              //   Container(
-              //     alignment: Alignment.center,
-              //     child: Image.asset('assets/images/google.png',
-              //       width: 30,
-              //       height: 30,
-              //       fit: BoxFit.contain ,),
-              //   ),
-              //   const SizedBox(width: 25,),
-              //
-              //   Container(
-              //     alignment: Alignment.center,
-              //     child: Image.asset('assets/images/facebook.png',
-              //       width: 30,
-              //       height: 30,
-              //       fit: BoxFit.contain ,),
-              //   ),
-              //
-              // ],
-              // ),
-
               const SizedBox(
                 height: 30,
               ),
@@ -175,12 +149,28 @@ class _LoginState extends State<Login> {
                 width: 300,
                 height: 50,
                 child: ElevatedButton(
-                  // onPressed: directToApplication,
-                  onPressed: () {
-                    login(accountNameCtl.text, passwordCtl.text);
-                  },
-                  child: const Text('Login'),
-                ),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        )),
+                    onPressed: () {
+                      login(accountNameCtl.text, passwordCtl.text);
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.login, size: 20, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
+                          'Login',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
+                        ),
+                      ],
+                    )),
               ),
               const SizedBox(
                 height: 10,
@@ -189,9 +179,31 @@ class _LoginState extends State<Login> {
                 width: 300,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: getCreateAccount,
-                  child: const Text("Create new accout"),
-                ),
+                    onPressed: getCreateAccount,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person_add,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          "Create new accout",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
+                        ),
+                      ],
+                    )),
               )
             ],
           ),
