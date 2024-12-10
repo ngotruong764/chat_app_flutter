@@ -13,6 +13,7 @@ class UserInfo {
   String? sex;
   bool? status;
   String? profilePicture;
+  String? profilePicturePath;
   DateTime? createAt;
   DateTime? updateAt;
   String? role;
@@ -34,6 +35,7 @@ class UserInfo {
       this.sex,
       this.status,
       this.profilePicture,
+      this.profilePicturePath,
       this.createAt,
       this.updateAt,
       this.role,
@@ -58,6 +60,7 @@ class UserInfo {
       sex: json['sex'],
       status: json['status'],
       profilePicture: json['profilePicture'],
+      profilePicturePath: json['profilePicturePath'],
       createAt: json['createAt'] != null ? DateTime.parse(json['createAt']) : null,
       updateAt:
           json['updateAt'] != null ? DateTime.parse(json['updateAt']) : null,
@@ -82,6 +85,7 @@ class UserInfo {
       'sex': sex,
       'status': status,
       'profilePicture': profilePicture,
+      'profilePicturePath': profilePicturePath,
       'createAt': createAt?.toIso8601String(),
       'updateAt': updateAt?.toIso8601String(),
       'role': role?.toString(),

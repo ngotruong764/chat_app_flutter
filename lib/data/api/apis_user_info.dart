@@ -75,6 +75,7 @@ abstract class ApisUserinfo {
     try {
       // Get device token
       await PushNotificationsService.getDeviceToken();
+      // Constants.DEVICE_TOKEN = '';
       userInfo.deviceToken = Constants.DEVICE_TOKEN;
       //
       final response = await ApisBase.dio.post(
@@ -146,6 +147,10 @@ abstract class ApisUserinfo {
         print(response.data);
         UserInfo userInfo = UserInfo.fromJson(response.data['userInfo']);
         ApisBase.currentUser = userInfo;
+        // convert img string to bytes
+        if(ApisBase.currentUser.profilePicture != null){
+
+        }
         return userInfo;
       }
       return null;

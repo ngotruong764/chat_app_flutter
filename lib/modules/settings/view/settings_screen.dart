@@ -3,15 +3,15 @@ import 'dart:typed_data';
 import 'package:chat_app_flutter/constants/constants.dart';
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/model/user_info.dart';
-import 'package:chat_app_flutter/modules/Settings/controller/settings_controller.dart';
+import 'package:chat_app_flutter/modules/settings/controller/settings_controller.dart';
 import 'package:chat_app_flutter/services/push_notifications_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../data/api/apis_user_info.dart';
-import '../../routes/app_routes.dart';
-import 'Profile.dart';
+import '../../../data/api/apis_user_info.dart';
+import '../../../routes/app_routes.dart';
+import 'user_profile_screen.dart';
 
 
 
@@ -130,7 +130,7 @@ class _SettingsPageState extends State<SettingsPage>{
                 child: ElevatedButton(
                   onPressed: _navigateToUserInfo,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(100, 66, 165, 255),
+                    backgroundColor: Colors.blue,
                     side: BorderSide.none,
                     shape: const StadiumBorder(),
                     shadowColor: Colors.transparent,
@@ -172,38 +172,48 @@ class _SettingsPageState extends State<SettingsPage>{
   *   else display default icon
   */
   Widget _displayUserAvatar() {
-    return Center(
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          if (Constants.USER_AVATAR.isNotEmpty) ...[
-            Image.memory(
-              Uint8List.fromList(Constants.USER_AVATAR),
-              width: 110,
-              height: 110,
-              fit: BoxFit.cover,
-            ),
-          ] else ...[
-            const Icon(
-              Icons.account_circle_rounded,
-              size: 100,
+    return Obx(
+            () => Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            if (Constants.USER_AVATAR.isNotEmpty) ...[
+              Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                ),
+                child: Image.memory(
+                  Uint8List.fromList(Constants.USER_AVATAR),
+                  width: 110,
+                  height: 110,
+                  fit: BoxFit.cover,
+                ),
+              )
+            ] else ...[
+              const Icon(
+                Icons.account_circle_rounded,
+                size: 110,
+                color: Colors.grey,
+              ),
+            ],
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  color: Colors.blue,
+                ),
+                child: const Icon(
+                  Icons.camera_alt_outlined,
+                  size: 20,
+                ),
+              ),
             ),
           ],
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.blue,
-              ),
-              child: const Icon(Icons.edit,),
-            ),
-          ),
-        ],
-      ),
+        ),
     );
   }
 
@@ -212,7 +222,7 @@ class _SettingsPageState extends State<SettingsPage>{
   */
   void _navigateToUserInfo() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => UserProfileScreen()));
+        context, MaterialPageRoute(builder: (context) => const UserProfileScreen()));
   }
 }
 

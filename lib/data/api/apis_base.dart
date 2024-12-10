@@ -9,9 +9,11 @@ abstract class ApisBase{
   // local - Android
   static const String baseURL = 'http://10.0.2.2:8081/talkie/api/v1';
   static const String socketBaseUrl = 'ws://10.0.2.2:8081/talkie/api/v1/chat';
+
   // local - IOS
   // static const String baseURL = 'http://localhost:8081/talkie/api/v1';
   // static const String socketBaseUrl = 'ws://localhost:8081/talkie/api/v1/chat';
+
   // server
   // static const String baseURL = 'http://52.221.210.229:8080/talkie/api/v1';
   // static const String socketBaseUrl = 'ws://52.221.210.229:8080/talkie/api/v1/chat';

@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,14 +31,14 @@ class ApplicationController extends GetxController{
         icon: Icon(Icons.chat),
         label: 'Chats',
       ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.people),
-        label: 'Contacts',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.settings),
-        label: 'Settings',
-      ),
+      // BottomNavigationBarItem(
+      //   icon: Icon(Icons.people),
+      //   label: 'Contacts',
+      // ),
+      // BottomNavigationBarItem(
+      //   icon: Icon(Icons.settings),
+      //   label: 'Settings',
+      // ),
       BottomNavigationBarItem(
         icon: Icon(Icons.settings),
         label: 'Settings',

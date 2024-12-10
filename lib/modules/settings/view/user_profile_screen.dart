@@ -1,267 +1,330 @@
 import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:chat_app_flutter/data/api/apis_base.dart';
+import 'package:chat_app_flutter/helper/helper.dart';
+import 'package:chat_app_flutter/model/user_info.dart';
+import 'package:chat_app_flutter/modules/settings/controller/settings_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
-class User {
-  final String avatar;
-  final String username;
-  final String email;
-  final String firstName;
-  final String lastName;
-  final String sex;
-  final String phoneNumber;
-
-
-  User({
-    required this.avatar,
-    required this.username,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.sex,
-    required this.phoneNumber,
-
-
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      avatar: json['avatar'],
-      username: json['username'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      sex: json['sex'],
-      phoneNumber: json['phone_number'],
-      email: json['email'],
-    );
-  }
-}
-
-Future<User> fetchUserData() async {
-  await Future.delayed(Duration(seconds: 2));
-  return User(
-    avatar: 'https://example.com/avatar.jpg',
-    username: 'huy_tran',
-    firstName: 'Tran',
-    lastName: 'Huy',
-    email: 'tranngochuy2611@gmail.com',
-    sex: 'Male',
-    phoneNumber: '0123456789',
-
-  );
-}
+import '../../../constants/constants.dart';
 
 class UserProfileScreen extends StatefulWidget {
+  const UserProfileScreen({super.key});
+
   @override
-  _UserProfileScreenState createState() => _UserProfileScreenState();
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  late TextEditingController _usernameController;
-  late TextEditingController _firstNameController;
-  late TextEditingController _lastNameController;
-  late TextEditingController _emailController;
-  late TextEditingController _sexController;
-  late TextEditingController _phoneNumberController;
+  final UserInfo currentUser = ApisBase.currentUser;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _sexController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  RxList<int> userAvatar = <int>[].obs;
+  final SettingsController settingsController = Get.put(SettingsController());
+  late String _currentGender;
+  bool isUpdated = false;
+  String profilePicturePath = '';
 
 
   @override
   void initState() {
     super.initState();
-    _usernameController = TextEditingController();
-    _firstNameController = TextEditingController();
-    _lastNameController = TextEditingController();
-    _emailController = TextEditingController();
-    _sexController = TextEditingController();
-    _phoneNumberController = TextEditingController();
-
-    _loadUserData();
-  }
-
-  Future<void> _loadUserData() async {
-    try {
-      User user = await fetchUserData();
-      _usernameController.text = user.username;
-      _firstNameController.text = user.firstName;
-      _lastNameController.text = user.lastName;
-      _sexController.text = user.sex;
-      _emailController.text = user.email;
-      _phoneNumberController.text = user.phoneNumber;
-      setState(() {});
-    } catch (e) {
-      // Xử lý lỗi nếu API call thất bại
-      print('Error: $e');
-    }
+    userAvatar.value = Constants.USER_AVATAR;
+    _firstNameController.text = currentUser.firstname ?? '';
+    _lastNameController.text = currentUser.lastname ?? '';
+    _usernameController.text = currentUser.username ?? '';
+    _emailController.text = currentUser.email ?? '';
+    _phoneNumberController.text = currentUser.phoneNumber ?? '';
+    _currentGender = (currentUser.sex != null ? currentUser.sex!.capitalizeFirst :  'Male')!;
   }
 
   @override
   void dispose() {
+    super.dispose();
     _usernameController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
     _sexController.dispose();
     _phoneNumberController.dispose();
-    super.dispose();
+    settingsController.dispose();
+  }
+
+  /*
+  * Method to display user avatar
+  *   if user has an avatar --> display avatar
+  *   else display default icon
+  */
+  Widget _displayUserAvatar() {
+    return GestureDetector(
+      onTap: _selectImage,
+      child: Obx(
+        () => Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            if (userAvatar.isNotEmpty) ...[
+                Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(50)),
+                  ),
+                  child: Image.memory(
+                    Uint8List.fromList(userAvatar),
+                    width: 110,
+                    height: 110,
+                    fit: BoxFit.cover,
+                  ),
+                )
+            ] else ...[
+                const Icon(
+                  Icons.account_circle_rounded,
+                  size: 110,
+                  color: Colors.grey,
+                ),
+            ],
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  color: Colors.blue,
+                ),
+                child: const Icon(
+                  Icons.camera_alt_outlined,
+                  size: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _selectImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    // convert img to bytes
+    if(image != null){
+      userAvatar.value = await Helper.encodeAnImgToBytes(image);
+      // set profile picture path
+      profilePicturePath = image.path;
+      List<String> pathList = profilePicturePath.split('/');
+      pathList.last = '${pathList.last.split('.')[0]}-${DateTime.now().microsecondsSinceEpoch}.${pathList.last.split('.')[1]}';
+      profilePicturePath = pathList.last;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final height = Get.height;
+    final width = Get.width;
     return Scaffold(
-      appBar: AppBar(title: Text('User Profile')),
-      body: FutureBuilder<User>(
-        future: fetchUserData(),
-        // Không cần `_getUserData()` nếu không sử dụng State
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            User user = snapshot.data!;
-
-            return Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: AppBar(
+          // leading: ,
+          title: const Text('User Profile')
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
+                  // Avatar
+                  _displayUserAvatar(),
+                  SizedBox(width:width * 0.025),
+                  // first name + last name
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Avatar
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(user.avatar),
+                      Text(
+                        '${currentUser.firstname} ${currentUser.lastname}',
+                        style: const TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(width: 20),
-                      Column(
-                        children: [
-                          Text(
-                            '${user.firstName} ${user.lastName}',
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            '@${user.username}',
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-
-                  SizedBox(height: 25),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _firstNameController,
-                          decoration: InputDecoration(
-                            label: Text("First name"),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 22,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: _lastNameController,
-                          decoration: InputDecoration(
-                            label: Text('Last name'),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                        ),
+                      // user name
+                      Text(
+                        '@${currentUser.username}',
+                        style: const TextStyle(fontSize: 18, color: Colors.grey),
                       ),
                     ],
-                  ),
-
-                  SizedBox(height: 20),
-
-                  Container(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: TextField(
-                        controller: _sexController,
-                        decoration: InputDecoration(
-                          labelText: 'Sex', // Hiển thị label
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 20),
-
-                  Container(
-                    child: Align(
-                      alignment: Alignment.center,
-                        child: TextField(
-                          controller: _usernameController,
-                          decoration: InputDecoration(
-                            labelText: 'User Name', // Hiển thị label
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                        ),
-                      ),
-                    // ),
-                  ),
-
-                  SizedBox(height: 20),
-
-                  Container(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: TextField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: 'Email', // Hiển thị label
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-
-
-
-
-                  Container(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: TextField(
-                        controller: _phoneNumberController,
-                        decoration: InputDecoration(
-                          labelText: 'Phone Number', // Hiển thị label
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-
-                  // User info
+                  )
                 ],
               ),
-            );
-          } else {
-            return Center(child: Text('No data available'));
-          }
-        },
-      ),
+              SizedBox(height: height * 0.025),
+              Row(
+                children: [
+                  // first name
+                  Expanded(
+                    child: TextField(
+                      controller: _firstNameController,
+                      decoration: InputDecoration(
+                        label: const Text("First name"),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: width * 0.04,
+                  ),
+                  // last name
+                  Expanded(
+                    child: TextField(
+                      controller: _lastNameController,
+                      decoration: InputDecoration(
+                        label: const Text('Last name'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: height * 0.02),
+              Container(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: TextField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: 'User Name', // Hiển thị label
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                ),
+                // ),
+              ),
+              SizedBox(height: height * 0.02),
+              Container(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email', // Hiển thị label
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: height * 0.02),
+              Container(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: TextField(
+                    controller: _phoneNumberController,
+                    decoration: InputDecoration(
+                      labelText: 'Phone Number', // Hiển thị label
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: height * 0.02),
+              Row(
+                // mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  addRadioButton(0, settingsController.gender[0]),
+                  addRadioButton(1, settingsController.gender[1]),
+                  addRadioButton(2, settingsController.gender[2]),
+                ],
+              ),
+              SizedBox(height: height * 0.025),
+              Container(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: _updateUserInfo,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    side: BorderSide.none,
+                    shape: const StadiumBorder(),
+                    shadowColor: Colors.transparent,
+                    elevation: 0.0,
+                  ),
+                  child: const Text(
+                    'Save',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
     );
+  }
+
+  Widget addRadioButton(int index, String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Radio(
+          value: settingsController.gender[index],
+          groupValue: _currentGender,
+          onChanged: (gender) {
+            setState(() {
+              _currentGender = gender!;
+            });
+          },
+        ),
+        Text(title),
+      ],
+    );
+  }
+
+  /*
+  * Method to update User info
+  */
+  void _updateUserInfo() async {
+    // get current user info
+    UserInfo userInfo = ApisBase.currentUser;
+
+    // get params
+    userInfo.firstname = _firstNameController.text.trim();
+    userInfo.lastname = _lastNameController.text.trim();
+    userInfo.username = _usernameController.text.trim();
+    userInfo.email = _emailController.text.trim();
+    userInfo.phoneNumber = _phoneNumberController.text.trim();
+    userInfo.sex = _currentGender.toUpperCase();
+    userInfo.profilePicturePath = profilePicturePath;
+    if(userAvatar.isNotEmpty){
+      userInfo.profilePicture = base64Encode(userAvatar);
+    }
+
+    // update user
+    UserInfo? updatedUser =  await settingsController.updateUser(userInfo);
+
+    // update img
+    if(updatedUser != null){
+      Constants.USER_AVATAR.value = userAvatar;
+      print("is updated");
+    }
   }
 }
 

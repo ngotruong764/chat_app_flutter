@@ -26,6 +26,11 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  /*
+  * Searching people
+  */
+
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
