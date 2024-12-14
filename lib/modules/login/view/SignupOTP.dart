@@ -41,76 +41,91 @@ class _VerificationEmailState extends State<SignUpOTP>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus(); // Ẩn bàn phím
-        },
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                  alignment: Alignment.centerLeft,
-                  margin: const EdgeInsets.fromLTRB(5, 40, 0, 0), // Thêm padding
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new), // Thay thế icon bằng bất kỳ biểu tượng nào
-                    color: Colors.black, // Màu của biểu tượng
-                    iconSize: 30.0, // Kích thước biểu tượng
-                    onPressed: () {
-                      // Hành động khi nút được bấm
-                      Get.back();
-                    },
-                  )
-              ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
 
-              Container(
-                margin: const EdgeInsets.only(top: 0),
-                alignment: Alignment.center,
-                child: const Text(
-                  'Verification email',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w700,
+          image: DecorationImage(
+            image: AssetImage('assets/images/background_login.png'), // Đường dẫn ảnh
+            fit: BoxFit.cover, // Căn chỉnh ảnh (cover, contain, fill...)
+          ),
+        ),
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus(); // Ẩn bàn phím
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                    alignment: Alignment.centerLeft,
+                    margin: const EdgeInsets.fromLTRB(5, 40, 0, 0), // Thêm padding
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new), // Thay thế icon bằng bất kỳ biểu tượng nào
+                      color: Colors.black, // Màu của biểu tượng
+                      iconSize: 30.0, // Kích thước biểu tượng
+                      onPressed: () {
+                        // Hành động khi nút được bấm
+                        Get.back();
+                      },
+                    )
+                ),
+
+                const SizedBox(
+                  height: 200,
+                ),
+
+                Container(
+                  margin: const EdgeInsets.only(top: 0),
+                  alignment: Alignment.center,
+                  // child: const Text(
+                  //   'Verification email',
+                  //   style: TextStyle(
+                  //     fontSize: 30,
+                  //     fontWeight: FontWeight.w700,
+                  //   ),
+                  // ),
+                ),
+                const SizedBox(
+                  height: 70,
+                ),
+                SizedBox(
+                  width: 325,
+                  height: 50,
+                  child: TextField(
+                    controller: verificationCtl,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      border:  OutlineInputBorder(),
+                      // hintText: '$code',
+                      hintText: 'Verification code',
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 70,
-              ),
-              SizedBox(
-                width: 325,
-                height: 50,
-                child: TextField(
-                  controller: verificationCtl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    border:  OutlineInputBorder(),
-                    // hintText: '$code',
-                    hintText: 'Verification code',
+                const SizedBox(
+                  height: 230,
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    // get user
+                    UserInfo userInfo = ApisBase.currentUser;
+                    userInfo.verificationCode = verificationCtl.text;
+                    await loginController.confirmAccount(userInfo);
+                    //
+                    getInforUser();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(fontSize: 20),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 230,
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  // get user
-                  UserInfo userInfo = ApisBase.currentUser;
-                  userInfo.verificationCode = verificationCtl.text;
-                  await loginController.confirmAccount(userInfo);
-                  //
-                  getInforUser();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text(
-                  'Next',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
