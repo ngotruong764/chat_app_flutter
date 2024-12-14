@@ -31,6 +31,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   late String _currentGender;
   bool isUpdated = false;
   String profilePicturePath = '';
+  RxBool isLoading = false.obs;
 
 
   @override
@@ -323,8 +324,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     // update img
     if(updatedUser != null){
       Constants.USER_AVATAR.value = userAvatar;
-      print("is updated");
     }
   }
+
+
 }
 
