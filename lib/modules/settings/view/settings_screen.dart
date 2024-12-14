@@ -37,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage>{
   void dispose() {
     super.dispose();
     // dispose instance of SettingsController
-    settingsController.dispose();
+    // settingsController.dispose();
   }
 
 

@@ -11,6 +11,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 abstract class ApisChat {
   static late final WebSocketChannel socketChannel;
+  static late final Stream socketChannelStreamBroadcast;
   /*
   * Connect web socket
   */
@@ -30,9 +31,9 @@ abstract class ApisChat {
       await channel.ready;
       socketChannel = channel;
       //  broad cast channel
-      socketChannel.stream.asBroadcastStream();
+      socketChannelStreamBroadcast = socketChannel.stream.asBroadcastStream();
       //
-      socketChannel.closeCode;
+      // socketChannel.closeCode;
       log("Connected");
     } catch(e){
       log('Error connect socket: $e');
@@ -61,7 +62,8 @@ abstract class ApisChat {
   }) {
     try {
       // listen message
-      socketChannel.stream.listen((onData) {
+      // socketChannel.stream.listen((onData) {
+      socketChannelStreamBroadcast.listen((onData) {
         // convert String to message
         Message message = Message.fromJson(jsonDecode(onData));
         // add message to the list
@@ -82,7 +84,8 @@ abstract class ApisChat {
   }) {
     try {
       // listen message
-      socketChannel.stream.listen(
+      // Stream socketStreamBroadcast = socketChannel.stream.asBroadcastStream();
+      socketChannelStreamBroadcast.listen(
         (onData) {
           // convert String to message
           Message message = Message.fromJson(jsonDecode(onData));
@@ -101,7 +104,7 @@ abstract class ApisChat {
           }
         },
       );
-      return conversationList.stream;
+      return conversationList.stream.asBroadcastStream();
     } catch (e) {
       log('Error listen message in chat: $e');
     }

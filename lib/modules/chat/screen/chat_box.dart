@@ -1,9 +1,7 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/data/api/apis_chat.dart';
-import 'package:chat_app_flutter/helper/helper.dart';
 import 'package:chat_app_flutter/model/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -42,6 +40,8 @@ class _ChatBoxState extends State<ChatBox> {
   List<XFile> medias = []; // Dùng để lưu ảnh đã chọn nhưng chưa gửi
   int messagePageSize = 40;
   int messagePageNumber = 0;
+  // declare stream to listen to message
+  late final Stream? messageStream;
 
   void _scrollToBottom() {
     _scrollController.animateTo(
@@ -68,27 +68,34 @@ class _ChatBoxState extends State<ChatBox> {
   @override
   void initState() {
     super.initState();
-    chatController.fetchMessage(
-        messagePageNumber, messagePageSize, widget.conversationId);
+    // after loading message --> go to the bottom to get the newest message
+    chatController
+        .fetchMessage(messagePageNumber, messagePageSize, widget.conversationId)
+        .then(
+          (value) => Future.delayed(
+            const Duration(milliseconds: 500),
+            () => _scrollToBottom(),
+          ),
+        );
+
+    // when open keyboard --> go to the bottom of the chat box
     currentFocus.addListener(() {
       if (currentFocus.hasFocus) {
         Future.delayed(
           const Duration(milliseconds: 500),
-              () => _scrollToBottom(),
+          () => _scrollToBottom(),
         );
       }
     });
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      currentScopeNode = FocusScope.of(context);
-      _scrollToBottom();
-    });
+
+    // get the stream of message
+    messageStream = ApisChat.listenMessage(
+        messageList: chatController.messageList);
   }
 
   @override
   void dispose() {
     super.dispose();
-    ApisChat.socketChannel.stream.asBroadcastStream();
-    ApisChat.listenMessage(messageList: chatController.messageList);
     _unFocusTextField();
     currentFocus.dispose();
   }
@@ -123,9 +130,7 @@ class _ChatBoxState extends State<ChatBox> {
           children: [
             Expanded(
               child: StreamBuilder(
-                stream: ApisChat.listenMessage(
-                    messageList: chatController.messageList)
-                    ?.asBroadcastStream(),
+                stream: messageStream,
                 initialData: chatController.messageList,
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -262,12 +267,12 @@ class _ChatBoxState extends State<ChatBox> {
                                                 index); // Xóa ảnh khỏi danh sách
                                           });
                                         },
-                                        child: CircleAvatar(
+                                        child: const CircleAvatar(
                                           radius: 12,
                                           // Kích thước nút xóa
                                           backgroundColor: Colors.red,
                                           // Màu nền nút xóa
-                                          child: const Icon(
+                                          child: Icon(
                                             Icons.close, // Icon xóa
                                             color: Colors.white, // Màu icon
                                             size: 16, // Kích thước icon
@@ -327,11 +332,11 @@ class _ChatBoxState extends State<ChatBox> {
                           messageController.clear();
                         }
                       }
-
-                      // Sau khi gửi xong, cuộn xuống dưới và xóa nội dung tin nhắn
+                      // scroll to bottom after sending message
                       SchedulerBinding.instance.addPostFrameCallback((_) {
                         _scrollToBottom();
                       });
+
                       updateChatScreen();
                       messageController.clear();
                       medias.clear();
