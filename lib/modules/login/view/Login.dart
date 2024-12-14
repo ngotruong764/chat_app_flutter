@@ -66,31 +66,37 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus(); // Ẩn bàn phím
-        },
-        child: SingleChildScrollView(
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/Talkie.png'), // Đường dẫn ảnh
+            fit: BoxFit.cover, // Căn chỉnh ảnh (cover, contain, fill...)
+          ),
+        ),
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus(); // Ẩn bàn phím
+          },
           child: Column(
             children: [
-              Container(
-                margin: const EdgeInsets.only(top: 150),
-
-                child: Image.asset(
-                  'assets/icon_launcher/ic_launcher.9.png',
-                  height: 130,
-                  width: 130,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(height: 20),
+              // Container(
+              //   margin: const EdgeInsets.only(top: 150),
+              //
+              //   child: Image.asset(
+              //     'assets/icon_launcher/ic_launcher.9.png',
+              //     height: 130,
+              //     width: 130,
+              //     fit: BoxFit.cover,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
               Container(
                 child: Align(
                   alignment: Alignment.center,
                   child: Container(
                     width: 400,
                     height: 50,
-                    margin: const EdgeInsets.only(top: 150),
+                    margin: const EdgeInsets.only(top: 400),
                     child: TextField(
                       controller: accountNameCtl,
                       decoration: InputDecoration(

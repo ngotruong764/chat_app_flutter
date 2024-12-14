@@ -41,119 +41,150 @@ class _Signup1State extends State<CreateAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus(); // Ẩn bàn phím
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 80),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    "Your information",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w700,
-                    ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/background_login.png'), // Đường dẫn ảnh
+            fit: BoxFit.cover, // Căn chỉnh ảnh (cover, contain, fill...)
+          ),
+        ),
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 80),
+                    alignment: Alignment.center,
+                    // child: const Text(
+                    //   "Your information",
+                    //   style: TextStyle(
+                    //     fontSize: 30,
+                    //     fontWeight: FontWeight.w700,
+                    //   ),
+                    // ),
                   ),
-                ),
-                // Padding(
-                //   padding: const EdgeInsets.only(top: 80),
-                //   child: const Text(
-                //     "Your information",
-                //     style: TextStyle(
-                //       fontSize: 30,
-                //       fontWeight: FontWeight.w700,
-                //     ),
-                //   ),
-                // ),
-            
-                const SizedBox(height: 130),
-            
-                SizedBox(
-                  width: 325,
-                  height: 50,
-                  child: TextField(
-                    controller: usernameController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Username',
-                    ),
-                  ),
-                ),
-            
-                const SizedBox(height: 30),
-                SizedBox(
-                  width: 325,
-                  height: 50,
-                  child: TextField(
-                    controller: emailController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Email',
-                    ),
-                  ),
-                ),
-            
-                const SizedBox(height: 30),
-                SizedBox(
-                  width: 325,
-                  height: 50,
-                  child: TextField(
-                    controller: passwordController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Password',
-                    ),
-                  ),
-                ),
-            
-                const SizedBox(height: 30),
-                SizedBox(
-                  width: 325,
-                  height: 50,
-                  child: TextField(
-                    controller: confirmPasswordController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Confirm password',
-                    ),
-                  ),
-                ),
-            
-                const SizedBox(height: 200,),
 
-                ElevatedButton(
-                  onPressed: () async {
-                    String username = usernameController.text;
-                    String email = emailController.text;
-                    String password = passwordController.text;
-                    // sent request
-                    UserInfo? userInfo =  await loginController.registerUser(username, email, password);
-                    getSignUpOTP();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
+                  const SizedBox(height: 230),
+
+                  SizedBox(
+                    width: 325,
+                    height: 50,
+                    child: TextField(
+                      controller: usernameController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person), // Icon cho username
+                        hintText: 'Username',
+                        // hintStyle: TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
                   ),
-                  child: const Text(
-                    "Next",
-                    style: TextStyle(fontSize: 20),
+
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: 325,
+                    height: 50,
+                    child: TextField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.email),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        hintText: 'Email',
+                        // hintStyle: TextStyle(color: Colors.white),
+
+                      ),
+                    ),
                   ),
-                ),
-            
-                const SizedBox(
-                  height: 10,
-                ),
-                TextButton(
-                  onPressed: () {getLogin();},
-                  child: const Text('Do you have an account?'),
-                ),
-              ],
+
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: 325,
+                    height: 50,
+                    child: TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.lock),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        hintText: 'Password',
+                        // hintStyle: TextStyle(color: Colors.white),
+
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: 325,
+                    height: 50,
+                    child: TextField(
+                      controller: confirmPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.lock_outline),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        hintText: 'Confirm password',
+                        // hintStyle: TextStyle(color: Colors.white),
+
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 200,),
+
+                  ElevatedButton(
+
+                    onPressed: () async {
+                      String username = usernameController.text;
+                      String email = emailController.text;
+                      String password = passwordController.text;
+                      // sent request
+                      UserInfo? userInfo =  await loginController.registerUser(username, email, password);
+                      getSignUpOTP();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 5, // Tạo bóng đổ
+                    ),
+                    child: const Text(
+                      "Next",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextButton(
+                    onPressed: () {getLogin();},
+                    child: const Text('Do you have an account?',
+                      style: TextStyle(
+                        fontSize: 16,
+                        // decoration: TextDecoration.underline,
+                        color: Colors.blue,
+                      ),),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
