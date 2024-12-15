@@ -17,8 +17,10 @@ class _Signup1State extends State<CreateAccount> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+  String? errorMessage;
+
+
 
   @override
   void dispose() {
@@ -38,6 +40,34 @@ class _Signup1State extends State<CreateAccount> {
     Get.toNamed(AppRoutes.LOGIN);
   }
 
+  void register(String username, String password, String email, String confirmPassword) async {
+
+    if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      setState(() {
+        errorMessage = "All information must be filled out!";
+      });
+      return;
+    }
+    if (password != confirmPassword) {
+      setState(() {
+        errorMessage = "Passwords do not match!";
+      });
+      return;
+    }
+
+    // create UserInfo object
+    UserInfo? user = await loginController.registerUser(username, email, password);
+    if (user != null) {
+      Get.toNamed(AppRoutes.LOGINOTP);
+    } else {
+      setState(() {
+        errorMessage = "Registration failed. Please try again!";
+      });
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +81,7 @@ class _Signup1State extends State<CreateAccount> {
           ),
         ),
         child: GestureDetector(
+          behavior: HitTestBehavior.opaque, // Đảm bảo sự kiện chạm không bị chặn
           onTap: () {
             FocusScope.of(context).unfocus();
           },
@@ -95,6 +126,8 @@ class _Signup1State extends State<CreateAccount> {
                     height: 50,
                     child: TextField(
                       controller: emailController,
+                      keyboardType: TextInputType.emailAddress, // Tối ưu bàn phím cho email
+
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.email),
                         border: OutlineInputBorder(
@@ -145,17 +178,36 @@ class _Signup1State extends State<CreateAccount> {
                     ),
                   ),
 
+
+                  const SizedBox(height: 10,),
+
+                  if (errorMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, top: 8.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          errorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+
                   const SizedBox(height: 200,),
 
                   ElevatedButton(
 
                     onPressed: () async {
-                      String username = usernameController.text;
-                      String email = emailController.text;
-                      String password = passwordController.text;
-                      // sent request
-                      UserInfo? userInfo =  await loginController.registerUser(username, email, password);
-                      getSignUpOTP();
+                      register(
+                        usernameController.text.trim(), // username
+                        emailController.text.trim(),    // email
+                        passwordController.text.trim(), // password
+                        confirmPasswordController.text.trim(), // confirmPassword
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,

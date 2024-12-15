@@ -27,6 +27,7 @@ class _LoginState extends State<Login> {
   final TextEditingController accountNameCtl = TextEditingController();
   final TextEditingController passwordCtl = TextEditingController();
 
+
   //
   void getCreateAccount() {
     Get.toNamed(AppRoutes.CREATACCOUNT);
@@ -44,14 +45,28 @@ class _LoginState extends State<Login> {
   * If not email --> email == null, username != null
   *   viết validate
   */
+  String? errorMessage;
+
+
   void login(String accountName, String password) async {
+
+    if (accountName.isEmpty || password.isEmpty) {
+      setState(() {
+        errorMessage = "Username or password cannot be empty!";
+      });
+      return;
+    }
+
     // create UserInfo object
-    UserInfo userInfo =
-        UserInfo(username: null, email: accountName, password: password);
+    UserInfo userInfo = UserInfo(username: null, email: accountName, password: password);
     UserInfo? user = await loginController.login(userInfo);
     if (user != null) {
       // redirect to application
       Get.offAllNamed(AppRoutes.APPLICATION);
+    }else{
+      setState(() {
+        errorMessage = "Incorrect email or password";
+      });
     }
   }
 
@@ -79,17 +94,6 @@ class _LoginState extends State<Login> {
           },
           child: Column(
             children: [
-              // Container(
-              //   margin: const EdgeInsets.only(top: 150),
-              //
-              //   child: Image.asset(
-              //     'assets/icon_launcher/ic_launcher.9.png',
-              //     height: 130,
-              //     width: 130,
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
-              // const SizedBox(height: 20),
               Container(
                 child: Align(
                   alignment: Alignment.center,
@@ -100,6 +104,7 @@ class _LoginState extends State<Login> {
                     child: TextField(
                       controller: accountNameCtl,
                       decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.email_rounded),
                         label: const Text('Username or email'),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15)),
@@ -119,6 +124,7 @@ class _LoginState extends State<Login> {
                   child: TextField(
                     controller: passwordCtl,
                     decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.lock),
                       label: const Text('Password'),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15)),
@@ -126,8 +132,25 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
+
+              if (errorMessage != null)
+                Container(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  alignment: Alignment.centerLeft, // Căn lề trái
+                  child: Text(
+                    'Error message',
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
+
+
               const SizedBox(
-                height: 10,
+                height: 20,
               ),
               Container(
                 child: Row(

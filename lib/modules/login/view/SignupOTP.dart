@@ -19,6 +19,7 @@ class _VerificationEmailState extends State<SignUpOTP>{
   final LoginController loginController = Get.put(LoginController());
   // text controller
   final TextEditingController verificationCtl = TextEditingController();
+  String? errorMessage;
 
   UserInfo userInfo = Get.arguments ?? UserInfo();
 
@@ -31,6 +32,18 @@ class _VerificationEmailState extends State<SignUpOTP>{
   void error() {
     print('Incorrect OTP');
   }
+
+  void confirmedOtp (String OTP) async{
+    if (OTP.isEmpty){
+      setState(() {
+        errorMessage = "OTP must be filled out";
+      });
+      return;
+    }
+
+
+  }
+
 
   @override
   void dispose() {
@@ -62,11 +75,10 @@ class _VerificationEmailState extends State<SignUpOTP>{
                     alignment: Alignment.centerLeft,
                     margin: const EdgeInsets.fromLTRB(5, 40, 0, 0), // Thêm padding
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new), // Thay thế icon bằng bất kỳ biểu tượng nào
-                      color: Colors.black, // Màu của biểu tượng
-                      iconSize: 30.0, // Kích thước biểu tượng
+                      icon: const Icon(Icons.arrow_back_ios_new),
+                      color: Colors.black,
+                      iconSize: 30.0,
                       onPressed: () {
-                        // Hành động khi nút được bấm
                         Get.back();
                       },
                     )
@@ -97,12 +109,31 @@ class _VerificationEmailState extends State<SignUpOTP>{
                     controller: verificationCtl,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.lock_clock),
                       border:  OutlineInputBorder(),
                       // hintText: '$code',
                       hintText: 'Verification code',
                     ),
                   ),
                 ),
+
+                const SizedBox(height: 10,),
+
+                if (errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0, top: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        errorMessage!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                 const SizedBox(
                   height: 230,
                 ),
