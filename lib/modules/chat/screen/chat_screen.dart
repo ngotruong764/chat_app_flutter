@@ -16,8 +16,22 @@ class ChatScreen extends StatefulWidget {
 
 class ChatScreenState extends State<ChatScreen> {
   final ChatController chatController = Get.find<ChatController>();
-
   // final TextEditingController _searchController = TextEditingController();
+
+  late final Stream? conversationStream;
+
+  @override
+  void initState() {
+    super.initState();
+    conversationStream = ApisChat.listenMessageInChatScreen(conversationList: chatController.conversationList);
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    chatController.dispose();
+  }
 
   List<Map<String, dynamic>> activeUsers = [
     {
@@ -189,65 +203,13 @@ class ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  // Widget _conversations(BuildContext context) {
-  //   return Obx(
-  //     () => ListView.builder(
-  //       shrinkWrap: true,
-  //       physics: const NeverScrollableScrollPhysics(),
-  //       itemCount: chatController.conversationList.length,
-  //       itemBuilder: (context, index) {
-  //         Conversation conversation = chatController.conversationList[index];
-  //         return InkWell(
-  //           onTap: () {
-  //             Navigator.push(
-  //               context,
-  //               MaterialPageRoute(
-  //                 builder: (context) => ChatBox(
-  //                   conversationId: conversation.id ?? 0,
-  //                   name: conversation.conservationName ?? '',
-  //                   imageUrl: conversation.conservationName ?? '',
-  //                   message: conversation.conservationName ?? '',
-  //                 ),
-  //               ),
-  //             );
-  //           },
-  //           child: Padding(
-  //             padding: const EdgeInsets.symmetric(vertical: 8.0),
-  //             child: Row(
-  //               children: <Widget>[
-  //                 const Icon(Icons.account_circle),
-  //                 const SizedBox(width: 20),
-  //                 Expanded(
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: <Widget>[
-  //                       Text(
-  //                         conversation.conservationName ??
-  //                             'Empty name',
-  //                         style: const TextStyle(
-  //                             fontSize: 17, fontWeight: FontWeight.w500),
-  //                       ),
-  //                       const SizedBox(height: 5),
-  //                       Text(conversation.lastMessage ?? ''),
-  //                     ],
-  //                   ),
-  //                 )
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
   Widget _conversations(BuildContext context) {
     return StreamBuilder(
-      stream: ApisChat.listenMessageInChatScreen(conversationList: chatController.conversationList)?.asBroadcastStream(),
+      stream: conversationStream,
       initialData: chatController.conversationList,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         //waiting for data
-        if(snapshot.connectionState == ConnectionState.waiting){
+        if(snapshot.connectionState == ConnectionState.waiting && chatController.conversationList.isEmpty){
           return const Center(
             child: CircularProgressIndicator(),
           );

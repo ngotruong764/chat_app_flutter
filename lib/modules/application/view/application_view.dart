@@ -1,10 +1,7 @@
 import 'package:chat_app_flutter/modules/application/controller/application_controller.dart';
-import 'package:chat_app_flutter/modules/application/view/widget/main_drawer.dart';
-import 'package:chat_app_flutter/modules/Settings/SettingsPage.dart';
-import 'package:chat_app_flutter/modules/login/view/Login.dart';
+import 'package:chat_app_flutter/modules/settings/view/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../chat/screen/chat_screen.dart';
 
 class ApplicationView extends GetView<ApplicationController>{
@@ -16,10 +13,10 @@ class ApplicationView extends GetView<ApplicationController>{
       onPageChanged: controller.onPageChange,
       scrollDirection: Axis.horizontal,
 
-      children: [
-        const ChatScreen(),
-        const Login(),
-        const ChatScreen(),
+      children: const [
+        ChatScreen(),
+        // const Login(),
+        // const ChatScreen(),
         SettingsPage(),
       ],
     );
@@ -29,7 +26,7 @@ class ApplicationView extends GetView<ApplicationController>{
   Widget build(BuildContext context) {
     return Scaffold(
       // drawer: const MainDrawer(),
-      appBar: AppBar(),
+      // appBar: AppBar(),
       body: buildPageView(),
       bottomNavigationBar: Obx(
           () => BottomNavigationBar(

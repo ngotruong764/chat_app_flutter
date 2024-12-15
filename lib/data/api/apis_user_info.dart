@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
+import '../../helper/helper.dart';
 import '../../services/push_notifications_service.dart';
 
 abstract class ApisUserinfo {
@@ -75,6 +76,7 @@ abstract class ApisUserinfo {
     try {
       // Get device token
       await PushNotificationsService.getDeviceToken();
+      // Constants.DEVICE_TOKEN = '';
       userInfo.deviceToken = Constants.DEVICE_TOKEN;
       //
       final response = await ApisBase.dio.post(
@@ -94,14 +96,32 @@ abstract class ApisUserinfo {
         final UserInfo user = UserInfo.fromJson(response.data['userInfo']);
         ApisBase.currentUser = user;
         final prefs = await SharedPreferences.getInstance();
+
         // save user info to local
         user.password = userInfo.password!;
         prefs.setString('userInfo', jsonEncode(user));
+
         // add jwt token to header
         ApisBase.dio.options.headers['Authorization'] =
           'Bearer ${response.data["jwt_token"]}';
+
         // print JWT token
         log("jwt token: ${response.data["jwt_token"]}");
+
+        // get user avatar
+        if(user.profilePicture != null){
+          if(user.profilePicture!.isNotEmpty){
+            String userAvatarBase64Encoded = user.profilePicture!;
+
+            // convert user avatar to byte[]
+            List<int> bytes = await Helper.encodeAnBase64ToBytes(userAvatarBase64Encoded);
+
+            if(bytes.isNotEmpty){
+              // set user avatar
+              Constants.USER_AVATAR.value = bytes;
+            }
+          }
+        }
         return user;
       }
       return null;
@@ -146,6 +166,10 @@ abstract class ApisUserinfo {
         print(response.data);
         UserInfo userInfo = UserInfo.fromJson(response.data['userInfo']);
         ApisBase.currentUser = userInfo;
+        // convert img string to bytes
+        if(ApisBase.currentUser.profilePicture != null){
+
+        }
         return userInfo;
       }
       return null;

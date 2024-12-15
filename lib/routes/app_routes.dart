@@ -9,4 +9,5 @@ abstract class AppRoutes{
   static const String LOGIN = "/login4";
   static const String CHATBOX = "/chatbox";
   static const String CONVERSATIONS = "/coversations";
+  static const String SETTINGS = "/settings";
 }
