@@ -27,7 +27,6 @@ class _LoginState extends State<Login> {
   final TextEditingController accountNameCtl = TextEditingController();
   final TextEditingController passwordCtl = TextEditingController();
 
-
   //
   void getCreateAccount() {
     Get.toNamed(AppRoutes.CREATACCOUNT);
@@ -47,9 +46,7 @@ class _LoginState extends State<Login> {
   */
   String? errorMessage;
 
-
   void login(String accountName, String password) async {
-
     if (accountName.isEmpty || password.isEmpty) {
       setState(() {
         errorMessage = "Username or password cannot be empty!";
@@ -58,12 +55,13 @@ class _LoginState extends State<Login> {
     }
 
     // create UserInfo object
-    UserInfo userInfo = UserInfo(username: null, email: accountName, password: password);
+    UserInfo userInfo =
+        UserInfo(username: null, email: accountName, password: password);
     UserInfo? user = await loginController.login(userInfo);
     if (user != null) {
       // redirect to application
       Get.offAllNamed(AppRoutes.APPLICATION);
-    }else{
+    } else {
       setState(() {
         errorMessage = "Incorrect email or password";
       });
@@ -92,149 +90,159 @@ class _LoginState extends State<Login> {
           onTap: () {
             FocusScope.of(context).unfocus(); // Ẩn bàn phím
           },
-          child: Column(
-            children: [
-              Container(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    width: 400,
-                    height: 50,
-                    margin: const EdgeInsets.only(top: 400),
-                    child: TextField(
-                      controller: accountNameCtl,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email_rounded),
-                        label: const Text('Username or email'),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15)),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            width: 400,
+                            height: 50,
+                            margin: const EdgeInsets.only(top: 500),
+                            child: TextField(
+                              controller: accountNameCtl,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.email_rounded),
+                                label: const Text('Username or email'),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Container(
-                  width: 400,
-                  height: 50,
-                  child: TextField(
-                    controller: passwordCtl,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock),
-                      label: const Text('Password'),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                    ),
-                  ),
-                ),
-              ),
-
-              if (errorMessage != null)
-                Container(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  alignment: Alignment.centerLeft, // Căn lề trái
-                  child: Text(
-                    'Error message',
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-
-
-
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                child: Row(
-                  children: [
-                    Obx(() => Checkbox(
-                          // Sử dụng Obx để theo dõi thay đổi
-                          value: checkboxController.isChecked.value,
-                          onChanged: (bool? value) {
-                            checkboxController.toggleCheckbox(value);
-                          },
-                        )),
-                    Obx(() => Text(checkboxController.isChecked.value
-                        ? 'Save password'
-                        : 'Non-Saving password')), // Hiển thị trạng thái
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              SizedBox(
-                width: 300,
-                height: 50,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        )),
-                    onPressed: () {
-                      login(accountNameCtl.text, passwordCtl.text);
-                    },
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.login, size: 20, color: Colors.white),
-                        SizedBox(width: 10),
-                        Text(
-                          'Login',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16),
-                        ),
-                      ],
-                    )),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                width: 300,
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: getCreateAccount,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.person_add,
-                          size: 20,
-                          color: Colors.white,
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: 400,
+                          height: 50,
+                          child: TextField(
+                            controller: passwordCtl,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.lock),
+                              label: const Text('Password'),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                            ),
+                          ),
                         ),
-                        SizedBox(width: 10),
-                        Text(
-                          "Create new accout",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16),
+                      ),
+                      if (errorMessage != null)
+                        Container(
+                          padding: const EdgeInsets.only(left: 16.0),
+                          alignment: Alignment.centerLeft, // Căn lề trái
+                          child: Text(
+                            'Error message',
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ],
-                    )),
-              )
-            ],
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        child: Row(
+                          children: [
+                            Obx(() => Checkbox(
+                                  // Sử dụng Obx để theo dõi thay đổi
+                                  value: checkboxController.isChecked.value,
+                                  onChanged: (bool? value) {
+                                    checkboxController.toggleCheckbox(value);
+                                  },
+                                )),
+                            Obx(() => Text(checkboxController.isChecked.value
+                                ? 'Save password'
+                                : 'Non-Saving password')),
+                            // Hiển thị trạng thái
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 35,
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      SizedBox(
+                        width: 300,
+                        height: 50,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                )),
+                            onPressed: () {
+                              login(accountNameCtl.text, passwordCtl.text);
+                            },
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.login,
+                                    size: 20, color: Colors.white),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Login',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16),
+                                ),
+                              ],
+                            )),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: 300,
+                        height: 50,
+                        child: ElevatedButton(
+                            onPressed: getCreateAccount,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.person_add,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  "Create new accout",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16),
+                                ),
+                              ],
+                            )),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
