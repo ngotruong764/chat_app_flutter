@@ -135,7 +135,7 @@ abstract class ApisUserinfo {
     }
   }
 
-  static Future<void> logout(UserInfo userInfo) async {
+  static Future<bool> logout(UserInfo userInfo) async {
     try {
       final response = await ApisBase.dio.post(
         ApisBase.logout,
@@ -146,8 +146,13 @@ abstract class ApisUserinfo {
           'userInfo': userInfo
         }
       );
+      if(response.data['responseCode'] == 200){
+        return true;
+      }
+      return false;
     } catch (e) {
       log(e.toString());
+      return false;
     }
   }
 

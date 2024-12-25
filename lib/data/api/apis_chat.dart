@@ -5,7 +5,6 @@ import 'dart:developer';
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/model/conversation.dart';
 import 'package:chat_app_flutter/model/message.dart';
-import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -37,6 +36,17 @@ abstract class ApisChat {
       log("Connected");
     } catch(e){
       log('Error connect socket: $e');
+    }
+  }
+
+  /*
+  * Method to disconnect socket
+  */
+  static void disconnectSocket(){
+    try{
+      socketChannel.sink.close();
+    } catch(e){
+      log('Error disconnect socket: $e');
     }
   }
 

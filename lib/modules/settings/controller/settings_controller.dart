@@ -16,4 +16,12 @@ class SettingsController extends GetxController{
     UserInfo? userInfo = await ApisUserinfo.updateUserInfo(userInfo: user);
     return userInfo;
   }
+
+  /*
+  * Method to logout
+  */
+  Future<bool> logout(UserInfo user) async{
+    bool isLogout = await ApisUserinfo.logout(user);
+    return isLogout;
+  }
 }

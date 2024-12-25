@@ -281,6 +281,13 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   /*
+  * Method to display avatar of each user in conversation list
+  */
+  Widget _displayUserAvatar(){
+    return SizedBox.shrink();
+  }
+
+  /*
   * Method to display last message
   */
   Widget _displayLastMessage(Conversation conversation){
