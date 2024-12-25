@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/constants.dart';
 import '../../helper/helper.dart';
 import '../../services/push_notifications_service.dart';
+import 'apis_chat.dart';
 
 abstract class ApisUserinfo {
   // Register account
@@ -107,6 +108,9 @@ abstract class ApisUserinfo {
 
         // print JWT token
         log("jwt token: ${response.data["jwt_token"]}");
+
+        // connect websocket
+        await ApisChat.connectSocket();
 
         // get user avatar
         if(user.profilePicture != null){

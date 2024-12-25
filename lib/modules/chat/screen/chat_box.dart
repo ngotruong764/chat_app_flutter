@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/data/api/apis_chat.dart';
+import 'package:chat_app_flutter/helper/helper.dart';
+import 'package:chat_app_flutter/model/attachment.dart';
 import 'package:chat_app_flutter/model/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -38,17 +41,23 @@ class _ChatBoxState extends State<ChatBox> {
   late final FocusScopeNode currentScopeNode;
   final _picker = ImagePicker();
   List<XFile> medias = []; // Dùng để lưu ảnh đã chọn nhưng chưa gửi
-  int messagePageSize = 40;
+  RxBool isLoadMore = false.obs;
+
+  // pagination parameter
+  int messagePageSize = 50;
   int messagePageNumber = 0;
+
   // declare stream to listen to message
   late final Stream? messageStream;
 
   void _scrollToBottom() {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.fastOutSlowIn,
-    );
+    if(_scrollController.hasClients){
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
   }
 
   // Open keyboard
@@ -67,23 +76,25 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   void initState() {
-    super.initState();
+    // init FocusScopeNode
+    currentScopeNode = FocusScopeNode();
+
     // after loading message --> go to the bottom to get the newest message
     chatController
-        .fetchMessage(messagePageNumber, messagePageSize, widget.conversationId)
+        .fetchMessage(messagePageNumber, messagePageSize, widget.conversationId, null)
         .then(
           (value) => Future.delayed(
-            const Duration(milliseconds: 500),
+        const Duration(milliseconds: 500),
             () => _scrollToBottom(),
-          ),
-        );
+      ),
+    );
 
     // when open keyboard --> go to the bottom of the chat box
     currentFocus.addListener(() {
       if (currentFocus.hasFocus) {
         Future.delayed(
           const Duration(milliseconds: 500),
-          () => _scrollToBottom(),
+              () => _scrollToBottom(),
         );
       }
     });
@@ -91,6 +102,32 @@ class _ChatBoxState extends State<ChatBox> {
     // get the stream of message
     messageStream = ApisChat.listenMessage(
         messageList: chatController.messageList);
+
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollToBottom();
+    // });
+
+    // Add a listener to scroll to the bottom when new messages are added
+    // chatController.messageList.listen((List<Message> messages) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _scrollToBottom();
+    //   });
+    // });
+
+    // add listener to ScrollController
+    _scrollController.addListener(() {
+      // if scroll controller is assigned to our widget
+      if(_scrollController.hasClients){
+        // if we scroll to the top, and not isLastPage --> load more messages
+        if(_scrollController.offset <= _scrollController.position.minScrollExtent
+          && !_scrollController.position.outOfRange && !chatController.isLastPage){
+          _loadMoreMessage();
+        }
+      }
+    });
+
+    super.initState();
   }
 
   @override
@@ -101,6 +138,7 @@ class _ChatBoxState extends State<ChatBox> {
   }
 
   void _unFocusTextField() {
+    currentFocus.unfocus();
     if (!currentScopeNode.hasPrimaryFocus &&
         currentScopeNode.focusedChild != null) {
       FocusManager.instance.primaryFocus?.unfocus();
@@ -128,6 +166,16 @@ class _ChatBoxState extends State<ChatBox> {
         ),
         body: Column(
           children: [
+            // display load at the top center when we load more object
+            Obx(() {
+              if (isLoadMore.value) {
+                return const Align(
+                  alignment: Alignment.topCenter,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
             Expanded(
               child: StreamBuilder(
                 stream: messageStream,
@@ -140,8 +188,11 @@ class _ChatBoxState extends State<ChatBox> {
                   if (!snapshot.hasData) {
                     return const Text("No messages");
                   }
+                  // display messages
                   return Obx(
-                        () => ListView.builder(
+                        () =>
+                            ListView.builder(
+                      // shrinkWrap: true,
                       controller: _scrollController,
                       itemCount: chatController.messageList.length,
                       itemBuilder: (context, index) {
@@ -149,6 +200,7 @@ class _ChatBoxState extends State<ChatBox> {
                         bool isUserMessage =
                             message.userId == ApisBase.currentUser.id;
 
+                        // render message content
                         if (message.content.isNotEmpty) {
                           return Align(
                             alignment: isUserMessage
@@ -169,53 +221,208 @@ class _ChatBoxState extends State<ChatBox> {
                           );
                         }
 
-                        if (message.mediaUrl.isNotEmpty) {
-                          return Align(
-                            alignment: isUserMessage
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
-                            child: GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => Dialog(
-                                    child: Image.file(
-                                      File(message
-                                          .mediaUrl), // Hiển thị ảnh từ file
+                        // render attachment
+                        if(message.attachments!.isNotEmpty) {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: message.attachments!.length,
+                            itemBuilder: (context, index) {
+                              Attachment attachment = message
+                                  .attachments![index];
+                              if (attachment.attachmentContentByte!
+                                  .isNotEmpty) {
+                                return Align(
+                                  alignment:
+                                  isUserMessage
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) =>
+                                            Dialog(
+                                              child: Image.memory(
+                                                Uint8List.fromList(attachment
+                                                    .attachmentContentByte!), // Hiển thị ảnh từ file
+                                              ),
+                                            ),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 5, horizontal: 10),
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 150,
+                                        // Giới hạn chiều rộng ảnh
+                                        maxHeight: 150, // Giới hạn chiều cao ảnh
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: Colors.grey.shade300),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        // Bo góc ảnh
+                                        child: Image.memory(
+                                          Uint8List.fromList(attachment
+                                              .attachmentContentByte!),
+                                          // Hiển thị ảnh từ File
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 );
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 10),
-                                constraints: const BoxConstraints(
-                                  maxWidth: 150, // Giới hạn chiều rộng ảnh
-                                  maxHeight: 150, // Giới hạn chiều cao ảnh
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border:
-                                  Border.all(color: Colors.grey.shade300),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  // Bo góc ảnh
-                                  child: Image.file(
-                                    File(message.mediaUrl),
-                                    // Hiển thị ảnh từ File
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            ),
+                              }
+                              return const SizedBox.shrink();
+                            },
                           );
                         }
+                        // if (message.attachments!.isNotEmpty) {
+                        //   return Align(
+                        //     alignment: isUserMessage
+                        //         ? Alignment.centerRight
+                        //         : Alignment.centerLeft,
+                        //     child: GestureDetector(
+                        //       onTap: () {
+                        //         showDialog(
+                        //           context: context,
+                        //           builder: (_) => Dialog(
+                        //             child: Image.memory(
+                        //               Uint8List.fromList(message.attachments![0].attachmentContentByte!), // Hiển thị ảnh từ file
+                        //             ),
+                        //           ),
+                        //         );
+                        //       },
+                        //       child: Container(
+                        //         margin: const EdgeInsets.symmetric(
+                        //             vertical: 5, horizontal: 10),
+                        //         constraints: const BoxConstraints(
+                        //           maxWidth: 150, // Giới hạn chiều rộng ảnh
+                        //           maxHeight: 150, // Giới hạn chiều cao ảnh
+                        //         ),
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(10),
+                        //           border:
+                        //           Border.all(color: Colors.grey.shade300),
+                        //         ),
+                        //         child: ClipRRect(
+                        //           borderRadius: BorderRadius.circular(10),
+                        //           // Bo góc ảnh
+                        //           child: Image.memory(
+                        //             Uint8List.fromList(message.attachments![0].attachmentContentByte!),
+                        //             // Hiển thị ảnh từ File
+                        //             fit: BoxFit.cover,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   );
+                        // }
 
                         return const SizedBox.shrink();
                       },
                     ),
                   );
+                  // return Obx(
+                  //   () => SingleChildScrollView(
+                  //     controller: _scrollController,
+                  //     padding: EdgeInsets.only(top: Get.height),
+                  //     child: IntrinsicHeight(
+                  //       child: Column(
+                  //         children: chatController.messageList.map((message) {
+                  //           bool isUserMessage =
+                  //               message.userId == ApisBase.currentUser.id;
+                  //
+                  //           List<Widget> messageWidgets = [];
+                  //
+                  //           // Render message content
+                  //           if (message.content.isNotEmpty) {
+                  //             messageWidgets.add(
+                  //               Align(
+                  //                 alignment: isUserMessage
+                  //                     ? Alignment.centerRight
+                  //                     : Alignment.centerLeft,
+                  //                 child: Container(
+                  //                   padding: const EdgeInsets.all(10),
+                  //                   margin: const EdgeInsets.symmetric(
+                  //                       vertical: 5, horizontal: 10),
+                  //                   decoration: BoxDecoration(
+                  //                     color: isUserMessage
+                  //                         ? Colors.blue[200]
+                  //                         : Colors.grey[300],
+                  //                     borderRadius: BorderRadius.circular(10),
+                  //                   ),
+                  //                   child: Text(message.content),
+                  //                 ),
+                  //               ),
+                  //             );
+                  //           }
+                  //
+                  //           // Render attachments
+                  //           if (message.attachments!.isNotEmpty) {
+                  //             messageWidgets.addAll(
+                  //               message.attachments!.map((attachment) {
+                  //                 if (attachment
+                  //                     .attachmentContentByte!.isNotEmpty) {
+                  //                   return Align(
+                  //                     alignment: isUserMessage
+                  //                         ? Alignment.centerRight
+                  //                         : Alignment.centerLeft,
+                  //                     child: GestureDetector(
+                  //                       onTap: () {
+                  //                         showDialog(
+                  //                           context: context,
+                  //                           builder: (_) => Dialog(
+                  //                             child: Image.memory(
+                  //                               Uint8List.fromList(attachment
+                  //                                   .attachmentContentByte!),
+                  //                             ),
+                  //                           ),
+                  //                         );
+                  //                       },
+                  //                       child: Container(
+                  //                         margin: const EdgeInsets.symmetric(
+                  //                             vertical: 5, horizontal: 10),
+                  //                         constraints: const BoxConstraints(
+                  //                           maxWidth: 150,
+                  //                           maxHeight: 150,
+                  //                         ),
+                  //                         decoration: BoxDecoration(
+                  //                           borderRadius:
+                  //                               BorderRadius.circular(10),
+                  //                           border: Border.all(
+                  //                               color: Colors.grey.shade300),
+                  //                         ),
+                  //                         child: ClipRRect(
+                  //                           borderRadius:
+                  //                               BorderRadius.circular(10),
+                  //                           child: Image.memory(
+                  //                             Uint8List.fromList(attachment
+                  //                                 .attachmentContentByte!),
+                  //                             fit: BoxFit.cover,
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                   );
+                  //                 }
+                  //                 return const SizedBox.shrink();
+                  //               }).toList(),
+                  //             );
+                  //           }
+                  //
+                  //           return Column(
+                  //             children: messageWidgets,
+                  //           );
+                  //         }).toList(),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // );
                 },
               ),
             ),
@@ -300,46 +507,53 @@ class _ChatBoxState extends State<ChatBox> {
                       ],
                     ),
                   ),
+
+                  // send button
                   IconButton(
                     icon: const Icon(Icons.send),
-                    onPressed: () {
+                    onPressed: () async {
+                      List<Attachment> attachments = [];
                       // Gửi ảnh nếu có trong danh sách `medias`
                       if (medias.isNotEmpty) {
-                        for (var media in medias) {
-                          chatController.sendMessage(
-                            ApisBase.currentUser.id!,
-                            widget.conversationId,
-                            widget.name,
-                            '', // Không có nội dung tin nhắn
-                            DateTime.now(),
-                            mediaUrl: media.path, // Đường dẫn ảnh
-                          );
-                        }
+                        attachments.clear();
+                        // convert img to attachment
+                        attachments = await imgToAttachments();
+                        //
+                        chatController.sendMessage(
+                          ApisBase.currentUser.id!,
+                          widget.conversationId,
+                          widget.name,
+                          '', // Không có nội dung tin nhắn
+                          DateTime.now(),
+                          attachments,
+                        );
                         // Xóa danh sách ảnh sau khi gửi
                         setState(() {
                           medias.clear(); // Xóa tất cả ảnh trong danh sách
                         });
                       } else {
                         if (messageController.text.trim().isNotEmpty) {
+                          attachments.clear();
                           chatController.sendMessage(
                             ApisBase.currentUser.id!,
                             widget.conversationId,
                             widget.name,
                             messageController.text.trim(), // Nội dung tin nhắn
                             DateTime.now(),
+                            attachments,
                           );
-                          // Xóa nội dung trong TextField
-                          messageController.clear();
                         }
                       }
+
                       // scroll to bottom after sending message
                       SchedulerBinding.instance.addPostFrameCallback((_) {
                         _scrollToBottom();
                       });
 
-                      updateChatScreen();
+                      // update chat screen (outside of chat box)
+                      updateChatScreen(attachments, messageController.text);
+
                       messageController.clear();
-                      medias.clear();
                     },
                   )
                 ],
@@ -351,7 +565,107 @@ class _ChatBoxState extends State<ChatBox> {
     );
   }
 
-  void updateChatScreen() {
+  /*
+  * Method is used to render message
+  */
+  Widget _renderMedia(Message message, bool isUserMessage) {
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: message.attachments!.length,
+      itemBuilder: (context, index) {
+        Attachment attachment = message.attachments![index];
+        if (attachment.attachmentContentByte!.isNotEmpty) {
+          return Align(
+            alignment:
+                isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+            child: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => Dialog(
+                    child: Image.memory(
+                      Uint8List.fromList(attachment
+                          .attachmentContentByte!), // Hiển thị ảnh từ file
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                constraints: const BoxConstraints(
+                  maxWidth: 150, // Giới hạn chiều rộng ảnh
+                  maxHeight: 150, // Giới hạn chiều cao ảnh
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  // Bo góc ảnh
+                  child: Image.memory(
+                    Uint8List.fromList(attachment.attachmentContentByte!),
+                    // Hiển thị ảnh từ File
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  /*
+  * Method to convert XFile to Attachment object
+  */
+  Future<List<Attachment>> imgToAttachments() async {
+    List<Attachment> attachments = [];
+    for (XFile media in medias) {
+      List<String> splitPath = media.path.split('/');
+      String fileName =
+          '${ApisBase.currentUser.id!}_${DateTime.now().microsecondsSinceEpoch}_${splitPath.last}';
+      String fileType = 'image';
+      // fileUrl has the format conversation_img/conversation_id/fileName
+      String fileUrl = 'conversation_img/${widget.conversationId}/$fileName';
+
+      // get attachment content (base64 encoded)
+      String attachmentContent = await Helper.encodeAnImgToBase64(media);
+      List<int> attachmentContentByte = Helper.encodeAnBase64ToBytesSync(attachmentContent).toList();
+
+      // create Attachment object
+      Attachment attachment = Attachment(
+        fileUrl: fileUrl,
+        fileType: fileType,
+        fileName: fileName,
+        attachmentContent: attachmentContent,
+        attachmentContentByte: attachmentContentByte,
+      );
+
+      // add to list
+      attachments.add(attachment);
+    }
+    return attachments;
+  }
+
+  /*
+  * Method to load more message
+  */
+  void _loadMoreMessage(){
+    // load more message
+    isLoadMore.value = true;
+
+    // load messages( increase page number)
+    chatController.fetchMessage(messagePageNumber++, messagePageSize, widget.conversationId, 0)
+        .then((_) => isLoadMore.value = false);
+  }
+
+  /*
+  * Method to update ChatScreen( Screen which is outside of Chatbox) when we sent a message
+  */
+  void updateChatScreen(List<Attachment> attachments, String messageContent) {
     Conversation? conversationReceivedMess = chatController.conversationList
         .firstWhereOrNull(
             (conversation) => conversation.id!.isEqual(widget.conversationId));
@@ -359,8 +673,19 @@ class _ChatBoxState extends State<ChatBox> {
       // remove old conversation
       chatController.conversationList.removeWhere(
               (conversation) => conversation.id!.isEqual(widget.conversationId));
+
       // add new conversation
-      conversationReceivedMess.lastMessage = messageController.text;
+      if(messageController.text.isEmpty && attachments.isNotEmpty){
+        // if user send attachment, and message do not have content -> display message by default
+        if(attachments.length == 1){
+          conversationReceivedMess.lastMessage = chatController.AN_ATTACHMENT_MESS;
+        } else {
+          conversationReceivedMess.lastMessage = chatController.ATTACHMENTS_MESS;
+        }
+      } else{
+        // if message has content
+        conversationReceivedMess.lastMessage = messageContent;
+      }
       chatController.conversationList.insert(0, conversationReceivedMess);
     }
   }

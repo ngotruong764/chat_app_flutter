@@ -3,12 +3,16 @@ class Conversation{
   String? conservationName;
   String? lastMessage;
   DateTime? lastMessageTime;
+  int? userLastMessageId;
+  String? userLastMessageName; // user name
 
   Conversation({
     this.id,
     this.conservationName,
     this.lastMessage,
-    this.lastMessageTime
+    this.lastMessageTime,
+    this.userLastMessageId,
+    this.userLastMessageName,
   });
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
@@ -17,6 +21,8 @@ class Conversation{
       conservationName: json['conversationName'],
       lastMessage: json['lastMessage'],
       lastMessageTime: json['lastMessageTime'] != null ? DateTime.parse(json['lastMessageTime']) : null,
+      userLastMessageId: json['userLastMessageId'],
+      userLastMessageName: json['userLastMessageName'],
     );
   }
 

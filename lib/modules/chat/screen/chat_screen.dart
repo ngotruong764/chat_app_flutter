@@ -1,9 +1,11 @@
+import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/modules/chat/controller/chat_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app_flutter/modules/application/creategroup/CreateGroup.dart';
 import 'package:get/get.dart';
 import '../../../data/api/apis_chat.dart';
+import '../../../helper/helper.dart';
 import '../../../model/conversation.dart';
 import 'chat_box.dart';
 
@@ -195,6 +197,7 @@ class ChatScreenState extends State<ChatScreen> {
                 const SizedBox(height: 20),
                 _activeUsersBar(),
                 const SizedBox(height: 20),
+                // render conversation list
                 _conversations(context),
               ],
             ),
@@ -251,16 +254,21 @@ class ChatScreenState extends State<ChatScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
+                            // conversation name
                             Text(
                               conversation.conservationName ?? 'Empty name',
                               style: const TextStyle(
                                   fontSize: 17, fontWeight: FontWeight.w500),
                             ),
                             const SizedBox(height: 5),
-                            Text(conversation.lastMessage ?? ''),
+
+                            // display last message
+                            _displayLastMessage(conversation),
+
+                            const Divider(),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -269,6 +277,31 @@ class ChatScreenState extends State<ChatScreen> {
           ),
         );
       },
+    );
+  }
+
+  /*
+  * Method to display last message
+  */
+  Widget _displayLastMessage(Conversation conversation){
+    String lastMessageUserName = 'You';
+    if(conversation.userLastMessageId != ApisBase.currentUser.id){
+      lastMessageUserName = conversation.userLastMessageName ?? '';
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        SizedBox(
+          width: Get.width * 0.6,
+          child: Text(
+            '$lastMessageUserName: ${conversation.lastMessage ?? ''}',
+            style: const TextStyle(overflow: TextOverflow.ellipsis),
+          ),
+        ),
+        Text(
+          Helper.formatLastMessageTime(conversation.lastMessageTime!),
+        ),
+      ],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:chat_app_flutter/data/api/apis_chat.dart';
 import 'package:chat_app_flutter/data/api/apis_conversation.dart';
+import 'package:chat_app_flutter/model/attachment.dart';
 import 'package:get/get.dart';
 
 import '../../../model/conversation.dart';
@@ -8,9 +9,15 @@ import '../../../model/message.dart';
 class ChatController extends GetxController{
   int pageSize = 20;
   int pageNumber = 0;
+  bool isLastPage = false;
+
   RxList<Conversation> conversationList = <Conversation>[].obs;
   // list for message of a conversation
   RxList<Message> messageList = <Message>[].obs;
+
+  // message when we send 1 or many attachment
+  final String AN_ATTACHMENT_MESS = "Send an attachment";
+  final String ATTACHMENTS_MESS = "Send attachments";
 
   //
   @override
@@ -36,15 +43,18 @@ class ChatController extends GetxController{
   /*
   * Fetch messages of a conversation
   */
-  Future<void> fetchMessage(int pageNumber, int pageSize, int conversationId) async {
+  Future<void> fetchMessage(int pageNumber, int pageSize, int conversationId, int? addPosition) async {
     // clear message list before get value
-    messageList.clear();
+    // messageList.clear();
     //
-    await ApisConversation.fetchConversationMessage(
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-        conversationId: conversationId,
-        messageList:messageList);
+    isLastPage = await ApisConversation.fetchConversationMessage(
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+      conversationId: conversationId,
+      messageList: messageList,
+      addPosition: addPosition,
+      isLastPage: isLastPage,
+    );
   }
 
   /*
@@ -60,14 +70,14 @@ class ChatController extends GetxController{
   //
   // }
 
-  void sendMessage(int userId, int conversationId, String conversationName, String content, DateTime currentTime, {String? mediaUrl}) {
+  void sendMessage(int userId, int conversationId, String conversationName, String content, DateTime currentTime, List<Attachment> attachments) {
     Message message = Message(
       userId: userId,
       conversationId: conversationId,
       content: content,
       messageTime: currentTime,
       conversationName: conversationName,
-      mediaUrl: mediaUrl ?? '', // Nếu không có mediaUrl thì để mặc định ''
+      attachments: attachments,
     );
     // add this temporary message
     messageList.add(message);

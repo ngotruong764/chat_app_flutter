@@ -89,17 +89,22 @@ abstract class ApisChat {
         (onData) {
           // convert String to message
           Message message = Message.fromJson(jsonDecode(onData));
+
           // get conversation id
           int conversationId = message.conversationId;
+
           Conversation? conversationReceivedMess =
               conversationList.firstWhereOrNull(
                   (conversation) => conversation.id!.isEqual(conversationId));
+
           if (conversationReceivedMess != null) {
             // remove old conversation
             conversationList.removeWhere(
                 (conversation) => conversation.id!.isEqual(conversationId));
+
             // add new conversation
-            conversationReceivedMess.lastMessage = message.content;
+            conversationReceivedMess.lastMessage = message.content; // update message
+            conversationReceivedMess.lastMessageTime = message.messageTime; // update time
             conversationList.insert(0, conversationReceivedMess);
           }
         },
@@ -109,25 +114,5 @@ abstract class ApisChat {
       log('Error listen message in chat: $e');
     }
     return null;
-  }
-
-  // test api
-  static Future<void> sendMedia({
-    required String base64Encoded,
-  }) async {
-    try {
-      final response = await ApisBase.dio.post(
-        'http://10.0.2.2:8081/talkie/api/v1/message/test_put_s3',
-        options: Options(
-          contentType: 'application/json',
-        ),
-        data: {
-          'base64': base64Encoded,
-        },
-      );
-
-    } catch (e) {
-      log('Error send media: $e');
-    }
   }
 }

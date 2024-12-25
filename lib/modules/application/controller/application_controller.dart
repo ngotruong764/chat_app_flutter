@@ -52,7 +52,7 @@ class ApplicationController extends GetxController{
     bottomTabs = _buildBottomTabs();
     pageController = PageController(initialPage: page.value);
     // connect websocket
-    await connectWebSocket();
+    // await connectWebSocket();
   }
 
   @override
