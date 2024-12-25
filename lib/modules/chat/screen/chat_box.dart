@@ -512,6 +512,7 @@ class _ChatBoxState extends State<ChatBox> {
                   IconButton(
                     icon: const Icon(Icons.send),
                     onPressed: () async {
+                      DateTime currentTime = DateTime.now();
                       List<Attachment> attachments = [];
                       // Gửi ảnh nếu có trong danh sách `medias`
                       if (medias.isNotEmpty) {
@@ -524,7 +525,7 @@ class _ChatBoxState extends State<ChatBox> {
                           widget.conversationId,
                           widget.name,
                           '', // Không có nội dung tin nhắn
-                          DateTime.now(),
+                          currentTime,
                           attachments,
                         );
                         // Xóa danh sách ảnh sau khi gửi
@@ -539,7 +540,7 @@ class _ChatBoxState extends State<ChatBox> {
                             widget.conversationId,
                             widget.name,
                             messageController.text.trim(), // Nội dung tin nhắn
-                            DateTime.now(),
+                            currentTime,
                             attachments,
                           );
                         }
@@ -551,7 +552,7 @@ class _ChatBoxState extends State<ChatBox> {
                       });
 
                       // update chat screen (outside of chat box)
-                      updateChatScreen(attachments, messageController.text);
+                      updateChatScreen(attachments, messageController.text, currentTime);
 
                       messageController.clear();
                     },
@@ -665,7 +666,7 @@ class _ChatBoxState extends State<ChatBox> {
   /*
   * Method to update ChatScreen( Screen which is outside of Chatbox) when we sent a message
   */
-  void updateChatScreen(List<Attachment> attachments, String messageContent) {
+  void updateChatScreen(List<Attachment> attachments, String messageContent, DateTime currentTime) {
     Conversation? conversationReceivedMess = chatController.conversationList
         .firstWhereOrNull(
             (conversation) => conversation.id!.isEqual(widget.conversationId));
@@ -686,6 +687,7 @@ class _ChatBoxState extends State<ChatBox> {
         // if message has content
         conversationReceivedMess.lastMessage = messageContent;
       }
+      conversationReceivedMess.lastMessageTime = currentTime;
       chatController.conversationList.insert(0, conversationReceivedMess);
     }
   }
