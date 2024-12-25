@@ -56,6 +56,7 @@ class ChatScreenState extends State<ChatScreen> {
     },
     {
       "name": "Peter",
+
       "imageUrl": "https://randomuser.me/api/portraits/men/22.jpg",
       "isOnline": true,
     },
