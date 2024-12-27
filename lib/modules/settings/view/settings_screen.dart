@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../data/api/apis_user_info.dart';
 import '../../../routes/app_routes.dart';
+import '../../login/view/Login.dart';
 import 'user_profile_screen.dart';
 
 
@@ -60,10 +61,10 @@ class _SettingsPageState extends State<SettingsPage>{
               child: const Text('Logout'),
               onPressed: () async{
                 logOut();
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => Login())
-                // );
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Login())
+                );
               },
             ),
           ],
@@ -158,7 +159,20 @@ class _SettingsPageState extends State<SettingsPage>{
               buildSettingsItem(Icons.notifications, "Notifications & sounds", "On", Colors.pink, context, () {}),
               buildSettingsItem(Icons.shopping_bag, "Orders", "", Colors.green, context, () {}),
               buildSettingsItem(Icons.photo, "Photos & media", "", Colors.purple, context, () {}),
+          ListTile(
+              leading: const Icon(Icons.logout, color: Colors.black),
+              title: const Text("Logout"),
+              trailing:  const Icon(Icons.chevron_right),
+              onTap: () {
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => _showLogoutDialog ())
+                // );
+                _showLogoutDialog(context);
+              },
+            ),
             ],
+
           ),
         ),
       ),

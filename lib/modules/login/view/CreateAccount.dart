@@ -40,7 +40,12 @@ class _Signup1State extends State<CreateAccount> {
     Get.toNamed(AppRoutes.LOGIN);
   }
 
-  void register(String username, String password, String email, String confirmPassword) async {
+  void register(String username,  String email, String password, String confirmPassword) async {
+
+    print("Password: '$password'");
+    print("Confirm Password: '$confirmPassword'");
+    print("Password.trim(): '${password.trim()}'");
+    print("Confirm Password.trim(): '${confirmPassword.trim()}'");
 
     if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       setState(() {
@@ -48,7 +53,7 @@ class _Signup1State extends State<CreateAccount> {
       });
       return;
     }
-    if (password != confirmPassword) {
+    if (password.trim() != confirmPassword.trim()) {
       setState(() {
         errorMessage = "Passwords do not match!";
       });
