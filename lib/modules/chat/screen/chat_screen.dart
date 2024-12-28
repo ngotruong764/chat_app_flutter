@@ -33,7 +33,7 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     super.dispose();
-    chatController.dispose();
+    // chatController.dispose();
   }
 
   List<Map<String, dynamic>> activeUsers = [

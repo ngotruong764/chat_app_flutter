@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:chat_app_flutter/constants/constants.dart';
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/data/api/apis_chat.dart';
 import 'package:chat_app_flutter/helper/helper.dart';
@@ -78,6 +79,9 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   void initState() {
+    // update current conversation id
+    Constants.CURRENT_CONVERSATION_ID = widget.conversationId;
+
     // init FocusScopeNode
     currentScopeNode = FocusScopeNode();
 
@@ -137,6 +141,7 @@ class _ChatBoxState extends State<ChatBox> {
     super.dispose();
     _unFocusTextField();
     currentFocus.dispose();
+    Constants.CURRENT_CONVERSATION_ID = -1;
   }
 
   void _unFocusTextField() {
