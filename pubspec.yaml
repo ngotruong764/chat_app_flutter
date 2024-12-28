@@ -42,6 +42,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   firebase_core: ^3.8.0
   firebase_messaging: ^15.1.5
+  flutter_launcher_icons: ^0.14.2
 
 dev_dependencies:
   flutter_test:
@@ -115,4 +116,12 @@ flutter_native_splash:
   ios: true
   android_gravity: fill
   ios_content_mode: fill
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon_launcher/ic_launcher_new.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/icon_launcher/ic_launcher_new.png"
+
 

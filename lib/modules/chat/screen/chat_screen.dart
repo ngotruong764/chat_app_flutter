@@ -1,3 +1,4 @@
+
 import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/modules/chat/controller/chat_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
@@ -33,7 +34,7 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     super.dispose();
-    chatController.dispose();
+    // chatController.dispose();
   }
 
   List<Map<String, dynamic>> activeUsers = [
@@ -242,6 +243,7 @@ class ChatScreenState extends State<ChatScreen> {
                         name: conversation.conservationName ?? '',
                         imageUrl: conversation.conservationName ?? '',
                         message: conversation.conservationName ?? '',
+                        conversation: conversation,
                       ),
                     ),
                   );
@@ -250,8 +252,11 @@ class ChatScreenState extends State<ChatScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
                     children: <Widget>[
-                      const Icon(Icons.account_circle),
-                      const SizedBox(width: 20),
+                      // display conservation avatar
+                      _displayConservationAvatar(conversation, context),
+
+                      const SizedBox(width: 10),
+
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,6 +284,38 @@ class ChatScreenState extends State<ChatScreen> {
           ),
         );
       },
+    );
+  }
+
+  /*
+  * Method to display avatar of each conservation in conversation list
+  */
+  Widget _displayConservationAvatar(
+      Conversation conservation, BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (conservation.conservationAvatarBytes!.isNotEmpty) {
+      return Container(
+        width: width * 0.15,
+        height: width * 0.15,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: MemoryImage(conservation.conservationAvatarBytes!),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+    return SizedBox(
+      width: width * 0.15,
+      height: width * 0.15,
+      child: const FittedBox(
+        fit: BoxFit.contain,
+        child: Icon(
+          Icons.account_circle,
+          color: Colors.grey,
+        ),
+      ),
     );
   }
 

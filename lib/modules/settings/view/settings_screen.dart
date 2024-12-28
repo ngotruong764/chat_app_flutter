@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:chat_app_flutter/constants/constants.dart';
 import 'package:chat_app_flutter/data/api/apis_base.dart';
+import 'package:chat_app_flutter/data/api/apis_chat.dart';
 import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:chat_app_flutter/modules/settings/controller/settings_controller.dart';
 import 'package:chat_app_flutter/services/push_notifications_service.dart';
@@ -11,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../data/api/apis_user_info.dart';
 import '../../../routes/app_routes.dart';
-import '../../login/view/Login.dart';
 import 'user_profile_screen.dart';
 
 
@@ -61,10 +61,10 @@ class _SettingsPageState extends State<SettingsPage>{
               child: const Text('Logout'),
               onPressed: () async{
                 logOut();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Login())
-                );
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => Login())
+                // );
               },
             ),
           ],
@@ -88,13 +88,19 @@ class _SettingsPageState extends State<SettingsPage>{
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('userInfo');
     // logout request
-    await ApisUserinfo.logout(ApisBase.currentUser);
-    // create empty user info
-    ApisBase.currentUser = UserInfo();
-    // delete device token
-    PushNotificationsService.deleteDeviceToken();
-    // direct to login page
-    Get.offAllNamed(AppRoutes.LOGIN);
+    bool isLogout = await settingsController.logout(ApisBase.currentUser);
+    if(isLogout){
+      // disconnect socket
+      ApisChat.disconnectSocket();
+      // create empty user info
+      ApisBase.currentUser = UserInfo();
+      // delete device token
+      PushNotificationsService.deleteDeviceToken();
+      // delete userAvatar
+      Constants.USER_AVATAR = <int>[].obs;
+      // direct to login page
+      Get.offAllNamed(AppRoutes.LOGIN);
+    }
   }
 
   @override
@@ -159,20 +165,20 @@ class _SettingsPageState extends State<SettingsPage>{
               buildSettingsItem(Icons.notifications, "Notifications & sounds", "On", Colors.pink, context, () {}),
               buildSettingsItem(Icons.shopping_bag, "Orders", "", Colors.green, context, () {}),
               buildSettingsItem(Icons.photo, "Photos & media", "", Colors.purple, context, () {}),
-          ListTile(
-              leading: const Icon(Icons.logout, color: Colors.black),
-              title: const Text("Logout"),
-              trailing:  const Icon(Icons.chevron_right),
-              onTap: () {
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => _showLogoutDialog ())
-                // );
-                _showLogoutDialog(context);
-              },
-            ),
+              // Logout
+              ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.black),
+                  title: const Text("Logout"),
+                  trailing:  const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(builder: (context) => _showLogoutDialog ())
+                    // );
+                    _showLogoutDialog(context);
+                  },
+                ),
             ],
-
           ),
         ),
       ),

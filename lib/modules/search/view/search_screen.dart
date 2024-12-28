@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chat_app_flutter/data/api/api_list_user.dart';
 
+import '../../../model/conversation.dart';
 import '../../../model/user_info.dart';
 import '../../chat/screen/chat_box.dart';
 
@@ -182,6 +183,16 @@ class _SearchScreenState extends State<SearchScreen> {
             itemBuilder: (context, index) {
               final user = _filteredUsers[index];
 
+              final conversation = Conversation(
+                id: user.id ?? 0,
+                conservationName: user.username ?? 'Unknown',
+                lastMessage: '', // Giá trị mặc định
+                lastMessageTime: DateTime.now(),
+                userLastMessageId: user.id,
+                userLastMessageName: user.username ?? 'Unknown',
+                conservationAvatarBytes: null, // Giá trị mặc định
+              );
+
               return InkWell(
                 onTap: () {
                   // Điều hướng đến màn hình ChatBox
@@ -193,6 +204,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         name: user.username ?? 'No name',
                         imageUrl: '', // Không cần imageUrl nếu bỏ avatar
                         message: 'Start a conversation',
+                        conversation: conversation,
                       ),
                     ),
                   );

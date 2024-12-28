@@ -133,23 +133,27 @@ class PushNotificationsService {
       Map<String, dynamic> messageData = jsonDecode(message.data['default']);
       String title = messageData['title'] ?? '';
       String body = messageData['body'] ?? '';
-      //
-      final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-      // NotificationDetails notificationDetails = NotificationDetails(
-      //   android: AndroidNotificationDetails("Channel Id", "Main Channel",
-      //       groupKey: "gfg",
-      //       color: Colors.green,
-      //       importance: Importance.max,
-      //       playSound: true,
-      //       priority: Priority.high),
-      // );
-      await _notificationsPlugin.show(
+      int conversationId = messageData['conversationId'] ?? 0;
+      int currentConversationId = Constants.CURRENT_CONVERSATION_ID;
+      if(conversationId != currentConversationId){
+        //
+        final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        // NotificationDetails notificationDetails = NotificationDetails(
+        //   android: AndroidNotificationDetails("Channel Id", "Main Channel",
+        //       groupKey: "gfg",
+        //       color: Colors.green,
+        //       importance: Importance.max,
+        //       playSound: true,
+        //       priority: Priority.high),
+        // );
+        await _notificationsPlugin.show(
           id,
           title,
           body,
           notificationDetails,
           payload: message.data['route'],
-      );
+        );
+      }
     } catch (e) {
       log(e.toString());
     }
