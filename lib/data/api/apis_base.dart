@@ -16,7 +16,7 @@ abstract class ApisBase{
 
   // server
   // static const String baseURL = 'http://52.221.210.229:8080/talkie/api/v1';
-  // static const String socketBaseUrl = 'ws://52.221.210.229:8080/talkie/api/v1/chat';
+  // static const String socketBaseUrl = 'ws ://52.221.210.229:8080/talkie/api/v1/chat';
 
   // USER INFO
   static const String registerAccount = '$baseURL/user-info/register';
@@ -28,5 +28,9 @@ abstract class ApisBase{
   // conservation
   static const String getListConversationUrl = '$baseURL/conservation/getListConversation';
   static const String fetchConversationMessageUrl = '$baseURL/conservation/fetchConversationMessage';
+  // static const String getListCustomerUrl = '$baseURL/user-info/searchUserByUsername';
+  static const String getListCustomerUrl = '$baseURL/user-info/searchUsersByUsername';
+
+
 
 }

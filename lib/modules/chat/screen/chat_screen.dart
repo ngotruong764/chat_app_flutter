@@ -18,6 +18,7 @@ class ChatScreen extends StatefulWidget {
 
 class ChatScreenState extends State<ChatScreen> {
   final ChatController chatController = Get.find<ChatController>();
+
   // final TextEditingController _searchController = TextEditingController();
 
   late final Stream? conversationStream;
@@ -25,9 +26,9 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    conversationStream = ApisChat.listenMessageInChatScreen(conversationList: chatController.conversationList);
+    conversationStream = ApisChat.listenMessageInChatScreen(
+        conversationList: chatController.conversationList);
   }
-
 
   @override
   void dispose() {
@@ -58,7 +59,6 @@ class ChatScreenState extends State<ChatScreen> {
     },
     {
       "name": "Peter",
-
       "imageUrl": "https://randomuser.me/api/portraits/men/22.jpg",
       "isOnline": true,
     },
@@ -213,23 +213,25 @@ class ChatScreenState extends State<ChatScreen> {
       initialData: chatController.conversationList,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         //waiting for data
-        if(snapshot.connectionState == ConnectionState.waiting && chatController.conversationList.isEmpty){
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            chatController.conversationList.isEmpty) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
         // if has no data
-        if(!snapshot.hasData){
+        if (!snapshot.hasData) {
           return const Text('Have no conversation');
         }
         // if has data
         return Obx(
-              () => ListView.builder(
+          () => ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: chatController.conversationList.length,
             itemBuilder: (context, index) {
-              Conversation conversation = chatController.conversationList[index];
+              Conversation conversation =
+                  chatController.conversationList[index];
               return InkWell(
                 onTap: () {
                   Navigator.push(
@@ -283,9 +285,9 @@ class ChatScreenState extends State<ChatScreen> {
   /*
   * Method to display last message
   */
-  Widget _displayLastMessage(Conversation conversation){
+  Widget _displayLastMessage(Conversation conversation) {
     String lastMessageUserName = 'You';
-    if(conversation.userLastMessageId != ApisBase.currentUser.id){
+    if (conversation.userLastMessageId != ApisBase.currentUser.id) {
       lastMessageUserName = conversation.userLastMessageName ?? '';
     }
     return Row(
