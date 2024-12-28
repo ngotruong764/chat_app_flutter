@@ -31,8 +31,6 @@ abstract class ApisChat {
       socketChannel = channel;
       //  broad cast channel
       socketChannelStreamBroadcast = socketChannel.stream.asBroadcastStream();
-      //
-      // socketChannel.closeCode;
       log("Connected");
     } catch(e){
       log('Error connect socket: $e');
@@ -42,7 +40,7 @@ abstract class ApisChat {
   /*
   * Method to disconnect socket
   */
-  static void disconnectSocket(){
+  static void disconnectSocket() async{
     try{
       socketChannel.sink.close();
     } catch(e){

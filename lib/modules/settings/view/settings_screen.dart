@@ -96,6 +96,8 @@ class _SettingsPageState extends State<SettingsPage>{
       ApisBase.currentUser = UserInfo();
       // delete device token
       PushNotificationsService.deleteDeviceToken();
+      // delete userAvatar
+      Constants.USER_AVATAR = <int>[].obs;
       // direct to login page
       Get.offAllNamed(AppRoutes.LOGIN);
     }
