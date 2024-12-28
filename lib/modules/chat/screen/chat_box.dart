@@ -22,12 +22,14 @@ class ChatBox extends StatefulWidget {
     required this.name,
     required this.imageUrl,
     required this.message,
+    required this.conversation,
   });
 
   final int conversationId;
   final String name;
   final String imageUrl;
   final String message;
+  final Conversation conversation;
 
   @override
   State<StatefulWidget> createState() => _ChatBoxState();
@@ -155,10 +157,11 @@ class _ChatBoxState extends State<ChatBox> {
         appBar: AppBar(
           title: Row(
             children: [
-              const CircleAvatar(
-                radius: 20,
-                child: Icon(Icons.account_circle),
-              ),
+              // const CircleAvatar(
+              //   radius: 20,
+              //   child: Icon(Icons.account_circle),
+              // ),
+              _displayConservationAvatar(widget.conversation, context),
               const SizedBox(width: 10),
               Text(widget.name),
             ],
@@ -561,6 +564,38 @@ class _ChatBoxState extends State<ChatBox> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  /*
+  * Method to display avatar of conservation
+  */
+  Widget _displayConservationAvatar(
+      Conversation conservation, BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (conservation.conservationAvatarBytes!.isNotEmpty) {
+      return Container(
+        width: width * 0.1,
+        height: width * 0.1,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: MemoryImage(conservation.conservationAvatarBytes!),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+    return SizedBox(
+      width: width * 0.1,
+      height: width * 0.1,
+      child: const FittedBox(
+        fit: BoxFit.contain,
+        child: Icon(
+          Icons.account_circle,
+          color: Colors.grey,
         ),
       ),
     );

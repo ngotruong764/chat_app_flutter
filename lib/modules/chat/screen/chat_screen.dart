@@ -241,6 +241,7 @@ class ChatScreenState extends State<ChatScreen> {
                         name: conversation.conservationName ?? '',
                         imageUrl: conversation.conservationName ?? '',
                         message: conversation.conservationName ?? '',
+                        conversation: conversation,
                       ),
                     ),
                   );
