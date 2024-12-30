@@ -15,8 +15,8 @@ abstract class ApisBase{
   // static const String socketBaseUrl = 'ws://localhost:8081/talkie/api/v1/chat';
 
   // server
-  // static const String baseURL = 'http://52.221.210.229:8080/talkie/api/v1';
-  // static const String socketBaseUrl = 'ws ://52.221.210.229:8080/talkie/api/v1/chat';
+  // static const String baseURL = 'http://13.229.78.79:8080/talkie/api/v1';
+  // static const String socketBaseUrl = 'ws://13.229.78.79:8080/talkie/api/v1/chat';
 
   // AUTH
   static const String login = '$baseURL/user-info/login';

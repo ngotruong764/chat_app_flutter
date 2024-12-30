@@ -331,7 +331,7 @@ class ChatScreenState extends State<ChatScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         SizedBox(
-          width: Get.width * 0.6,
+          width: Get.width * 0.4,
           child: Text(
             '$lastMessageUserName: ${conversation.lastMessage ?? ''}',
             style: const TextStyle(overflow: TextOverflow.ellipsis),
