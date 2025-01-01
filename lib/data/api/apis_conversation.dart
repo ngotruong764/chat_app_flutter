@@ -97,4 +97,33 @@ class ApisConversation {
     }
     return isLastPage;
   }
+
+  /*
+  * find conversation of 2 person
+  *   if find the conversation is created before --> return conversation
+  *   else create new and return
+  */
+  static Future<Conversation?> findConversationOfTwoPeople({required int conversationPartnerId}) async {
+    try {
+      final response = await ApisBase.dio.post(
+        ApisBase.fetchConversationOrCreateUrl,
+        options: Options(
+          contentType: 'application/json',
+        ),
+        data: {
+          'conversationPartnerId': conversationPartnerId,
+        },
+      );
+      if(response.data['responseCode'] == 200){
+         if(response.data['conversationDTO'] != null){
+           return Conversation.fromJson(response.data['conversationDTO']);
+         }
+         return null;
+      }
+      return null;
+    } catch (e) {
+      log('error: $e');
+      return null;
+    }
+  }
 }

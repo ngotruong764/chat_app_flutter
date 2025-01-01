@@ -7,12 +7,14 @@ import 'package:chat_app_flutter/data/api/apis_chat.dart';
 import 'package:chat_app_flutter/helper/helper.dart';
 import 'package:chat_app_flutter/model/attachment.dart';
 import 'package:chat_app_flutter/model/message.dart';
+import 'package:chat_app_flutter/model/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../model/conversation.dart';
+import '../../search/controller/search_user_controller.dart';
 import '../controller/chat_controller.dart';
 
 
@@ -20,17 +22,17 @@ class ChatBox extends StatefulWidget {
   const ChatBox({
     super.key,
     required this.conversationId,
+    this.conversationPartner,
     required this.name,
-    required this.imageUrl,
-    required this.message,
+    required this.conversationAvatar,
     required this.conversation,
   });
 
   final int conversationId;
+  final UserInfo? conversationPartner;
   final String name;
-  final String imageUrl;
-  final String message;
-  final Conversation conversation;
+  final Uint8List conversationAvatar;
+  final Conversation? conversation;
 
   @override
   State<StatefulWidget> createState() => _ChatBoxState();
@@ -38,6 +40,13 @@ class ChatBox extends StatefulWidget {
 
 class _ChatBoxState extends State<ChatBox> {
   final ChatController chatController = Get.put(ChatController());
+  late final SearchUserController _searchUserController;
+
+  // params
+  late int conversationId;
+  late String conversationName;
+  late Conversation conversation;
+
   final TextEditingController messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode currentFocus = FocusNode();
@@ -79,36 +88,42 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   void initState() {
-    // update current conversation id
-    Constants.CURRENT_CONVERSATION_ID = widget.conversationId;
-
     // init FocusScopeNode
     currentScopeNode = FocusScopeNode();
 
-    // after loading message --> go to the bottom to get the newest message
-    chatController
-        .fetchMessage(messagePageNumber, messagePageSize, widget.conversationId, null)
-        .then(
-          (value) => Future.delayed(
-        const Duration(milliseconds: 500),
-            () => _scrollToBottom(),
-      ),
-    );
+    if (widget.conversation == null && widget.conversationPartner != null) {
+      _searchUserController = Get.put(SearchUserController());
+      _updateConversation().then((conversation) {
+        // if conversation != null --> update value
+        if (conversation != null) {
+          _updateAttribute(
+              conversation.id!, conversation.conservationName!, conversation);
+
+          // update chat screen
+          chatController.conversationList.insert(0, conversation);
+        }
+        setState(() {});
+      });
+
+
+    } else {
+      _updateAttribute(
+          widget.conversationId, widget.name, widget.conversation!);
+    }
 
     // when open keyboard --> go to the bottom of the chat box
     currentFocus.addListener(() {
       if (currentFocus.hasFocus) {
         Future.delayed(
           const Duration(milliseconds: 500),
-              () => _scrollToBottom(),
+          () => _scrollToBottom(),
         );
       }
     });
 
     // get the stream of message
-    messageStream = ApisChat.listenMessage(
-        messageList: chatController.messageList);
-
+    messageStream =
+        ApisChat.listenMessage(messageList: chatController.messageList);
 
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   _scrollToBottom();
@@ -124,10 +139,12 @@ class _ChatBoxState extends State<ChatBox> {
     // add listener to ScrollController
     _scrollController.addListener(() {
       // if scroll controller is assigned to our widget
-      if(_scrollController.hasClients){
+      if (_scrollController.hasClients) {
         // if we scroll to the top, and not isLastPage --> load more messages
-        if(_scrollController.offset <= _scrollController.position.minScrollExtent
-            && !_scrollController.position.outOfRange && !chatController.isLastPage){
+        if (_scrollController.offset <=
+                _scrollController.position.minScrollExtent &&
+            !_scrollController.position.outOfRange &&
+            !chatController.isLastPage) {
           _loadMoreMessage();
         }
       }
@@ -142,6 +159,29 @@ class _ChatBoxState extends State<ChatBox> {
     _unFocusTextField();
     currentFocus.dispose();
     Constants.CURRENT_CONVERSATION_ID = -1;
+  }
+
+  Future<Conversation?> _updateConversation() async{
+    return await _searchUserController.findConversation(widget.conversationPartner!.id ?? 0);
+  }
+
+  void _updateAttribute(int conversationId, String conversationName, Conversation conversation){
+    this.conversationId = conversationId;
+    this.conversationName = conversationName;
+    this.conversation = conversation;
+
+    // after loading message --> go to the bottom to get the newest message
+    chatController
+        .fetchMessage(messagePageNumber, messagePageSize, conversationId, null)
+        .then(
+          (value) => Future.delayed(
+        const Duration(milliseconds: 500),
+            () => _scrollToBottom(),
+      ),
+    );
+
+    // update current conversation id
+    Constants.CURRENT_CONVERSATION_ID = conversationId;
   }
 
   void _unFocusTextField() {
@@ -162,11 +202,8 @@ class _ChatBoxState extends State<ChatBox> {
         appBar: AppBar(
           title: Row(
             children: [
-              // const CircleAvatar(
-              //   radius: 20,
-              //   child: Icon(Icons.account_circle),
-              // ),
-              _displayConservationAvatar(widget.conversation, context),
+              // _displayConservationAvatar(conversation, context),
+              _displayConservationAvatar(widget.conversationAvatar, context),
               const SizedBox(width: 10),
               Text(widget.name),
             ],
@@ -578,16 +615,16 @@ class _ChatBoxState extends State<ChatBox> {
   * Method to display avatar of conservation
   */
   Widget _displayConservationAvatar(
-      Conversation conservation, BuildContext context) {
+      Uint8List conversationAvatar, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (conservation.conservationAvatarBytes!.isNotEmpty) {
+    if (conversationAvatar.isNotEmpty) {
       return Container(
         width: width * 0.1,
         height: width * 0.1,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
-            image: MemoryImage(conservation.conservationAvatarBytes!),
+            image: MemoryImage(conversationAvatar),
             fit: BoxFit.cover,
           ),
         ),

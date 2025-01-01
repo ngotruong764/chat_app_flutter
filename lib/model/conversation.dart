@@ -31,11 +31,11 @@ import 'package:chat_app_flutter/helper/helper.dart';
     }
     return  Conversation(
       id: json['conversationId'] ?? -1,
-      conservationName: json['conversationName'],
-      lastMessage: json['lastMessage'],
+      conservationName: json['conversationName'] ?? '',
+      lastMessage: json['lastMessage'] ?? '',
       lastMessageTime: json['lastMessageTime'] != null ? DateTime.parse(json['lastMessageTime']) : null,
       userLastMessageId: json['userLastMessageId'],
-      userLastMessageName: json['userLastMessageName'],
+      userLastMessageName: json['userLastMessageName'] ,
       conservationAvatarBase64: conservationAvatarBase64,
       conservationAvatarBytes: conservationAvatarBytes,
     );

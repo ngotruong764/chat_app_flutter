@@ -241,8 +241,7 @@ class ChatScreenState extends State<ChatScreen> {
                       builder: (context) => ChatBox(
                         conversationId: conversation.id ?? 0,
                         name: conversation.conservationName ?? '',
-                        imageUrl: conversation.conservationName ?? '',
-                        message: conversation.conservationName ?? '',
+                        conversationAvatar: conversation.conservationAvatarBytes!,
                         conversation: conversation,
                       ),
                     ),
@@ -323,9 +322,13 @@ class ChatScreenState extends State<ChatScreen> {
   * Method to display last message
   */
   Widget _displayLastMessage(Conversation conversation) {
-    String lastMessageUserName = 'You';
+    String lastMessageUserName = 'You:';
+
     if (conversation.userLastMessageId != ApisBase.currentUser.id) {
-      lastMessageUserName = conversation.userLastMessageName ?? '';
+      lastMessageUserName = conversation.userLastMessageName != null &&
+              conversation.userLastMessageName!.isNotEmpty
+          ? '${conversation.userLastMessageName}:'
+          : '';
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -333,12 +336,12 @@ class ChatScreenState extends State<ChatScreen> {
         SizedBox(
           width: Get.width * 0.4,
           child: Text(
-            '$lastMessageUserName: ${conversation.lastMessage ?? ''}',
+            '$lastMessageUserName ${conversation.lastMessage ?? ''}',
             style: const TextStyle(overflow: TextOverflow.ellipsis),
           ),
         ),
         Text(
-          Helper.formatLastMessageTime(conversation.lastMessageTime!),
+          Helper.formatLastMessageTime(conversation.lastMessageTime),
         ),
       ],
     );

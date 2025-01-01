@@ -51,22 +51,24 @@ class Helper{
     return bytes;
   }
 
-  static String formatLastMessageTime(DateTime lastMessageTime){
+  static String formatLastMessageTime(DateTime? lastMessageTime){
     String formattedTime = '';
     DateTime currentTime = DateTime.now();
 
-    if(currentTime.difference(lastMessageTime).inSeconds < 60){
-      // if less than 60 second
-      formattedTime = 'Just now';
-    } else if(currentTime.difference(lastMessageTime).inDays < 1){
-      // if than 1 day
-      formattedTime = '${lastMessageTime.hour.toString().padLeft(2, '0')}:${lastMessageTime.minute.toString().padLeft(2, '0')}';
-    } else if(currentTime.year > lastMessageTime.year){
-      // if currentTime.year > lastMessageTime.year
-      formattedTime = DateFormat('MMM dd, yyyy').format(lastMessageTime);
-    } else if(currentTime.difference(lastMessageTime).inDays >= 1) {
-      // if greater than 1 day
-      formattedTime = DateFormat('MMM, dd').format(lastMessageTime);
+    if(lastMessageTime != null){
+      if(currentTime.difference(lastMessageTime).inSeconds < 60){
+        // if less than 60 second
+        formattedTime = 'Just now';
+      } else if(currentTime.difference(lastMessageTime).inDays < 1){
+        // if than 1 day
+        formattedTime = '${lastMessageTime.hour.toString().padLeft(2, '0')}:${lastMessageTime.minute.toString().padLeft(2, '0')}';
+      } else if(currentTime.year > lastMessageTime.year){
+        // if currentTime.year > lastMessageTime.year
+        formattedTime = DateFormat('MMM dd, yyyy').format(lastMessageTime);
+      } else if(currentTime.difference(lastMessageTime).inDays >= 1) {
+        // if greater than 1 day
+        formattedTime = DateFormat('MMM, dd').format(lastMessageTime);
+      }
     }
 
     return formattedTime;

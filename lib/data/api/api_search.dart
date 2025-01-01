@@ -1,14 +1,16 @@
+import 'dart:developer';
+
 import 'package:chat_app_flutter/model/user_info.dart'; // Import class UserInfo
 import 'apis_base.dart';
 import 'package:dio/dio.dart';
 
-abstract class CustomerService {
+abstract class ApiSearch {
   // Hàm lấy danh sách user từ API
   static Future<List<UserInfo>> fetchUserList(String username, int currentUserId,
-      {int page = 0, int size = 10}) async {
+      {required int page, required int size}) async {
     try {
-      print("Fetching users...");
-      print('Request Parameters: username=$username, currentUserId=$currentUserId');
+      // log("Fetching users...");
+      // log('Request Parameters: username=$username, currentUserId=$currentUserId');
 
       // Gọi API với query parameters
       final response = await Dio().get(
@@ -22,25 +24,24 @@ abstract class CustomerService {
       );
 
       // Log dữ liệu phản hồi
-      print('Response Data: ${response.data}');
+      // log('Response Data: ${response.data}');
 
       if (response.statusCode == 200) {
-        // Kiểm tra nếu dữ liệu trả về là một danh sách
         if (response.data is List) {
           // Map JSON thành danh sách UserInfo
           return (response.data as List)
               .map((json) => UserInfo.fromJson(json))
               .toList();
         } else {
-          throw Exception(
-              'Unexpected response format: Expected a List but got ${response.data.runtimeType}');
+          return [];
         }
       } else {
-        throw Exception('Failed to fetch user list: ${response.statusCode}');
+        log('Failed to fetch user list: ${response.statusCode}');
       }
+      return [];
     } catch (e) {
-      print('Error: $e');
-      throw Exception('Error fetching user list: $e');
+      log('Failed to fetch user list: $e');
+      return [];
     }
   }
 
@@ -58,7 +59,7 @@ abstract class CustomerService {
         throw Exception('Failed to fetch user: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching user: $e');
+      log('Error fetching user: $e');
       throw Exception('Error fetching user: $e');
     }
   }

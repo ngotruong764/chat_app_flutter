@@ -1,7 +1,8 @@
+import 'package:chat_app_flutter/modules/search/controller/search_user_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app_flutter/data/api/api_list_user.dart';
 
-import '../../../model/conversation.dart';
+import 'package:get/get.dart';
+
 import '../../../model/user_info.dart';
 import '../../chat/screen/chat_box.dart';
 
@@ -13,83 +14,19 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final TextEditingController _searchController = TextEditingController();
+  final SearchUserController _searchUserController = Get.find<SearchUserController>();
+
+  final TextEditingController _searchControllerText = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
-  List<UserInfo> _allUsers = [];
   List<UserInfo> _filteredUsers = [];
+  bool _isLoadingMore = true;
 
-// xu lý logic hiện users
+  // params to paginate
   int _currentPage = 0;
-  bool _isLoadingMore = false;
+  final int _pageSize = 10;
 
-  void _loadMoreUsers() async {
-    if (_isLoadingMore) return; // Tránh gọi lại nhiều lần
-
-    setState(() {
-      _isLoadingMore = true;
-    });
-
-    try {
-      final List<UserInfo> users = await CustomerService.fetchUserList(
-        _searchController.text,
-        1,
-        page: _currentPage + 1,
-        size: 10, // Mỗi lần tải thêm 10 người dùng
-      );
-
-      setState(() {
-        _currentPage++;
-        _allUsers.addAll(users);
-        _filteredUsers = List.from(_allUsers);
-      });
-    } catch (error) {
-      print('Error loading more users: $error');
-    } finally {
-      setState(() {
-        _isLoadingMore = false;
-      });
-    }
-  }
   @override
-
-  // void initState() {
-  //   super.initState();
-  //
-  //   _searchController.addListener(() {print("change");});
-  // }
-
-  /*
-  * Un focus TextField
-  */
-  // void _fetchUsersFromApi() async {
-  //   try {
-  //     final List<UserInfo> users = await CustomerService.fetchUserList();
-  //     setState(() {
-  //       _allUsers = users;
-  //       _filteredUsers = List.from(_allUsers);
-  //     });
-  //   } catch (error) {
-  //     print('Error fetching users: $error');
-  //   }
-  // }
-  void _fetchUsersFromApi() async {
-    try {
-      final String username = _searchController.text; // Lấy username từ TextField
-      final int currentUserId = 1; // Gán giá trị currentUserId tạm thời
-      final List<UserInfo> users = await CustomerService.fetchUserList(
-        username,
-        currentUserId,
-      );
-
-      setState(() {
-        _allUsers = users;
-        _filteredUsers = List.from(_allUsers);
-      });
-    } catch (error) {
-      print('Error fetching users: $error');
-    }
-  }
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -97,21 +34,100 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     // Sao chép danh sách ban đầu
-    _fetchUsersFromApi();
+    // _fetchUsersFromApi();
 
     // Lắng nghe thay đổi trong TextField
-    _searchController.addListener(() {
-      setState(() {
-        _filteredUsers = _allUsers
-            .where((user) =>
-                user.username != null &&
-                user.username!
-                    .toLowerCase()
-                    .contains(_searchController.text.toLowerCase()))
-            .toList();
-      });
+    _searchControllerText.addListener(() {
+      if(_searchControllerText.text.isNotEmpty){
+        _findUserByUserNameOrEmail(_searchControllerText.text, _currentPage, _pageSize);
+      } else{
+        _currentPage = 0;
+        _filteredUsers.clear();
+        setState(() {});
+      }
+      // setState(() {
+      //   _filteredUsers = _allUsers
+      //       .where((user) =>
+      //   user.username != null &&
+      //       user.username!
+      //           .toLowerCase()
+      //           .contains(_searchControllerText.text.toLowerCase()))
+      //       .toList();
+      // });
     });
   }
+
+  // void _loadMoreUsers() async {
+  //   if (_isLoadingMore) return; // Tránh gọi lại nhiều lần
+  //
+  //   setState(() {
+  //     _isLoadingMore = true;
+  //   });
+  //
+  //   try {
+  //     final List<UserInfo> users = await ApiSearch.fetchUserList(
+  //       _searchControllerText.text,
+  //       1,
+  //       page: _currentPage + 1,
+  //       size: _pageSize, // Mỗi lần tải thêm 10 người dùng
+  //     );
+  //
+  //     setState(() {
+  //       _currentPage++;
+  //       _allUsers.addAll(users);
+  //       _filteredUsers = List.from(_allUsers);
+  //     });
+  //   } catch (error) {
+  //     log('Error loading more users: $error');
+  //   } finally {
+  //     setState(() {
+  //       _isLoadingMore = false;
+  //     });
+  //   }
+  // }
+
+  /*
+  * Method to load more users
+  */
+  void _loadMoreUsers() async {
+    if (!_isLoadingMore) return; // Tránh gọi lại nhiều lần
+
+    final List<UserInfo> users =
+        await _searchUserController.findUserByUserNameOrEmail(
+            _searchControllerText.text,
+            _searchUserController.currentUser.id!,
+            _currentPage++,
+            _pageSize);
+
+    // if users is empty -> no data response -> set loadingMore is false
+    if (users.isEmpty) {
+      _isLoadingMore = false;
+      return;
+    }
+    
+    setState(() {
+      _filteredUsers.addAll(users);
+    });
+  }
+
+  // void _fetchUsersFromApi() async {
+  //   try {
+  //     final String username =
+  //         _searchControllerText.text; // Lấy username từ TextField
+  //     int currentUserId = _searchUserController.currentUser.id!; // Gán giá trị currentUserId tạm thời
+  //     final List<UserInfo> users = await ApiSearch.fetchUserList(
+  //       username,
+  //       currentUserId,
+  //     );
+  //
+  //     setState(() {
+  //       _allUsers = users;
+  //       _filteredUsers = List.from(_allUsers);
+  //     });
+  //   } catch (error) {
+  //     log('Error fetching users: $error');
+  //   }
+  // }
 
   void _unFocusTextField() {
     FocusScopeNode currentFocus = FocusScope.of(context);
@@ -119,7 +135,6 @@ class _SearchScreenState extends State<SearchScreen> {
       FocusManager.instance.primaryFocus?.unfocus();
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +155,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: TextField(
-                controller: _searchController,
+                controller: _searchControllerText,
                 autofocus: true,
                 cursorColor: Colors.grey,
                 decoration: const InputDecoration(
@@ -173,52 +188,102 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         body: NotificationListener<ScrollNotification>(
           onNotification: (scrollInfo) {
-            if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+            if (scrollInfo.metrics.pixels ==
+                scrollInfo.metrics.maxScrollExtent) {
               _loadMoreUsers(); // Gọi hàm tải thêm khi cuộn tới cuối danh sách
             }
             return true;
           },
-          child: ListView.builder(
-            itemCount: _filteredUsers.length,
-            itemBuilder: (context, index) {
-              final user = _filteredUsers[index];
-
-              final conversation = Conversation(
-                id: user.id ?? 0,
-                conservationName: user.username ?? 'Unknown',
-                lastMessage: '', // Giá trị mặc định
-                lastMessageTime: DateTime.now(),
-                userLastMessageId: user.id,
-                userLastMessageName: user.username ?? 'Unknown',
-                conservationAvatarBytes: null, // Giá trị mặc định
-              );
-
-              return InkWell(
-                onTap: () {
-                  // Điều hướng đến màn hình ChatBox
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatBox(
-                        conversationId: 0, // Tạo một ID cuộc trò chuyện mới hoặc lấy từ API
-                        name: user.username ?? 'No name',
-                        imageUrl: '', // Không cần imageUrl nếu bỏ avatar
-                        message: 'Start a conversation',
-                        conversation: conversation,
-                      ),
-                    ),
-                  );
-                },
-                child: ListTile(
-                  title: Text(user.username ?? 'No username'),
-                  subtitle: Text(user.status == true ? 'Active' : 'Inactive'),
-                  leading: Icon(Icons.account_circle, size: 40, color: Colors.grey), // Hiển thị icon nếu không có avatar
-                ),
-              );
-            },
-          ),
+          child: _showSearchedUser(),
         ),
       ),
     );
+  }
+
+  Widget _showSearchedUser() {
+    if (_filteredUsers.isNotEmpty) {
+      return ListView.builder(
+        itemCount: _filteredUsers.length,
+        itemBuilder: (context, index) {
+          final user = _filteredUsers[index];
+
+          return InkWell(
+            onTap: () async {
+              // Điều hướng đến màn hình ChatBox
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatBox(
+                    conversationId: 0,
+                    conversationPartner: user,
+                    name: user.username ?? 'No name',
+                    conversationAvatar: user.profilePictureBytes!,
+                    conversation: null,
+                  ),
+                ),
+              );
+            },
+            child: ListTile(
+              title: Text(user.username ?? 'No username'),
+              subtitle: Text(user.status == true ? 'Active' : 'Inactive'),
+              leading: _renderUserAvatar(user), // Hiển thị icon nếu không có avatar
+            ),
+          );
+        },
+      );
+    } else if (_filteredUsers.isEmpty &&
+        _searchControllerText.text.isNotEmpty) {
+      return const Center(
+        child: Text("User not found!"),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+  
+  Widget _renderUserAvatar(UserInfo user){
+    final width = MediaQuery.of(context).size.width;
+    if (user.profilePictureBytes!.isNotEmpty) {
+      return Container(
+        width: width * 0.1,
+        height: width * 0.1,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: MemoryImage(user.profilePictureBytes!),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+    return SizedBox(
+      width: width * 0.1,
+      height: width * 0.1,
+      child: const FittedBox(
+        fit: BoxFit.contain,
+        child: Icon(
+          Icons.account_circle,
+          color: Colors.grey,
+        ),
+      ),
+    );
+  }
+
+  /*
+  * Method to find user by username or email
+  */
+  void _findUserByUserNameOrEmail(String value, int pageNo, int pageSize) async{
+    _isLoadingMore = true;
+
+    List<UserInfo> searchedUser = await _searchUserController
+        .findUserByUserNameOrEmail(value,_searchUserController.currentUser.id! , pageNo, pageSize);
+
+    if(searchedUser.isNotEmpty){
+      setState(() {
+        // clear the list before add
+        _filteredUsers.clear();
+        _filteredUsers.addAll(searchedUser);
+      });
+    }
   }
 }

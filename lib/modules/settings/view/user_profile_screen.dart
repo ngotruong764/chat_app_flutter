@@ -313,9 +313,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     userInfo.email = _emailController.text.trim();
     userInfo.phoneNumber = _phoneNumberController.text.trim();
     userInfo.sex = _currentGender.toUpperCase();
-    userInfo.profilePicturePath = profilePicturePath;
+    userInfo.profilePicture = profilePicturePath;
     if(userAvatar.isNotEmpty){
-      userInfo.profilePicture = base64Encode(userAvatar);
+      userInfo.profilePictureBase64 = base64Encode(userAvatar);
     }
 
     // update user

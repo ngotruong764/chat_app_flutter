@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import '../helper/helper.dart';
+
 class UserInfo {
   int? id;
   String? email;
@@ -13,7 +17,8 @@ class UserInfo {
   String? sex;
   bool? status;
   String? profilePicture;
-  String? profilePicturePath;
+  String? profilePictureBase64;
+  Uint8List? profilePictureBytes;
   DateTime? createAt;
   DateTime? updateAt;
   String? role;
@@ -35,7 +40,8 @@ class UserInfo {
       this.sex,
       this.status,
       this.profilePicture,
-      this.profilePicturePath,
+      this.profilePictureBase64,
+      this.profilePictureBytes,
       this.createAt,
       this.updateAt,
       this.role,
@@ -43,6 +49,12 @@ class UserInfo {
       this.deviceToken});
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
+    String profilePicture = json['profilePictureBase64'] ?? '';
+    Uint8List profilePicturesBytes = Uint8List.fromList([]);
+    if(profilePicture.isNotEmpty){
+      profilePicturesBytes = Helper.encodeAnBase64ToBytesSync(profilePicture);
+    }
+
     return  UserInfo(
       id: json['id'],
       email: json['email'],
@@ -60,7 +72,8 @@ class UserInfo {
       sex: json['sex'],
       status: json['status'],
       profilePicture: json['profilePicture'],
-      profilePicturePath: json['profilePicturePath'],
+      profilePictureBase64: json['profilePictureBase64'],
+      profilePictureBytes: profilePicturesBytes,
       createAt: json['createAt'] != null ? DateTime.parse(json['createAt']) : null,
       updateAt:
           json['updateAt'] != null ? DateTime.parse(json['updateAt']) : null,
@@ -85,7 +98,7 @@ class UserInfo {
       'sex': sex,
       'status': status,
       'profilePicture': profilePicture,
-      'profilePicturePath': profilePicturePath,
+      'profilePictureBase64': profilePictureBase64,
       'createAt': createAt?.toIso8601String(),
       'updateAt': updateAt?.toIso8601String(),
       'role': role?.toString(),
