@@ -10,6 +10,7 @@ import 'package:chat_app_flutter/modules/settings/binding/settings_binding.dart'
 import 'package:chat_app_flutter/modules/settings/view/settings_screen.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
+import '../modules/forgetPass/view/forgot_pass_screen.dart';
 import '../modules/login/view/InforUser.dart';
 import '../modules/login/view/Signup3.dart';
 import '../modules/splash_screen/SplashScreen.dart';
@@ -65,4 +66,9 @@ final kRoutePages = [
     page: () => const SettingsPage(),
     binding: SettingsBinding(),
   ),
+  
+  GetPage(name: AppRoutes.FOGGOTPASSWORD,
+  page: () => const ForgetPassword(),
+  )
+
 ];

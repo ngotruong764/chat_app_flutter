@@ -36,6 +36,10 @@ class _LoginState extends State<Login> {
     Get.toNamed(AppRoutes.APPLICATION);
   }
 
+  void forgotPassWord() {
+    Get.toNamed(AppRoutes.FOGGOTPASSWORD);
+  }
+
   final CheckboxController checkboxController = Get.put(CheckboxController());
 
   /*
@@ -138,43 +142,65 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
+                      Row(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(left: 15.0),
+                            alignment: Alignment.centerLeft, // Căn sang lề phải
+                            child: Row(
+                              children: [
+                                Obx(() => Checkbox(
+                                      // Sử dụng Obx để theo dõi thay đổi
+                                      value: checkboxController.isChecked.value,
+                                      onChanged: (bool? value) {
+                                        checkboxController
+                                            .toggleCheckbox(value);
+                                      },
+                                    )),
+                                Obx(() => Text(
+                                    checkboxController.isChecked.value
+                                        ? 'Save password'
+                                        : 'Non-Saving password')),
+                                // Hiển thị trạng thái
+                              ],
+                            ),
+                          ),
+                          Spacer(),
+                          Container(
+                            margin: const EdgeInsets.only(right: 25.0),
+                            alignment: Alignment.centerRight,
+                            // Căn sang lề phải
+                            child: TextButton(
+                              onPressed: forgotPassWord,
+                              child: const Text(
+                                'Forget password?',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       if (errorMessage != null)
                         Container(
-                          padding: const EdgeInsets.only(left: 16.0),
+                          padding: const EdgeInsets.only(left: 30.0),
                           alignment: Alignment.centerLeft, // Căn lề trái
                           child: Text(
                             'Error message',
                             style: const TextStyle(
                               color: Colors.red,
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       const SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        child: Row(
-                          children: [
-                            Obx(() => Checkbox(
-                                  // Sử dụng Obx để theo dõi thay đổi
-                                  value: checkboxController.isChecked.value,
-                                  onChanged: (bool? value) {
-                                    checkboxController.toggleCheckbox(value);
-                                  },
-                                )),
-                            Obx(() => Text(checkboxController.isChecked.value
-                                ? 'Save password'
-                                : 'Non-Saving password')),
-                            // Hiển thị trạng thái
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
                         height: 35,
                       ),
-
                       SizedBox(
                         width: 300,
                         height: 50,
@@ -235,7 +261,7 @@ class _LoginState extends State<Login> {
                                 ),
                               ],
                             )),
-                      )
+                      ),
                     ],
                   ),
                 ),

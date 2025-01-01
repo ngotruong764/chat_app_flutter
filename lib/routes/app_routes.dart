@@ -10,4 +10,6 @@ abstract class AppRoutes{
   static const String CHATBOX = "/chatbox";
   static const String CONVERSATIONS = "/coversations";
   static const String SETTINGS = "/settings";
+  static const String FOGGOTPASSWORD = "/forgot";
+
 }

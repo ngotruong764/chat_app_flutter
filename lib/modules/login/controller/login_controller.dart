@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../model/user_info.dart';
 
-class LoginController extends GetxController{
+class   LoginController extends GetxController{
 
   DateTime firstDate = DateTime(1900);
   DateTime lastDate = DateTime.now();

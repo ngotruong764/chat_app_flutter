@@ -33,6 +33,7 @@ abstract class ApisBase{
   static const String fetchConversationOrCreateUrl = '$baseURL/conservation/fetchConversationOrCreate';
   // static const String getListCustomerUrl = '$baseURL/user-info/searchUserByUsername';
   static const String getListCustomerUrl = '$baseURL/user-info/searchUsersByUsername';
+  static const String createConversation = '$baseURL/conservation/createConversation';
 
 
 
