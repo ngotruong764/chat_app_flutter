@@ -15,7 +15,7 @@ class UserInfo {
   String? phoneNumber;
   DateTime? dob;
   String? sex;
-  bool? status;
+  bool? status; // true: online - false: offline
   String? profilePicture;
   String? profilePictureBase64;
   Uint8List? profilePictureBytes;

@@ -292,30 +292,55 @@ class ChatScreenState extends State<ChatScreen> {
   Widget _displayConservationAvatar(
       Conversation conservation, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (conservation.conservationAvatarBytes!.isNotEmpty) {
-      return Container(
-        width: width * 0.15,
-        height: width * 0.15,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            image: MemoryImage(conservation.conservationAvatarBytes!),
-            fit: BoxFit.cover,
+    Color statusColor = Colors.yellow;
+    if(conservation.isOnline!){
+      statusColor = Colors.green;
+    }
+
+    return Stack(
+      children: <Widget>[
+        if (conservation.conservationAvatarBytes!.isNotEmpty)
+          Container(
+            width: width * 0.15,
+            height: width * 0.15,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: MemoryImage(conservation.conservationAvatarBytes!),
+                fit: BoxFit.cover,
+              ),
+            ),
+          )
+        else
+          Container(
+            width: width * 0.15,
+            height: width * 0.15,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.account_circle,
+              color: Colors.grey,
+              size: width *
+                  0.15, // Set the size of the icon to match the container
+            ),
+          ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: Container(
+            width: width * 0.04,
+            height: width * 0.04,
+            decoration: BoxDecoration(
+              color: statusColor,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+            ),
           ),
         ),
-      );
-    }
-    return SizedBox(
-      width: width * 0.15,
-      height: width * 0.15,
-      child: const FittedBox(
-        fit: BoxFit.contain,
-        child: Icon(
-          Icons.account_circle,
-          color: Colors.grey,
-        ),
-      ),
+      ],
     );
+
   }
 
   /*

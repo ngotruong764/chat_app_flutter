@@ -11,6 +11,7 @@ import 'package:chat_app_flutter/helper/helper.dart';
   String? userLastMessageName; // user name
   String? conservationAvatarBase64;
   Uint8List? conservationAvatarBytes;
+  bool? isOnline; // true: online - false: offline
 
   Conversation({
     this.id,
@@ -21,6 +22,7 @@ import 'package:chat_app_flutter/helper/helper.dart';
     this.userLastMessageName,
     this.conservationAvatarBase64,
     this.conservationAvatarBytes,
+    this.isOnline,
   });
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
@@ -29,7 +31,7 @@ import 'package:chat_app_flutter/helper/helper.dart';
     if(conservationAvatarBase64.isNotEmpty){
       conservationAvatarBytes = Helper.encodeAnBase64ToBytesSync(conservationAvatarBase64);
     }
-    return  Conversation(
+    return Conversation(
       id: json['conversationId'] ?? -1,
       conservationName: json['conversationName'] ?? '',
       lastMessage: json['lastMessage'] ?? '',
@@ -38,6 +40,7 @@ import 'package:chat_app_flutter/helper/helper.dart';
       userLastMessageName: json['userLastMessageName'] ,
       conservationAvatarBase64: conservationAvatarBase64,
       conservationAvatarBytes: conservationAvatarBytes,
+      isOnline: json['online'] ?? false,
     );
   }
 
