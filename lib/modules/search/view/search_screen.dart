@@ -104,7 +104,6 @@ class _SearchScreenState extends State<SearchScreen> {
       _isLoadingMore = false;
       return;
     }
-    
     setState(() {
       _filteredUsers.addAll(users);
     });

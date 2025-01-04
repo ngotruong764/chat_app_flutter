@@ -3,7 +3,7 @@ import 'package:chat_app_flutter/data/api/apis_base.dart';
 import 'package:chat_app_flutter/modules/chat/controller/chat_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app_flutter/modules/application/creategroup/CreateGroup.dart';
+import 'package:chat_app_flutter/modules/application/creategroup/view/CreateGroup.dart';
 import 'package:get/get.dart';
 import '../../../data/api/apis_chat.dart';
 import '../../../helper/helper.dart';

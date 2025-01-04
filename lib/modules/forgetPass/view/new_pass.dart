@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/modules/forgetPass/view/done_forget.dart';
 import 'package:flutter/material.dart';
 
 class EnterNewPass extends StatefulWidget {
@@ -87,6 +88,12 @@ class _EnterNewPassState extends State<EnterNewPass> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UnForget(),
+                          ),
+                      );
                       // Hành động khi button được nhấn
                       print("Button pressed!");
                     },

@@ -188,7 +188,7 @@ class _LoginState extends State<Login> {
                       if (errorMessage != null)
                         Container(
                           padding: const EdgeInsets.only(left: 30.0),
-                          alignment: Alignment.centerLeft, // Căn lề trái
+                          alignment: Alignment.centerLeft,
                           child: Text(
                             'Error message',
                             style: const TextStyle(
