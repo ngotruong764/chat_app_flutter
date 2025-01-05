@@ -14,13 +14,6 @@ class AddNewPage extends StatefulWidget {
 }
 
 class _AddNewPageState extends State<AddNewPage> {
-  final List<String> users = [
-    'User 1',
-    'User 2',
-    'User 3',
-    'User 4',
-    'User 5',
-  ];
 
   // Danh sách người dùng đã thêm
   final List<String> addedUsers = [];
@@ -85,8 +78,7 @@ class _AddNewPageState extends State<AddNewPage> {
     });
   }
 
-  void _findUserByUserNameOrEmail(String value, int pageNo,
-      int pageSize) async {
+  void _findUserByUserNameOrEmail(String value, int pageNo, int pageSize) async {
     _isLoadingMore = true;
 
     List<UserInfo> searchedUser = await _createGroupController
@@ -129,8 +121,101 @@ class _AddNewPageState extends State<AddNewPage> {
     }
   }
 
+  void _onCreateGroup() {
+    if (addedUsers.isNotEmpty) {
+      // Thực hiện hành động tạo nhóm với danh sách người dùng đã chọn
+      print("Creating group with users: $addedUsers");
+      // Bạn có thể thêm logic gọi API hoặc chuyển qua màn hình tiếp theo ở đây
+    } else {
+      // Nếu không có người dùng nào được chọn
+      print("No users selected!");
+    }
+  }
+
+
   // Hàm xử lý khi thêm hoặc xóa người dùng
 
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   double height = MediaQuery.of(context).size.height;
+  //   return GestureDetector(
+  //     onTap: _unFocusTextField,
+  //     child: Scaffold(
+  //       appBar: AppBar(
+  //       automaticallyImplyLeading: false,
+  //       title: Padding(
+  //         padding: EdgeInsets.symmetric(horizontal: 8, vertical: height * 0.02),
+  //         child: Row(
+  //           children: [
+  //             // Nút Create
+  //             Flexible(
+  //               flex: 1, // Chiếm 1 phần tỷ lệ
+  //               child: TextButton(
+  //                 onPressed: () {
+  //                   // Logic cho Create
+  //                 },
+  //                 child: const Text(
+  //                   'Create',
+  //                   style: TextStyle(fontSize: 10), // Kích thước chữ nhỏ hơn
+  //                 ),
+  //               ),
+  //             ),
+  //             // Thanh tìm kiếm
+  //             Flexible(
+  //               flex: 4, // Chiếm 4 phần tỷ lệ
+  //               child: Container(
+  //                 height: 40,
+  //                 margin: const EdgeInsets.symmetric(horizontal: 8), // Tạo khoảng cách hai bên
+  //                 decoration: BoxDecoration(
+  //                   color: const Color(0xFFe9eaec),
+  //                   borderRadius: BorderRadius.circular(15),
+  //                 ),
+  //                 child: TextField(
+  //                   controller: _searchControllerText,
+  //                   autofocus: true,
+  //                   cursorColor: Colors.grey,
+  //                   decoration: const InputDecoration(
+  //                     border: InputBorder.none,
+  //                     hintText: 'Search',
+  //                     prefixIcon: Icon(Icons.search),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             // Nút Cancel
+  //             Flexible(
+  //               flex: 1, // Chiếm 1 phần tỷ lệ
+  //               child: TextButton(
+  //                 onPressed: () {
+  //                   _unFocusTextField();
+  //                   Navigator.pop(context);
+  //                 },
+  //                 child: const Text(
+  //                   'Cancel',
+  //                   style: TextStyle(fontSize: 10), // Kích thước chữ nhỏ hơn
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //
+  //       body: NotificationListener<ScrollNotification>(
+  //         onNotification: (scrollInfo) {
+  //           if (scrollInfo.metrics.pixels ==
+  //               scrollInfo.metrics.maxScrollExtent) {
+  //             _loadMoreUsers(); // Gọi hàm tải thêm khi cuộn tới cuối danh sách
+  //           }
+  //           return true;
+  //         },
+  //         child: _showSearchedUser(),
+  //       ),
+  //     ),
+  //   );
+  // }
 
 
   @override
@@ -139,71 +224,79 @@ class _AddNewPageState extends State<AddNewPage> {
     return GestureDetector(
       onTap: _unFocusTextField,
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: height * 0.02),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Nút Create và Cancel trong title
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // Nút Create
-                    TextButton(
-                      onPressed: () {
-                        // Logic cho Create
-                      },
-                      child: const Text('Create'),
-                    ),
-                    // Nút Cancel
-                    TextButton(
-                      onPressed: () {
-                        _unFocusTextField();
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Cancel'),
-                    ),
-                  ],
-                ),
-                // Thanh tìm kiếm nằm ở dưới
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7, // Thanh tìm kiếm chiếm 70% chiều rộng
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFe9eaec),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: TextField(
-                    controller: _searchControllerText,
-                    autofocus: true,
-                    cursorColor: Colors.grey,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Search',
-                      prefixIcon: Icon(Icons.search),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: height * 0.02),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // Căn lề trái
+            children: [
+              // Nút Create
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: _onCreateGroup,
+                    child: const Text(
+                      'Create',
+                      style: TextStyle(fontSize: 16),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
 
-        body: NotificationListener<ScrollNotification>(
-          onNotification: (scrollInfo) {
-            if (scrollInfo.metrics.pixels ==
-                scrollInfo.metrics.maxScrollExtent) {
-              _loadMoreUsers(); // Gọi hàm tải thêm khi cuộn tới cuối danh sách
-            }
-            return true;
-          },
-          child: _showSearchedUser(),
+                  Text("Create group chat", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),),
+                  TextButton(
+                    onPressed: () {
+                      _unFocusTextField();
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(fontSize: 16), // Kích thước chữ vừa phải
+                    ),
+                  ),
+
+                ],
+              ),
+              // Thanh tìm kiếm
+              Container(
+                height: 40,
+                margin: const EdgeInsets.symmetric(vertical: 8), // Tạo khoảng cách giữa các phần tử
+                decoration: BoxDecoration(
+                  color: const Color(0xFFe9eaec),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: TextField(
+                  controller: _searchControllerText,
+                  autofocus: true,
+                  cursorColor: Colors.grey,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Search',
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                ),
+              ),
+              // Nút Cancel
+
+              // Phần hiển thị kết quả tìm kiếm và cuộn danh sách
+              Expanded( // Đảm bảo phần này chiếm hết không gian còn lại
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (scrollInfo) {
+                    if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                      _loadMoreUsers(); // Gọi hàm tải thêm khi cuộn tới cuối danh sách
+                    }
+                    return true;
+                  },
+                  child: _showSearchedUser(), // Hàm này hiển thị kết quả tìm kiếm
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+
+
 
   Widget _showSearchedUser() {
     return Column(
@@ -242,7 +335,7 @@ class _AddNewPageState extends State<AddNewPage> {
               itemCount: _filteredUsers.length,
               itemBuilder: (context, index) {
                 final user = _filteredUsers[index];
-                final isAdded = addedUsers.contains(user.username);
+                final isAdded = addedUsers.contains(user.id);
 
                 return Card(
                   elevation: 3, // Card có độ nổi
@@ -332,4 +425,20 @@ class _AddNewPageState extends State<AddNewPage> {
     );
   }
 
+  void _findUserByUserNameOrEmail2(String value, int pageNo, int pageSize) async{
+    _isLoadingMore = true;
+
+    List<UserInfo> createGroup = await _createGroupController
+        .findUserByUserNameOrEmail(value,_createGroupController.currentUser.id! , pageNo, pageSize);
+
+    if(createGroup.isNotEmpty){
+      setState(() {
+        // clear the list before add
+        addedUsers.clear();
+        addedUsers.addAll(createGroup as Iterable<String>);
+      });
+    }
+  }
 }
+
+

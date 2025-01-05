@@ -14,7 +14,8 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final SearchUserController _searchUserController = Get.find<SearchUserController>();
+  final SearchUserController _searchUserController =
+      Get.find<SearchUserController>();
 
   final TextEditingController _searchControllerText = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -38,9 +39,10 @@ class _SearchScreenState extends State<SearchScreen> {
 
     // Lắng nghe thay đổi trong TextField
     _searchControllerText.addListener(() {
-      if(_searchControllerText.text.isNotEmpty){
-        _findUserByUserNameOrEmail(_searchControllerText.text, _currentPage, _pageSize);
-      } else{
+      if (_searchControllerText.text.isNotEmpty) {
+        _findUserByUserNameOrEmail(
+            _searchControllerText.text, _currentPage, _pageSize);
+      } else {
         _currentPage = 0;
         _filteredUsers.clear();
         setState(() {});
@@ -225,7 +227,8 @@ class _SearchScreenState extends State<SearchScreen> {
             child: ListTile(
               title: Text(user.username ?? 'No username'),
               subtitle: Text(user.status == true ? 'Active' : 'Inactive'),
-              leading: _renderUserAvatar(user), // Hiển thị icon nếu không có avatar
+              leading:
+                  _renderUserAvatar(user), // Hiển thị icon nếu không có avatar
             ),
           );
         },
@@ -239,8 +242,8 @@ class _SearchScreenState extends State<SearchScreen> {
       return const SizedBox.shrink();
     }
   }
-  
-  Widget _renderUserAvatar(UserInfo user){
+
+  Widget _renderUserAvatar(UserInfo user) {
     final width = MediaQuery.of(context).size.width;
     if (user.profilePictureBytes!.isNotEmpty) {
       return Container(
@@ -271,13 +274,15 @@ class _SearchScreenState extends State<SearchScreen> {
   /*
   * Method to find user by username or email
   */
-  void _findUserByUserNameOrEmail(String value, int pageNo, int pageSize) async{
+  void _findUserByUserNameOrEmail(
+      String value, int pageNo, int pageSize) async {
     _isLoadingMore = true;
 
-    List<UserInfo> searchedUser = await _searchUserController
-        .findUserByUserNameOrEmail(value,_searchUserController.currentUser.id! , pageNo, pageSize);
+    List<UserInfo> searchedUser =
+        await _searchUserController.findUserByUserNameOrEmail(
+            value, _searchUserController.currentUser.id!, pageNo, pageSize);
 
-    if(searchedUser.isNotEmpty){
+    if (searchedUser.isNotEmpty) {
       setState(() {
         // clear the list before add
         _filteredUsers.clear();
