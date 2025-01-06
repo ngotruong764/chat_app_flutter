@@ -193,6 +193,8 @@ class _ChatBoxState extends State<ChatBox> {
   }
 
 
+  //function to create group
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

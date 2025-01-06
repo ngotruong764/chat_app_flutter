@@ -2,7 +2,8 @@ import 'package:chat_app_flutter/modules/application/creategroup/controller/crea
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-
+import 'package:flutter/services.dart' show ByteData, Uint8List, rootBundle;
+import 'dart:typed_data' as typed_data; // Import with prefix
 import '../../../../model/user_info.dart';
 import '../../../chat/screen/chat_box.dart';
 
@@ -14,16 +15,14 @@ class AddNewPage extends StatefulWidget {
 }
 
 class _AddNewPageState extends State<AddNewPage> {
-
-  // Danh sách người dùng đã thêm
-  final List<String> addedUsers = [];
+  final List<UserInfo> addedUsers = [];
 
 /////
-  final CreateGroupController _createGroupController = Get.put(CreateGroupController());
+  final CreateGroupController _createGroupController =
+      Get.put(CreateGroupController());
 
   final TextEditingController _searchControllerText = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-
   List<UserInfo> _filteredUsers = [];
   bool _isLoadingMore = true;
 
@@ -32,13 +31,15 @@ class _AddNewPageState extends State<AddNewPage> {
   final int _pageSize = 10;
 
   // Hàm xử lý khi thêm người dùng
-  void toggleUser(String user) {
+  void toggleUser(UserInfo user) {
     setState(() {
-      if (addedUsers.contains(user)) {
-        // Xóa người dùng nếu đã được thêm
-        addedUsers.remove(user);
+      // Kiểm tra nếu người dùng đã tồn tại trong danh sách
+      final isAdded = addedUsers.any((u) => u.id == user.id);
+      if (isAdded) {
+        // Nếu đã tồn tại, xóa người dùng khỏi danh sách
+        addedUsers.removeWhere((u) => u.id == user.id);
       } else {
-        // Thêm người dùng nếu chưa có
+        // Nếu chưa tồn tại, thêm người dùng vào danh sách
         addedUsers.add(user);
       }
     });
@@ -53,9 +54,6 @@ class _AddNewPageState extends State<AddNewPage> {
       _focusNode.requestFocus();
     });
 
-    // Sao chép danh sách ban đầu
-    // _fetchUsersFromApi();
-
     // Lắng nghe thay đổi trong TextField
     _searchControllerText.addListener(() {
       if (_searchControllerText.text.isNotEmpty) {
@@ -66,24 +64,16 @@ class _AddNewPageState extends State<AddNewPage> {
         _filteredUsers.clear();
         setState(() {});
       }
-      // setState(() {
-      //   _filteredUsers = _allUsers
-      //       .where((user) =>
-      //   user.username != null &&
-      //       user.username!
-      //           .toLowerCase()
-      //           .contains(_searchControllerText.text.toLowerCase()))
-      //       .toList();
-      // });
     });
   }
 
-  void _findUserByUserNameOrEmail(String value, int pageNo, int pageSize) async {
+  void _findUserByUserNameOrEmail(
+      String value, int pageNo, int pageSize) async {
     _isLoadingMore = true;
 
-    List<UserInfo> searchedUser = await _createGroupController
-        .findUserByUserNameOrEmail(
-        value, _createGroupController.currentUser.id!, pageNo, pageSize);
+    List<UserInfo> searchedUser =
+        await _createGroupController.findUserByUserNameOrEmail(
+            value, _createGroupController.currentUser.id!, pageNo, pageSize);
 
     if (searchedUser.isNotEmpty) {
       setState(() {
@@ -98,11 +88,11 @@ class _AddNewPageState extends State<AddNewPage> {
     if (!_isLoadingMore) return; // Tránh gọi lại nhiều lần
 
     final List<UserInfo> users =
-    await _createGroupController.findUserByUserNameOrEmail(
-        _searchControllerText.text,
-        _createGroupController.currentUser.id!,
-        _currentPage++,
-        _pageSize);
+        await _createGroupController.findUserByUserNameOrEmail(
+            _searchControllerText.text,
+            _createGroupController.currentUser.id!,
+            _currentPage++,
+            _pageSize);
 
     // if users is empty -> no data response -> set loadingMore is false
     if (users.isEmpty) {
@@ -121,21 +111,47 @@ class _AddNewPageState extends State<AddNewPage> {
     }
   }
 
-  void _onCreateGroup() {
+  void _onCreateGroup() async {
+    if (addedUsers.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Please select at least 2 users to create a group.",
+            ),
+          )
+      );
+      return; // Stop the process if less than 2 users selected
+    }
     if (addedUsers.isNotEmpty) {
-      // Thực hiện hành động tạo nhóm với danh sách người dùng đã chọn
-      print("Creating group with users: $addedUsers");
-      // Bạn có thể thêm logic gọi API hoặc chuyển qua màn hình tiếp theo ở đây
+      _createGroupController.createGroup(addedUsers).then((groupId) async {
+        print('groupId: $groupId'); // add this line to log group id
+        if (groupId != null) {
+          // Đọc ảnh từ assets
+          final typed_data.ByteData data = await rootBundle.load('assets/group_avatar.png'); // Replace with path to your image
+          final typed_data.Uint8List avatarBytes = data.buffer.asUint8List();
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatBox(
+                conversationId: groupId,
+                conversationPartner: addedUsers.first,
+                name: 'Group Name',
+                conversation: null,
+                conversationAvatar: avatarBytes, // Truyền ảnh vào đây
+              ),
+            ),
+          );
+        }
+      }).catchError((error) {
+        print("Error creating group: $error");
+      });
     } else {
-      // Nếu không có người dùng nào được chọn
       print("No users selected!");
     }
   }
 
-
   // Hàm xử lý khi thêm hoặc xóa người dùng
-
-
 
   // @override
   // Widget build(BuildContext context) {
@@ -217,7 +233,6 @@ class _AddNewPageState extends State<AddNewPage> {
   //   );
   // }
 
-
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -240,8 +255,10 @@ class _AddNewPageState extends State<AddNewPage> {
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
-
-                  Text("Create group chat", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),),
+                  Text(
+                    "Create group chat",
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                  ),
                   TextButton(
                     onPressed: () {
                       _unFocusTextField();
@@ -252,13 +269,13 @@ class _AddNewPageState extends State<AddNewPage> {
                       style: TextStyle(fontSize: 16), // Kích thước chữ vừa phải
                     ),
                   ),
-
                 ],
               ),
               // Thanh tìm kiếm
               Container(
                 height: 40,
-                margin: const EdgeInsets.symmetric(vertical: 8), // Tạo khoảng cách giữa các phần tử
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                // Tạo khoảng cách giữa các phần tử
                 decoration: BoxDecoration(
                   color: const Color(0xFFe9eaec),
                   borderRadius: BorderRadius.circular(15),
@@ -277,15 +294,18 @@ class _AddNewPageState extends State<AddNewPage> {
               // Nút Cancel
 
               // Phần hiển thị kết quả tìm kiếm và cuộn danh sách
-              Expanded( // Đảm bảo phần này chiếm hết không gian còn lại
+              Expanded(
+                // Đảm bảo phần này chiếm hết không gian còn lại
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (scrollInfo) {
-                    if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                    if (scrollInfo.metrics.pixels ==
+                        scrollInfo.metrics.maxScrollExtent) {
                       _loadMoreUsers(); // Gọi hàm tải thêm khi cuộn tới cuối danh sách
                     }
                     return true;
                   },
-                  child: _showSearchedUser(), // Hàm này hiển thị kết quả tìm kiếm
+                  child:
+                      _showSearchedUser(), // Hàm này hiển thị kết quả tìm kiếm
                 ),
               ),
             ],
@@ -294,9 +314,6 @@ class _AddNewPageState extends State<AddNewPage> {
       ),
     );
   }
-
-
-
 
   Widget _showSearchedUser() {
     return Column(
@@ -317,7 +334,8 @@ class _AddNewPageState extends State<AddNewPage> {
                   runSpacing: 8.0,
                   children: addedUsers.map((user) {
                     return Chip(
-                      label: Text(user),
+                      label: Text(user.username ?? 'No username'),
+                      // Hiển thị username
                       deleteIcon: const Icon(Icons.close),
                       onDeleted: () {
                         toggleUser(user); // Xóa user khỏi danh sách
@@ -328,62 +346,41 @@ class _AddNewPageState extends State<AddNewPage> {
               ],
             ),
           ),
-
         if (_filteredUsers.isNotEmpty)
           Expanded(
             child: ListView.builder(
               itemCount: _filteredUsers.length,
               itemBuilder: (context, index) {
                 final user = _filteredUsers[index];
-                final isAdded = addedUsers.contains(user.id);
+                final isAdded = addedUsers.any((u) => u.id == user.id);
 
                 return Card(
-                  elevation: 3, // Card có độ nổi
+                  elevation: 3,
                   margin: const EdgeInsets.symmetric(vertical: 8.0),
                   child: ListTile(
-                    leading: _renderUserAvatar(user), // Hiển thị avatar hoặc icon mặc định
+                    leading: _renderUserAvatar(user), // Hiển thị avatar
                     title: Text(user.username ?? 'No username'),
                     subtitle: Text(user.status == true ? 'Active' : 'Inactive'),
                     trailing: IconButton(
                       icon: Icon(
-                        isAdded ? Icons.check_circle : Icons.check_circle_outline,
+                        isAdded
+                            ? Icons.check_circle
+                            : Icons.check_circle_outline,
                         color: isAdded ? Colors.green : Colors.grey,
                       ),
                       onPressed: () {
-                        setState(() {
-                          // Kiểm tra nếu username không phải null thì mới thêm vào addedUsers
-                          if (user.username != null) {
-                            if (isAdded) {
-                              addedUsers.remove(user.username);
-                            } else {
-                              addedUsers.add(user.username!); // Dùng `!` để khẳng định không phải null
-                            }
-                          }
-                        });
+                        toggleUser(
+                            user); // Gọi hàm toggle với đối tượng `UserInfo`
                       },
                     ),
-                    onTap: () async {
-                      // Điều hướng đến màn hình ChatBox khi nhấn vào người dùng
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatBox(
-                            conversationId: 0,
-                            conversationPartner: user,
-                            name: user.username ?? 'No name',
-                            conversationAvatar: user.profilePictureBytes!,
-                            conversation: null,
-                          ),
-                        ),
-                      );
-                    },
                   ),
                 );
               },
             ),
           )
         // Hiển thị khi không tìm thấy người dùng
-        else if (_filteredUsers.isEmpty && _searchControllerText.text.isNotEmpty)
+        else if (_filteredUsers.isEmpty &&
+            _searchControllerText.text.isNotEmpty)
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: Center(
@@ -392,12 +389,11 @@ class _AddNewPageState extends State<AddNewPage> {
           )
         else
           const SizedBox.shrink(),
-
       ],
     );
   }
 
-  Widget _renderUserAvatar(UserInfo user){
+  Widget _renderUserAvatar(UserInfo user) {
     final width = MediaQuery.of(context).size.width;
     if (user.profilePictureBytes!.isNotEmpty) {
       return Container(
@@ -425,20 +421,20 @@ class _AddNewPageState extends State<AddNewPage> {
     );
   }
 
-  void _findUserByUserNameOrEmail2(String value, int pageNo, int pageSize) async{
+  void _findUserByUserNameOrEmail2(
+      String value, int pageNo, int pageSize) async {
     _isLoadingMore = true;
 
-    List<UserInfo> createGroup = await _createGroupController
-        .findUserByUserNameOrEmail(value,_createGroupController.currentUser.id! , pageNo, pageSize);
+    List<UserInfo> createGroup =
+        await _createGroupController.findUserByUserNameOrEmail(
+            value, _createGroupController.currentUser.id!, pageNo, pageSize);
 
-    if(createGroup.isNotEmpty){
+    if (createGroup.isNotEmpty) {
       setState(() {
         // clear the list before add
         addedUsers.clear();
-        addedUsers.addAll(createGroup as Iterable<String>);
+        addedUsers.addAll(createGroup);
       });
     }
   }
 }
-
-
