@@ -18,6 +18,10 @@ abstract class ApisBase{
   // static const String baseURL = 'http://13.229.78.79:8080/talkie/api/v1';
   // static const String socketBaseUrl = 'ws://13.229.78.79:8080/talkie/api/v1/chat';
 
+  // // server
+  // static const String baseURL = 'chat-app-688219525.ap-southeast-1.elb.amazonaws.com/talkie/api/v1';
+  // static const String socketBaseUrl = 'chat-app-688219525.ap-southeast-1.elb.amazonaws.com/talkie/api/v1/chat';
+
   // AUTH
   static const String login = '$baseURL/user-info/login';
   static const String logout = '$baseURL/user-info/logout';
