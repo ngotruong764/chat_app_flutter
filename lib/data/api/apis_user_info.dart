@@ -186,4 +186,28 @@ abstract class ApisUserinfo {
       return null;
     }
   }
+
+  // update user-info
+  static Future<bool> pushVerificationCode(
+      {required String userEmail}) async {
+    try {
+      final response = await ApisBase.dio.post(
+        ApisBase.pushVerificationCodeUrl,
+        options: Options(
+          contentType: 'application/json',
+        ),
+        data: {
+          'userEmail': userEmail,
+        },
+      );
+      // if success
+      if (response.data['responseCode'] == 200) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
 }

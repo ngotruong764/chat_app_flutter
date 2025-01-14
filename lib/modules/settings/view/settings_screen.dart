@@ -107,6 +107,15 @@ class _SettingsPageState extends State<SettingsPage>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: Constants.GRADIENT_APP_BAR_COLORS,
+            ),
+          ),
+        ),
         title: const Text(
           "Settings",
           style: TextStyle(fontWeight: FontWeight.bold),

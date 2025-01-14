@@ -1,15 +1,17 @@
+import 'package:chat_app_flutter/modules/forgetPass/controller/forget_pass_controller.dart';
 import 'package:chat_app_flutter/modules/forgetPass/view/new_pass.dart';
-import 'package:chat_app_flutter/modules/forgetPass/view/otp_forget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../login/view/Login.dart';
 
-class ForgetPassword extends StatelessWidget {
+class ForgetPassword extends GetView<ForgetPassController> {
   const ForgetPassword({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final textController = TextEditingController();
+
     return Scaffold(
       body: Container(
           height: MediaQuery.of(context).size.height,
@@ -50,10 +52,13 @@ class ForgetPassword extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
+                // TextField nhập email
                 SizedBox(
                   width: 380,
                   height: 50,
+
                   child: TextField(
+                    controller: textController,
                     decoration: InputDecoration(
                       labelText: 'Email Address',
                       border: OutlineInputBorder(
@@ -71,19 +76,21 @@ class ForgetPassword extends StatelessWidget {
                   width: 380,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async{
+                      pushVerificationCode(textController.text, context);
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => ForgetOTP()));
-                      // Get.snackbar(
-                      //   "Email Sent",
-                      //   "A reset password link has been sent to your email.",
-                      //   snackPosition: SnackPosition.BOTTOM,
-                      //   duration: const Duration(seconds: 2),
-                      // );
+                          MaterialPageRoute(builder: (context) => EnterNewPass()));
+                      // Hành động gửi yêu cầu reset password
+                      Get.snackbar(
+                        "Email Sent",
+                        "A reset password link has been sent to your email.",
+                        snackPosition: SnackPosition.BOTTOM,
+                        duration: const Duration(seconds: 2),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 50, vertical: 15),
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                       backgroundColor: Colors.blue, // Màu nền của nút
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -124,5 +131,23 @@ class ForgetPassword extends StatelessWidget {
             ),
           )),
     );
+  }
+
+  void pushVerificationCode(String userEmail, BuildContext context) async{
+    if(userEmail.isNotEmpty){
+      bool isSent = await controller.pushVerificationCode(userEmail);
+
+      if(isSent){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => EnterNewPass()));
+        // Hành động gửi yêu cầu reset password
+        Get.snackbar(
+          "Email Sent",
+          "A reset password link has been sent to your email.",
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 2),
+        );
+      }
+    }
   }
 }
