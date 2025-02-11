@@ -111,10 +111,15 @@ class _InfoUserState extends State<InforUser> {
     return Stack(
       children: [
         Scaffold(
-          body: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus(); // Ẩn bàn phím
-            },
+          body: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/background_login.png'),
+                fit: BoxFit.cover, // Căn chỉnh ảnh (cover, contain, fill...)
+              ),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
