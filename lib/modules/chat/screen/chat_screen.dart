@@ -1,5 +1,6 @@
 
 import 'package:chat_app_flutter/data/api/apis_base.dart';
+import 'package:chat_app_flutter/helper/my_dialog.dart';
 import 'package:chat_app_flutter/modules/chat/controller/chat_controller.dart';
 import 'package:chat_app_flutter/routes/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -206,7 +207,7 @@ class ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _activeUsersBar(),
+                // _activeUsersBar(),
                 const SizedBox(height: 20),
                 // render conversation list
                 _conversations(context),
@@ -226,9 +227,7 @@ class ChatScreenState extends State<ChatScreen> {
         //waiting for data
         if (snapshot.connectionState == ConnectionState.waiting &&
             chatController.conversationList.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return MyDiaLog.loadingConversation(context);
         }
         // if has no data
         if (!snapshot.hasData) {

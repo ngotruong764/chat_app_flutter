@@ -13,6 +13,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../helper/my_dialog.dart';
 import '../../../model/conversation.dart';
 import '../../../routes/app_routes.dart';
 import '../../search/controller/search_user_controller.dart';
@@ -240,10 +241,10 @@ class _ChatBoxState extends State<ChatBox> {
             // display load at the top center when we load more object
             Obx(() {
               if (isLoadMore.value) {
-                return const Align(
-                  alignment: Alignment.topCenter,
-                  child: CircularProgressIndicator(),
-                );
+                // return const Align(
+                //   alignment: Alignment.topCenter,
+                //   child: CircularProgressIndicator(),
+                // );
               }
               return const SizedBox.shrink();
             }),
@@ -254,7 +255,7 @@ class _ChatBoxState extends State<ChatBox> {
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return MyDiaLog.loadingChatBox(context);
                   }
                   if (!snapshot.hasData) {
                     return const Text("No messages");
