@@ -14,8 +14,10 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../model/conversation.dart';
+import '../../../routes/app_routes.dart';
 import '../../search/controller/search_user_controller.dart';
 import '../controller/chat_controller.dart';
+
 
 class ChatBox extends StatefulWidget {
   const ChatBox({
@@ -62,7 +64,7 @@ class _ChatBoxState extends State<ChatBox> {
   late final Stream? messageStream;
 
   void _scrollToBottom() {
-    if (_scrollController.hasClients) {
+    if(_scrollController.hasClients){
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 500),
@@ -103,6 +105,8 @@ class _ChatBoxState extends State<ChatBox> {
         }
         setState(() {});
       });
+
+
     } else {
       _updateAttribute(
           widget.conversationId, widget.name, widget.conversation!);
@@ -113,7 +117,7 @@ class _ChatBoxState extends State<ChatBox> {
       if (currentFocus.hasFocus) {
         Future.delayed(
           const Duration(milliseconds: 500),
-          () => _scrollToBottom(),
+              () => _scrollToBottom(),
         );
       }
     });
@@ -139,7 +143,7 @@ class _ChatBoxState extends State<ChatBox> {
       if (_scrollController.hasClients) {
         // if we scroll to the top, and not isLastPage --> load more messages
         if (_scrollController.offset <=
-                _scrollController.position.minScrollExtent &&
+            _scrollController.position.minScrollExtent &&
             !_scrollController.position.outOfRange &&
             !chatController.isLastPage) {
           _loadMoreMessage();
@@ -158,13 +162,11 @@ class _ChatBoxState extends State<ChatBox> {
     Constants.CURRENT_CONVERSATION_ID = -1;
   }
 
-  Future<Conversation?> _updateConversation() async {
-    return await _searchUserController
-        .findConversation(widget.conversationPartner!.id ?? 0);
+  Future<Conversation?> _updateConversation() async{
+    return await _searchUserController.findConversation(widget.conversationPartner!.id ?? 0);
   }
 
-  void _updateAttribute(
-      int conversationId, String conversationName, Conversation conversation) {
+  void _updateAttribute(int conversationId, String conversationName, Conversation conversation){
     this.conversationId = conversationId;
     this.conversationName = conversationName;
     this.conversation = conversation;
@@ -174,10 +176,10 @@ class _ChatBoxState extends State<ChatBox> {
         .fetchMessage(messagePageNumber, messagePageSize, conversationId, null)
         .then(
           (value) => Future.delayed(
-            const Duration(milliseconds: 500),
+        const Duration(milliseconds: 500),
             () => _scrollToBottom(),
-          ),
-        );
+      ),
+    );
 
     // update current conversation id
     Constants.CURRENT_CONVERSATION_ID = conversationId;
@@ -191,6 +193,7 @@ class _ChatBoxState extends State<ChatBox> {
     }
   }
 
+
   //function to create group
 
   @override
@@ -198,16 +201,39 @@ class _ChatBoxState extends State<ChatBox> {
     return GestureDetector(
       onTap: _unFocusTextField,
       child: Scaffold(
+        backgroundColor: Constants.CHAT_BOX_COLOR,
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: Constants.GRADIENT_APP_BAR_COLORS,
+              ),
+            ),
+          ),
+          leading: IconButton(
+            onPressed: () => Get.back(),
+            icon: const Icon(Icons.arrow_back),
+            color: Colors.white,
+          ),
           title: Row(
             children: [
-              // _displayConservationAvatar(conversation, context),
               _displayConservationAvatar(widget.conversationAvatar, context),
               const SizedBox(width: 10),
-              Text(widget.name),
+              Text(
+                widget.name,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
+          actions: [
+            _audioCall(),
+            _videoCall(),
+          ],
         ),
         body: Column(
           children: [
@@ -235,7 +261,7 @@ class _ChatBoxState extends State<ChatBox> {
                   }
                   // display messages
                   return Obx(
-                    () => ListView.builder(
+                        () => ListView.builder(
                       // shrinkWrap: true,
                       controller: _scrollController,
                       itemCount: chatController.messageList.length,
@@ -281,7 +307,7 @@ class _ChatBoxState extends State<ChatBox> {
                             itemCount: message.attachments!.length,
                             itemBuilder: (context, index) {
                               Attachment attachment =
-                                  message.attachments![index];
+                              message.attachments![index];
                               if (attachment
                                   .attachmentContentByte!.isNotEmpty) {
                                 return Align(
@@ -307,7 +333,7 @@ class _ChatBoxState extends State<ChatBox> {
                                         maxWidth: 150,
                                         // Giới hạn chiều rộng ảnh
                                         maxHeight:
-                                            150, // Giới hạn chiều cao ảnh
+                                        150, // Giới hạn chiều cao ảnh
                                       ),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
@@ -644,7 +670,7 @@ class _ChatBoxState extends State<ChatBox> {
         fit: BoxFit.contain,
         child: Icon(
           Icons.account_circle,
-          color: Colors.grey,
+          color: Colors.white,
         ),
       ),
     );
@@ -662,7 +688,7 @@ class _ChatBoxState extends State<ChatBox> {
         if (attachment.attachmentContentByte!.isNotEmpty) {
           return Align(
             alignment:
-                isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+            isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
             child: GestureDetector(
               onTap: () {
                 showDialog(
@@ -719,7 +745,7 @@ class _ChatBoxState extends State<ChatBox> {
       // get attachment content (base64 encoded)
       String attachmentContent = await Helper.encodeAnImgToBase64(media);
       List<int> attachmentContentByte =
-          Helper.encodeAnBase64ToBytesSync(attachmentContent).toList();
+      Helper.encodeAnBase64ToBytesSync(attachmentContent).toList();
 
       // create Attachment object
       Attachment attachment = Attachment(
@@ -746,7 +772,7 @@ class _ChatBoxState extends State<ChatBox> {
     // load messages( increase page number)
     chatController
         .fetchMessage(
-            messagePageNumber++, messagePageSize, widget.conversationId, 0)
+        messagePageNumber++, messagePageSize, widget.conversationId, 0)
         .then((_) => isLoadMore.value = false);
   }
 
@@ -761,7 +787,7 @@ class _ChatBoxState extends State<ChatBox> {
     if (conversationReceivedMess != null) {
       // remove old conversation
       chatController.conversationList.removeWhere(
-          (conversation) => conversation.id!.isEqual(widget.conversationId));
+              (conversation) => conversation.id!.isEqual(widget.conversationId));
 
       // add new conversation
       if (messageController.text.isEmpty && attachments.isNotEmpty) {
@@ -780,5 +806,44 @@ class _ChatBoxState extends State<ChatBox> {
       conversationReceivedMess.lastMessageTime = currentTime;
       chatController.conversationList.insert(0, conversationReceivedMess);
     }
+  }
+
+  /*
+  * Audio call
+  */
+  Widget _audioCall() {
+    return IconButton(
+      onPressed: () async{
+        Get.toNamed(AppRoutes.VIDEO_CALL, arguments: {
+          'conversationId': conversationId,
+          'isOffer': false,
+        });
+
+      },
+      icon: const Icon(
+        Icons.phone,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  /*
+  * Video call
+  */
+  Widget _videoCall() {
+    return IconButton(
+      onPressed: () {
+        // navigate to
+        Get.toNamed(AppRoutes.VIDEO_CALL, arguments: {
+          'conversationId': conversationId,
+          'isOffer': true,
+          'conversationName': ApisBase.currentUser.username ?? 'Unknown',
+        });
+      },
+      icon: const Icon(
+        Icons.videocam_sharp,
+        color: Colors.white,
+      ),
+    );
   }
 }

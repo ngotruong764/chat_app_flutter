@@ -6,6 +6,8 @@ import '../../../model/user_info.dart';
 class SettingsController extends GetxController{
   List<String> gender = ['Male', 'Female', 'Others'];
 
+  RxBool isLoading = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -13,7 +15,7 @@ class SettingsController extends GetxController{
 
   // Update user info
   Future<UserInfo?> updateUser(UserInfo user) async{
-    UserInfo? userInfo = await ApisUserinfo.updateUserInfo(userInfo: user);
+    UserInfo? userInfo = await ApisUserinfo.updateUserInfo(userInfo: user, isLoading: isLoading);
     return userInfo;
   }
 

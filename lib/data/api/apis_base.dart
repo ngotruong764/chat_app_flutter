@@ -9,12 +9,15 @@ abstract class ApisBase{
   // local - Android
   static const String baseURL = 'http://10.0.2.2:8081/talkie/api/v1';
   static const String socketBaseUrl = 'ws://10.0.2.2:8081/talkie/api/v1/chat';
+  static const String socketBaseVideoCallUrl = 'ws://10.0.2.2:8081/talkie/api/v1/video';
 
   // local - IOS
   // static const String baseURL = 'http://localhost:8081/talkie/api/v1';
   // static const String socketBaseUrl = 'ws://localhost:8081/talkie/api/v1/chat';
-
-  // server
+  // static const String baseURL = 'http://192.168.1.11:8081/talkie/api/v1';
+  // static const String socketBaseUrl = 'ws://192.168.1.11:8081/talkie/api/v1/chat';
+  // static const String socketBaseVideoCallUrl = 'ws://192.168.1.11:8081/talkie/api/v1/video';
+  // // server
   // static const String baseURL = 'http://13.229.78.79:8080/talkie/api/v1';
   // static const String socketBaseUrl = 'ws://13.229.78.79:8080/talkie/api/v1/chat';
   // static const String baseURL = 'http://chat-app-688219525.ap-southeast-1.elb.amazonaws.com/talkie/api/v1';

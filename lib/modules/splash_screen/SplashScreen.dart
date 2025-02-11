@@ -27,7 +27,7 @@ class SplashScreen extends StatelessWidget {
           dynamic>;
       UserInfo userInfo = UserInfo.fromJson(userMap);
       // login request
-      UserInfo? loginUser = await ApisUserinfo.login(userInfo: userInfo);
+      UserInfo? loginUser = await ApisUserinfo.login(userInfo: userInfo, isLoading: true.obs);
       // if login user is not null --> direct to application
       if (loginUser != null) {
         Get.offAllNamed(AppRoutes.APPLICATION);

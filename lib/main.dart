@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:chat_app_flutter/firebase_options.dart';
 import 'package:chat_app_flutter/routes/app_pages.dart';
@@ -7,6 +8,7 @@ import 'package:chat_app_flutter/services/push_notifications_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -17,11 +19,14 @@ import 'model/user_info.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async{
   // initialize firebase app
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
   PushNotificationsService.notificationSetUpInterface();
   PushNotificationsService.display(message);
+  log('On handle background notification');
 }
 
 // setting up theme
@@ -53,7 +58,7 @@ Future<void> init() async {
     UserInfo userInfo = UserInfo.fromJson(userMap);
     // userInfo.deviceToken = Constants.DEVICE_TOKEN;
     // login request
-    UserInfo? loginUser = await ApisUserinfo.login(userInfo: userInfo);
+    UserInfo? loginUser = await ApisUserinfo.login(userInfo: userInfo, isLoading: true.obs);
     // if login user is not null --> direct to application
     if (loginUser != null) {
       initialRoute = AppRoutes.APPLICATION;
@@ -63,9 +68,13 @@ Future<void> init() async {
 
 void main() async{
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+
   PushNotificationsService.notificationSetUpInterface();
 
   // Request notification permission
@@ -81,10 +90,25 @@ void main() async{
   await init();
   FlutterNativeSplash.remove();
   runApp(const MyApp());
+
+  log('Run main()');
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+
+class _MyAppState extends State<MyApp> {
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

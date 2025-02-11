@@ -2,9 +2,14 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:chat_app_flutter/constants/constants.dart';
+import 'package:chat_app_flutter/data/api/apis_base.dart';
+import 'package:chat_app_flutter/services/call_notification_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../routes/app_routes.dart';
 
 class PushNotificationsService {
   // create instance of FirebaseMessaging
@@ -45,10 +50,12 @@ class PushNotificationsService {
    * Get device token (push token)
    */
   static Future<String?> getDeviceToken() async {
+    // String? token = await _messaging.getAPNSToken();
     String? token = await _messaging.getToken();
     log('Device token: $token');
     // save device token
     Constants.DEVICE_TOKEN = token;
+    // Constants.DEVICE_TOKEN = 'eJ5N6kH-SYChszmAlXF4nQ:APA91bFnx0Of977CbxN6ZYFdJyMprbbNRjLhUcRy4qEo80MGNYhQcvpPRigj0meLqrrDYoo-9TM3QXM1LO0N1x5CSDiLA_QLJrWgRj0wrpHHOrdeIspShl4';
     return token;
   }
 
@@ -71,7 +78,6 @@ class PushNotificationsService {
       // log('Message data: ${message.data}');
       // log('Message notification: ${message.notification?.title}');
       // log('Message notification: ${message.notification?.body}');
-
     });
   }
 
@@ -81,21 +87,19 @@ class PushNotificationsService {
   static void notificationSetUpInterface() {
     // initialize setting for Android
     const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     // initialize setting for ios
     const DarwinInitializationSettings iosSettings =
-    DarwinInitializationSettings(
+        DarwinInitializationSettings(
       requestSoundPermission: true,
       requestBadgePermission: true,
       requestAlertPermission: true,
     );
 
     // create initialize setting object
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: androidSettings, iOS: iosSettings);
 
     _notificationsPlugin.initialize(initializationSettings);
 
@@ -111,16 +115,14 @@ class PushNotificationsService {
     // create notification details for IOS
     const DarwinNotificationDetails iosNotificationDetails =
         DarwinNotificationDetails(
-            presentAlert: true,
-            presentBadge: true,
-            presentSound: true,
-        );
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
 
     // create NotificationDetails
     notificationDetails = const NotificationDetails(
-      android: androidNotificationDetails,
-      iOS: iosNotificationDetails
-    );
+        android: androidNotificationDetails, iOS: iosNotificationDetails);
   }
 
   /*
@@ -135,9 +137,38 @@ class PushNotificationsService {
       String body = messageData['body'] ?? '';
       int conversationId = messageData['conversationId'] ?? 0;
       int currentConversationId = Constants.CURRENT_CONVERSATION_ID;
-      if(conversationId != currentConversationId){
-        //
-        final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+      final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+      if (title == Constants.VIDEO_CALL) {
+        // if is video call
+        Map<String, dynamic> json = jsonDecode(body);
+        String? sdp = json['sdp'];
+
+        Get.offAllNamed(AppRoutes.TEST_VIDEO_CALL, arguments: {
+          'conversationId': conversationId,
+          'isOffer': false, // create answer
+          'conversationName': ApisBase.currentUser.username ?? 'Unknown',
+          'sdp': sdp,
+          'action': Constants.AGREE_CALL,
+        });
+
+        // CallNotificationService
+        // CallNotificationService callService = CallNotificationService(
+        //   nameCaller: 'Caller',
+        //   avatarImgUrl:
+        //       'https://first-s3-bucket-nqt.s3.ap-southeast-1.amazonaws.com/img/1/18-1734145472676244.jpg',
+        //   callType: title,
+        //   conversationId: conversationId,
+        //   currentUserId: ApisBase.currentUser.id ?? 0,
+        //   conversationName: '',
+        //   sdp: sdp ?? '',
+        // );
+
+        // show incoming call
+        // callService.incomingCall();
+
+      } else if (conversationId != currentConversationId) {
         // NotificationDetails notificationDetails = NotificationDetails(
         //   android: AndroidNotificationDetails("Channel Id", "Main Channel",
         //       groupKey: "gfg",

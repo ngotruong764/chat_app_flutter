@@ -10,6 +10,9 @@ import 'package:chat_app_flutter/modules/search/binding/search_binding.dart';
 import 'package:chat_app_flutter/modules/search/view/search_screen.dart';
 import 'package:chat_app_flutter/modules/settings/binding/settings_binding.dart';
 import 'package:chat_app_flutter/modules/settings/view/settings_screen.dart';
+import 'package:chat_app_flutter/modules/video_call/binding/video_call_binding.dart';
+import 'package:chat_app_flutter/modules/video_call/view/test_receive_call_screen.dart';
+import 'package:chat_app_flutter/modules/video_call/view/video_call_screen.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
 import '../modules/forgetPass/view/forgot_pass_screen.dart';
@@ -73,6 +76,20 @@ final kRoutePages = [
     name: AppRoutes.FOGGOTPASSWORD,
   page: () => const ForgetPassword(),
     binding: ForgetPassBinding(),
+  ),
+  GetPage(
+    name: AppRoutes.VIDEO_CALL,
+    page: () => const VideoCallScreen(),
+    binding: VideoCallBinding(),
+  ),
+  GetPage(
+    name: AppRoutes.VIDEO_CALL_FROM_APPLICATION,
+    page: () => const VideoCallScreen(),
+    binding: VideoCallBinding(),
+  ),
+  GetPage(
+    name: AppRoutes.TEST_VIDEO_CALL,
+    page: () => const TestReceiveCallScreen(),
   )
 
 ];

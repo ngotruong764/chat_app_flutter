@@ -16,8 +16,10 @@ abstract class ApisUserinfo {
   static Future<UserInfo?> registerAccount(
       {required String username,
       required String email,
-      required String password}) async {
+      required String password,
+      required Rx<bool> isLoading}) async {
     try{
+      isLoading.value = true;
       final response = await ApisBase.dio.post(
         ApisBase.registerAccount,
         options: Options(
@@ -41,13 +43,17 @@ abstract class ApisUserinfo {
     } catch(e){
       e.printError();
       return null;
+    } finally{
+      isLoading.value = false;
     }
   }
 
   // confirm account
   static Future<UserInfo?> confirmAccount(
-      {required UserInfo userInfo}) async {
+      {required UserInfo userInfo,
+      required Rx<bool> isLoading}) async {
     try {
+      isLoading.value = true;
       final response = await ApisBase.dio.post(
         ApisBase.confirmAccount,
         options: Options(
@@ -68,13 +74,17 @@ abstract class ApisUserinfo {
     } catch (e) {
       log(e.toString());
       return null;
+    } finally{
+      isLoading.value = false;
     }
   }
 
   // Login
   static Future<UserInfo?> login(
-      {required UserInfo userInfo}) async {
+      {required UserInfo userInfo,
+      required Rx<bool> isLoading}) async {
     try {
+      isLoading.value = true;
       // Get device token
       await PushNotificationsService.getDeviceToken();
       // Constants.DEVICE_TOKEN = '';
@@ -132,6 +142,8 @@ abstract class ApisUserinfo {
     } catch (e) {
       log(e.toString());
       return null;
+    } finally{
+      isLoading.value = false;
     }
   }
 
@@ -158,8 +170,10 @@ abstract class ApisUserinfo {
 
   // update user-info
   static Future<UserInfo?> updateUserInfo(
-      {required UserInfo userInfo}) async {
+      {required UserInfo userInfo,
+      required Rx<bool> isLoading}) async {
     try {
+      isLoading.value = true;
       final response = await ApisBase.dio.post(
         ApisBase.updateUserInfo,
         options: Options(
@@ -184,6 +198,8 @@ abstract class ApisUserinfo {
     } catch (e) {
       log(e.toString());
       return null;
+    } finally{
+      isLoading.value = false;
     }
   }
 
