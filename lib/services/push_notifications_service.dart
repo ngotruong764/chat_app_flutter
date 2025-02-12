@@ -140,17 +140,24 @@ class PushNotificationsService {
 
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-      if (title == Constants.VIDEO_CALL) {
+      if (title == Constants.VIDEO_CALL || title == Constants.AUDIO_CALL) {
         // if is video call
         Map<String, dynamic> json = jsonDecode(body);
         String? sdp = json['sdp'];
+        int voipId = json['voipId'] ?? 0;
+        String? callerAvtUrl = json['callerAvtUrl'];
+        String? callerUserName = json['callerUserName'];
 
-        Get.offAllNamed(AppRoutes.TEST_VIDEO_CALL, arguments: {
+        Get.toNamed(AppRoutes.TEST_VIDEO_CALL, arguments: {
           'conversationId': conversationId,
           'isOffer': false, // create answer
           'conversationName': ApisBase.currentUser.username ?? 'Unknown',
           'sdp': sdp,
+          'voipId': voipId,
           'action': Constants.AGREE_CALL,
+          'callerAvtUrl': callerAvtUrl,
+          'callerUserName': callerUserName,
+          'title': title,
         });
 
         // CallNotificationService

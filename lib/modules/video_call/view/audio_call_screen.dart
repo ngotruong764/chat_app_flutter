@@ -9,18 +9,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
 import 'package:get/get.dart';
 
-class VideoCallScreen extends StatefulWidget {
-  const VideoCallScreen({super.key});
+class AudioCallScreen extends StatefulWidget {
+  const AudioCallScreen({super.key});
 
   @override
-  State<VideoCallScreen> createState() => _VideoCallState();
+  State<AudioCallScreen> createState() => _AudioCallState();
 }
 
-class _VideoCallState extends State<VideoCallScreen> {
-
+class _AudioCallState extends State<AudioCallScreen> {
   VideoCallController videoCallController = Get.find<VideoCallController>();
 
-  final String callType = Constants.VIDEO_CALL;
+  final String callType = Constants.AUDIO_CALL;
+
   // params
   late final int conversationId;
   late final String conversationName;
@@ -28,6 +28,7 @@ class _VideoCallState extends State<VideoCallScreen> {
   late final int voipId;
   late final String? action;
   late final bool isOffer;
+  late final Uint8List? conversationAvatar;
 
   // create signaling service
   late final WebRTCSignalingService signalingService;
@@ -50,6 +51,7 @@ class _VideoCallState extends State<VideoCallScreen> {
     sdp = arguments['sdp'] ?? '';
     voipId = arguments['voipId'] ?? 0;
     action = arguments['action'] ?? '';
+    conversationAvatar = arguments['conversationAvatar'];
 
     // init WebRTCSignalingService
     signalingService = WebRTCSignalingService(
@@ -72,9 +74,9 @@ class _VideoCallState extends State<VideoCallScreen> {
     // init signaling server
     signalingService.initialize().then((_) {
       // create offer
-      if(isOffer){
+      if (isOffer) {
         signalingService.createOffer();
-      } else{
+      } else {
         signalingService.createAnswer();
       }
 
@@ -109,25 +111,10 @@ class _VideoCallState extends State<VideoCallScreen> {
   void dispose() async {
     _localVideoRenderer.dispose();
     _remoteVideoRenderer.dispose();
-    if(_timer != null){
+    if (_timer != null) {
       _timer!.cancel();
     }
     super.dispose();
-  }
-
-  /*
-  * Fullscreen mode
-  */
-  void enterFullScreen() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-  }
-
-  /*
-  * Exit fullscreen
-  */
-  void exitFullScreen() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
   }
 
   /*
@@ -143,33 +130,14 @@ class _VideoCallState extends State<VideoCallScreen> {
     // Clear the video renderer's source object
     _localVideoRenderer.srcObject = null;
     // Dispose of the video renderer
-    await _localVideoRenderer.dispose();
+    _localVideoRenderer.dispose();
     // disconnect socket
     signalingService.disconnectSocket();
     // signalingService.endCall();
 
-    // Exit fullscreen mode
-    exitFullScreen();
     Get.back();
 
     log('End call');
-  }
-
-  /*
-  * Method to render media of both the local and remote user
-  */
-   List<Widget> _videoRenderers() {
-    return <Widget>[
-      if(_remoteVideoRenderer.srcObject == null)...[
-        Positioned(child: Container(
-          key: const Key('local'),
-          child: rtc.RTCVideoView(
-            _localVideoRenderer,
-            mirror: true,
-          ),
-        ),),
-      ]
-    ];
   }
 
   // This function will be called when the user presses the start button
@@ -177,7 +145,7 @@ class _VideoCallState extends State<VideoCallScreen> {
   // The timer will run every second
   // The timer will stop when the hours, minutes and seconds are all 0
   void _startTimer() {
-    if(mounted){
+    if (mounted) {
       _timer = Timer.periodic(const Duration(milliseconds: 30), (_) {
         setState(() {
           _secondsElapsed++;
@@ -196,107 +164,96 @@ class _VideoCallState extends State<VideoCallScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Stack(
-        children: [
-          if (_remoteVideoRenderer.srcObject == null) ...[
-            // Local video only
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: SizedBox(
-                width: Get.width,
-                height: Get.height,
-                key: const Key('local'),
-                child: rtc.RTCVideoView(
-                  _localVideoRenderer,
-                  mirror: true,
-                  objectFit: rtc.RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
+      backgroundColor: Colors.blue,
+      body: Padding(
+        padding:
+            EdgeInsets.fromLTRB(width * 0.03, height * 0.06, width * 0.03, 0),
+        child: Column(
+          children: [
+            Center(
+              // ignore_for_file: avoid_low_contrast_text
+              child: Text(
+                "TALKIE",
+                style: TextStyle(
+                  fontSize: Get.width * 0.05,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-          ] else ...[
-            // Remote video
-            Positioned(
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0,
-              child: SizedBox(
-                width: Get.width,
-                height: Get.height,
-                key: const Key('remote'),
-                child: rtc.RTCVideoView(
-                  _remoteVideoRenderer,
-                  objectFit: rtc.RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                ),
-              ),
+            SizedBox(
+              height: height * 0.04,
             ),
-      
-            // Local video
-            Positioned(
-              top: Get.height * 0.12,
-              right: Get.width * 0.03,
-              width: Get.width * 0.4,
-              height: Get.height * 0.25,
-              child: Container(
-                key: const Key('local'),
+            if (conversationAvatar != null) ...[
+              Container(
+                width: width * 0.3,
+                height: width * 0.3,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                clipBehavior: Clip.hardEdge,
-                child: rtc.RTCVideoView(
-                  _localVideoRenderer,
-                  mirror: true,
-                  objectFit: rtc.RTCVideoViewObjectFit.RTCVideoViewObjectFitCover ,
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, Get.height * 0.05, 0, 5),
-                  child:  Center(
-                    // ignore_for_file: avoid_low_contrast_text
-                    child: Text(
-                      "TALKIE",
-                      style: TextStyle(
-                        fontSize: Get.width * 0.05,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: MemoryImage(conversationAvatar!),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Text(
-                  formattedTime,
-                  style: TextStyle(
+              ),
+            ] else ...[
+              Center(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        offset: Offset(0, 2),
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.account_circle,
+                    color: Colors.grey,
+                    size: width * 0.3, // Adjust icon size as needed
+                  ),
+                ),
+              ),
+            ],
+            SizedBox(
+              height: height * 0.02,
+            ),
+            Text(
+              conversationName,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: width * 0.07,
+              ),
+            ),
+            if (_remoteVideoRenderer.srcObject == null) ...[
+              Text(
+                'Ringing',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: width * 0.04,
+                ),
+              ),
+            ] else ...[
+              Text(
+                formattedTime,
+                style: TextStyle(
                     color: Colors.green,
                     fontSize: Get.width * 0.04,
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
-              ],
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+            SizedBox(
+              height: height * 0.5,
             ),
-          ],
-          // End call button
-          Positioned(
-            bottom: Get.height * 0.01,
-            left: 0,
-            right: 0,
-            child: Container(
+            // End call button
+            Container(
               height: Get.width * 0.18,
               width: Get.width * 0.18,
               decoration: const BoxDecoration(
@@ -317,11 +274,9 @@ class _VideoCallState extends State<VideoCallScreen> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
-
-

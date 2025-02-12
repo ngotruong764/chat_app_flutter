@@ -813,11 +813,14 @@ class _ChatBoxState extends State<ChatBox> {
   * Audio call
   */
   Widget _audioCall() {
+    _unFocusTextField();
     return IconButton(
       onPressed: () async{
-        Get.toNamed(AppRoutes.VIDEO_CALL, arguments: {
+        Get.toNamed(AppRoutes.AUDIO_CALL, arguments: {
           'conversationId': conversationId,
-          'isOffer': false,
+          'isOffer': true,
+          'conversationName': widget.name,
+          'conversationAvatar': widget.conversationAvatar
         });
 
       },
@@ -832,6 +835,7 @@ class _ChatBoxState extends State<ChatBox> {
   * Video call
   */
   Widget _videoCall() {
+    _unFocusTextField();
     return IconButton(
       onPressed: () {
         // navigate to

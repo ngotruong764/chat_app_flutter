@@ -16,8 +16,14 @@ abstract class Constants {
   ];
   static Color CHAT_BOX_COLOR = const Color(0xFFF0ECF4);
 
-  // Video Call
-  static String VIDEO_CALL = 'Video-Call';
+  // Call
+  static const String VIDEO_CALL = 'VIDEO';
+  static const String AUDIO_CALL = 'AUDIO';
   static const String AGREE_CALL = 'Agree';
   static const String DECLINE_CALL = 'Decline';
+
+  // Call Status
+  static const String END_CALL = 'END';
+
+  static int VOIP_CALL_ID_CALlER = 0;
 }

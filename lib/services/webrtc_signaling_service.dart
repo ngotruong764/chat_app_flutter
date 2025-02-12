@@ -16,6 +16,8 @@ class WebRTCSignalingService {
   String? incomingCallAction; // accept or decline a call
   final VoidCallback? onCallEnded;
   final String? sdp;
+  int? voipId;
+  final VoidCallback handleError;
 
   late RTCPeerConnection peerConnection;
   late WebSocketChannel webSocket;
@@ -29,10 +31,13 @@ class WebRTCSignalingService {
     required this.callType,
     this.incomingCallAction,
     this.onCallEnded,
-    this.sdp
+    this.sdp,
+    this.voipId,
+    required this.handleError,
   });
 
   Future<void> initialize() async {
+    bool isAudio = callType == Constants.AUDIO_CALL;
     // Initialize WebSocket connection
     int userId = ApisBase.currentUser.id ?? 0;
     final wsUrl =
@@ -40,14 +45,22 @@ class WebRTCSignalingService {
     webSocket = WebSocketChannel.connect(wsUrl);
 
     // handle message
-    webSocket.stream
-        .listen((message) => _handleSignalingMessage(jsonDecode(message)));
+    webSocket.stream.listen(
+      (message) => _handleSignalingMessage(
+        jsonDecode(message),
+      ),
+      onDone: () {
+        log('Handle error');
+        // closeAllStream();
+        handleError();
+      },
+    );
 
     // Create WebRTC peer connection
     final Map<String, dynamic> offerSdpConstraints = {
       "mandatory": {
         "OfferToReceiveAudio": true,
-        "OfferToReceiveVideo": true,
+        "OfferToReceiveVideo": !isAudio,
       },
       "optional": [],
     };
@@ -66,6 +79,7 @@ class WebRTCSignalingService {
             'callType': callType,
             'sdp': '',
             'isOffer': isOffer,
+            'voipId': voipId,
           }));
     };
 
@@ -73,7 +87,7 @@ class WebRTCSignalingService {
     if(incomingCallAction != Constants.DECLINE_CALL){
       // Get local media stream (camera & microphone)
       localStream = await navigator.mediaDevices
-          .getUserMedia({'video': true, 'audio': true});
+          .getUserMedia({'video': !isAudio, 'audio': true});
       localStream.getTracks().forEach((track) {
         peerConnection.addTrack(track, localStream);
       });
@@ -144,6 +158,9 @@ class WebRTCSignalingService {
         message['candidate']['sdpMLineIndex'],
       ));
       log('Adding candidate');
+    } else if(message['voipId'] != null){
+      Constants.VOIP_CALL_ID_CALlER = message['voipId'];
+      voipId = message['voipId'];
     }
   }
 
@@ -152,6 +169,21 @@ class WebRTCSignalingService {
       webSocket.sink.close();
     } catch (e) {
       log('Error disconnect socket: $e');
+    }
+  }
+
+  void endCall(){
+    try{
+      webSocket.sink.add(jsonEncode({
+        'callStatus': Constants.END_CALL,
+        'userId': currentUserId,
+        'conversationId': conversationId,
+        'conversationName': conversationName,
+        'callType': callType,
+        'voipId': voipId,
+      }));
+    } catch(e){
+      log('End call');
     }
   }
 
